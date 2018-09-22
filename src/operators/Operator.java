@@ -1,5 +1,11 @@
 package operators;
 
-public class Operator {
+import util.Tuple;
 
+public abstract class Operator {
+	
+	public abstract Tuple getNextTuple();
+	
+	public abstract void reset();
+	
 }

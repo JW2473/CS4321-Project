@@ -30,9 +30,9 @@ public class Catalog {
 			Catalog.output = output;
 		}
 		schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
-		System.out.println(input);
-		System.out.println(Catalog.input);
-		System.out.println(schema);
+//		System.out.println(input);
+//		System.out.println(Catalog.input);
+//		System.out.println(schema);
 		File file = new File(schema);
 		Scanner in = new Scanner(file);
 		while(in.hasNextLine()) {
@@ -48,4 +48,31 @@ public class Catalog {
 		}
 		in.close();
 	}
+	
+	public static FileReader getQueryFiles() {
+		query = Catalog.input + File.separator + "queries.sql";
+		try {
+			return new FileReader(query);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static BufferedReader getTableFiles(String tName) {
+		String table = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + tName;
+		try {
+			return new BufferedReader(new FileReader(table));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static List<String> getSchema(String tName) {
+		return schema_map.get(tName);
+	}
+	
 }

@@ -1,5 +1,22 @@
 package util;
 
-public class Tuple {
+import java.util.Arrays;
 
+public class Tuple {
+	int[] val;
+	int size;
+	
+	public Tuple(String[] val) {
+		size = val.length;
+		this.val = new int[size];
+		for (int i = 0; i < val.length; i++) {
+			this.val[i] = Integer.valueOf(val[i]);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return Arrays.toString(val);
+	}
+	
 }
