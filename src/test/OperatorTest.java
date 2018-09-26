@@ -17,7 +17,7 @@ public class OperatorTest {
 	
 	@Test
 	public void ScanTest() throws Exception{
-	
+
 			Catalog.getInstance();
 		
 			// TODO Auto-generated catch block
