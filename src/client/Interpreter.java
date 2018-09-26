@@ -6,9 +6,7 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import operators.ScanOperater;
 import util.Catalog;
-import util.MyTable;
 
 public class Interpreter {
 
@@ -26,7 +24,7 @@ public class Interpreter {
 				System.out.println("Read statement: " + statement);
 				Select select = (Select) statement;
 				PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
-				//System.out.println(plainSelect.getFromItem());
+				System.out.println(plainSelect.getFromItem());
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
