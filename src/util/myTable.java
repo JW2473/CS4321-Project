@@ -7,13 +7,13 @@ import java.util.List;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.FromItem;
 
-public class myTable{
+public class MyTable{
 	String tname;
 	String alias;
 	List<String> schemaName;
 	BufferedReader br = null;
 	
-	public myTable(FromItem fromItem) {
+	public MyTable(FromItem fromItem) {
 		Table t = (Table) fromItem;
 		alias = t.getAlias();
 		tname = t.getWholeTableName();

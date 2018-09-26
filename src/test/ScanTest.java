@@ -10,7 +10,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import operators.ScanOperater;
 import util.Catalog;
-import util.myTable;
+import util.MyTable;
 
 public class ScanTest {
 
@@ -25,7 +25,7 @@ public class ScanTest {
 				System.out.println("Read statement: " + statement);
 				Select select = (Select) statement;
 				PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
-				ScanOperater s = new ScanOperater(new myTable(plainSelect.getFromItem()));
+				ScanOperater s = new ScanOperater(new MyTable(plainSelect.getFromItem()));
 				
 //				System.out.println(s.getNextTuple());
 //				System.out.println(s.getNextTuple());

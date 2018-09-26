@@ -1,7 +1,6 @@
 package test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 import org.junit.Test;
@@ -12,7 +11,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import operators.ScanOperater;
 import util.Catalog;
-import util.myTable;
+import util.MyTable;
 
 public class OperatorTest {
 	
@@ -30,7 +29,7 @@ public class OperatorTest {
 				System.out.println("Read statement: " + statement);
 				Select select = (Select) statement;
 				PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
-				ScanOperater s = new ScanOperater(new myTable(plainSelect.getFromItem()));				
+				ScanOperater s = new ScanOperater(new MyTable(plainSelect.getFromItem()));				
 				
 				System.out.println("\nStart dumping...");
 				PrintStream ps = new PrintStream(new File("output" + String.valueOf(count)));

@@ -1,6 +1,6 @@
 package operators;
 
-import util.myTable;
+import util.MyTable;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -9,10 +9,10 @@ import util.Tuple;
 
 public class ScanOperater extends Operator{
 	
-	myTable table;
+	MyTable table;
 	List<String> schema;
 	
-	public ScanOperater(myTable table) {
+	public ScanOperater(MyTable table) {
 		this.table = table;
 		schema = table.getSchemaName();
 	}

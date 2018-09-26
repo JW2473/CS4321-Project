@@ -8,7 +8,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import operators.ScanOperater;
 import util.Catalog;
-import util.myTable;
+import util.MyTable;
 
 public class Interpreter {
 
