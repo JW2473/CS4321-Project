@@ -13,7 +13,10 @@ public class Tuple {
 			this.val[i] = Integer.valueOf(val[i]);
 		}
 	}
-
+	
+	public int getVal(int id) {
+		return this.val[id];
+	}
 	@Override
 	public String toString() {
 		return Arrays.toString(val);
