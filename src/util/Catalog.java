@@ -11,7 +11,6 @@ public class Catalog {
 	public static String query = "";
 	public static String schema = "";
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
-	public static HashMap<String, String> aliase_map = new HashMap<>();
 
 	private Catalog() throws FileNotFoundException {
 		initialize(input, output);

@@ -14,6 +14,7 @@ public class ProjectOperator extends Operator{
 
 	Operator child;
 	List<SelectItem> si;
+	List<String> schemas = new ArrayList<>();
 	
 	@Override
 	public Tuple getNextTuple() {
@@ -26,11 +27,12 @@ public class ProjectOperator extends Operator{
 			if (item instanceof SelectExpressionItem) {
 				Expression expr = ((SelectExpressionItem) item).getExpression();
 				Column col = (Column) expr;
-				System.out.println(col.toString());
+				System.out.println(col.getColumnName());
 				projection.add(t.getValue(col));
+				schemas.add(col.getColumnName());
 			}
 		}
-		return new Tuple(projection);
+		return new Tuple(projection, schemas);
 	}
 
 	@Override

@@ -1,12 +1,14 @@
 package util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sf.jsqlparser.schema.Column;
 
 public class Tuple {
 	List<Long> value = new ArrayList<>();
+	HashMap<String, Integer> schemaIndex = new HashMap<>();
 	int size;
 	String tableName;
 
@@ -18,10 +20,13 @@ public class Tuple {
 		}
 	}
 	
-	public Tuple(List<Long> value) {
+	public Tuple(List<Long> value, List<String> schemas) {
 		this.tableName = null;
 		size = value.size();
 		this.value = value;
+		for (int i = 0; i < schemas.size(); i++) {
+			schemaIndex.put(schemas.get(i), i);
+		}
 	}
 	
 	public String getTableName() {
@@ -33,11 +38,17 @@ public class Tuple {
 		return value.toString().replaceAll("\\[", "").replaceAll("\\]", " ");
 	}
 	
-	public long getValue(Column c) {
-		if (c.getTable().getWholeTableName().equals(tableName)) {
-			return value.get(Catalog.getIndex(tableName, c.getWholeColumnName().split("\\.")[1]));
+	public Long getValue(Column c) {
+		try {
+			if (tableName != null) {
+				return value.get(Catalog.getIndex(tableName, c.getWholeColumnName().split("\\.")[1]));
+			}else {
+				String colName = c.getWholeColumnName().split("\\.")[1];
+				return value.get(schemaIndex.get(colName));
+			}
+		}catch (Exception e) {
+			return null;
 		}
-		return -1;
 	}
 	
 }
