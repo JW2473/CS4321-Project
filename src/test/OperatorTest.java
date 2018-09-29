@@ -9,7 +9,9 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import operators.ScanOperater;
+import operators.ProjectOperator;
+import operators.ScanOperator;
+import operators.SelectOperator;
 import util.Catalog;
 import util.MyTable;
 
@@ -26,14 +28,71 @@ public class OperatorTest {
 			Statement statement;
 			int count = 1;
 			while ((statement = parser.Statement()) != null) {
-				System.out.println("Read statement: " + statement);
+				System.out.println("\nRead statement: " + statement);
 				Select select = (Select) statement;
 				PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
-				ScanOperater s = new ScanOperater(new MyTable(plainSelect.getFromItem()));				
+				ScanOperator s = new ScanOperator(new MyTable(plainSelect.getFromItem()));				
 				
 				System.out.println("\nStart dumping...");
-				PrintStream ps = new PrintStream(new File("output" + String.valueOf(count)));
+				PrintStream ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count) + ".txt"));
 				s.dump(ps);
+				System.out.println("Dumping finished !");
+				count++;
+			}
+		} catch (Exception e) {
+			System.err.println("Exception occurred during parsing");
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void SelectTest() throws Exception{
+
+			Catalog.getInstance();
+		
+			// TODO Auto-generated catch block
+		try {
+			CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
+			Statement statement;
+			int count = 1;
+			while ((statement = parser.Statement()) != null) {
+				System.out.println("\nRead statement: " + statement);
+				Select select = (Select) statement;
+				PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+				ScanOperator s = new ScanOperator(new MyTable(plainSelect.getFromItem()));
+				SelectOperator selOp = new SelectOperator(s, plainSelect.getWhere());
+				System.out.println("\nStart dumping...");
+				PrintStream ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count) + ".txt"));
+				selOp.dump(ps);
+				System.out.println("Dumping finished !");
+				count++;
+			}
+		} catch (Exception e) {
+			System.err.println("Exception occurred during parsing");
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void ProjectTest() throws Exception{
+
+			Catalog.getInstance();
+		
+			// TODO Auto-generated catch block
+		try {
+			CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
+			Statement statement;
+			int count = 1;
+			while ((statement = parser.Statement()) != null) {
+				System.out.println("\nRead statement: " + statement);
+				Select select = (Select) statement;
+				PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+				ScanOperator s = new ScanOperator(new MyTable(plainSelect.getFromItem()));
+				SelectOperator selOp = new SelectOperator(s, plainSelect.getWhere());
+				ProjectOperator proOp = new ProjectOperator(plainSelect.getSelectItems(), selOp);
+				System.out.println("\nStart dumping...");
+				PrintStream ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count) + ".txt"));
+				proOp.dump(ps);
 				System.out.println("Dumping finished !");
 				count++;
 			}

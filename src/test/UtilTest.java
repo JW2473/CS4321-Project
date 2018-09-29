@@ -6,7 +6,7 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import operators.ScanOperater;
+import operators.ScanOperator;
 import util.Catalog;
 import util.MyTable;
 import visitor.*;
@@ -28,7 +28,7 @@ public class UtilTest {
 			Select select = (Select) statement;
 			PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
 			SelectExpVisitor sv = new SelectExpVisitor();
-			ScanOperater s = new ScanOperater(new MyTable(plainSelect.getFromItem()));
+			ScanOperator s = new ScanOperator(new MyTable(plainSelect.getFromItem()));
 			if (plainSelect.getWhere() != null) {
 				sv.readTuple(s.getNextTuple());
 				plainSelect.getWhere().accept(sv);

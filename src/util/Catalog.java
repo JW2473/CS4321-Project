@@ -7,7 +7,7 @@ public class Catalog {
 	private static Catalog instance = null;
 	
 	public static String input = "samples" + File.separator + "input";
-	public static String output = "samples" + File.separator + "output";
+	public static String output = "samples" + File.separator + "output" + File.separator;
 	public static String query = "";
 	public static String schema = "";
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
@@ -27,7 +27,7 @@ public class Catalog {
 			Catalog.input = input;
 		}
 		if (!output.isEmpty()) {
-			Catalog.output = output;
+			Catalog.output = output + File.separator;
 		}
 		schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
 //		System.out.println(input);

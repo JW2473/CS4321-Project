@@ -6,7 +6,7 @@ import java.util.List;
 import net.sf.jsqlparser.schema.Column;
 
 public class Tuple {
-	List<Integer> value = new ArrayList<>();
+	List<Long> value = new ArrayList<>();
 	int size;
 	String tableName;
 
@@ -14,12 +14,18 @@ public class Tuple {
 		this.tableName = tableName;
 		size = val.length;
 		for (int i = 0; i < val.length; i++) {
-			this.value.add(Integer.valueOf(val[i]));
+			this.value.add(Long.valueOf(val[i]));
 		}
 	}
 	
-	public int getVal(int id) {
-		return this.value.get(id);
+	public Tuple(List<Long> value) {
+		this.tableName = null;
+		size = value.size();
+		this.value = value;
+	}
+	
+	public String getTableName() {
+		return this.tableName;
 	}
 	
 	@Override

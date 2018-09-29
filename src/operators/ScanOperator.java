@@ -7,12 +7,12 @@ import java.util.List;
 
 import util.Tuple;
 
-public class ScanOperater extends Operator{
+public class ScanOperator extends Operator{
 	
 	MyTable table;
 	List<String> schema;
 	
-	public ScanOperater(MyTable table) {
+	public ScanOperator(MyTable table) {
 		this.table = table;
 		schema = table.getSchemaName();
 	}
@@ -30,15 +30,7 @@ public class ScanOperater extends Operator{
 	}
 	
 	public void dump(PrintStream ps) {
-		this.reset();
-//		System.out.println(schema);
-		ps.println(schema);
-		Tuple curr = table.nextTuple();
-		while (curr != null) {
-//			System.out.println(curr);
-			ps.println(curr);
-			curr = table.nextTuple();
-		}
+		super.dump(ps);
 	}
 	
 }
