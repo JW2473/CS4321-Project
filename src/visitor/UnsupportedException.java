@@ -2,6 +2,11 @@ package visitor;
 
 public class UnsupportedException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public UnsupportedException() {
 		super();
 		// TODO Auto-generated constructor stub

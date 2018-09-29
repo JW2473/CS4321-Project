@@ -36,7 +36,7 @@ public class MyTable{
 	public Tuple nextTuple() {
 		try {
 			String[] val = br.readLine().split(",");
-			return new Tuple(val);
+			return new Tuple(val, this.tname);
 		} catch (NullPointerException e) {
 			// TODO Auto-generated catch block
 			return null;

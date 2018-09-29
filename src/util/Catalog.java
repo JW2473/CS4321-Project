@@ -75,4 +75,8 @@ public class Catalog {
 		return schema_map.get(tName);
 	}
 	
+	public static int getIndex(String tableName, String schemaName) {
+		return schema_map.get(tableName).indexOf(schemaName);
+	}
+	
 }

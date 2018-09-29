@@ -38,29 +38,98 @@ import net.sf.jsqlparser.expression.operators.relational.Matches;
 import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
 public abstract class ExpVisitor implements ExpressionVisitor{
 	
 	private final String msg = "this operation is not supported";
-	@Override
-	public abstract void visit(AndExpression arg0);
-	@Override
-	public abstract void visit(Column arg0);
-	@Override
-	public abstract void visit(EqualsTo arg0);
-	@Override
-	public abstract void visit(GreaterThan arg0);
-	@Override
-	public abstract void visit(GreaterThanEquals arg0);
-	@Override
-	public abstract void visit(NotEqualsTo arg0);
-	@Override
-	public abstract void visit(MinorThan arg0);
-	@Override
-	public abstract void visit(MinorThanEquals arg0);
+	
+	long curValue = 0;
+	boolean curStatus = true;
+	public long getCurValue() {
+		return curValue;
+	}
 
+	public boolean getCurStatus() {
+		return curStatus;
+	}
+
+
+	@Override
+	public void visit(AndExpression arg0) {
+		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		boolean left  = curStatus;
+		arg0.getRightExpression().accept(this);
+		boolean right  = curStatus;
+		curStatus = (left && right);
+	}
+
+	@Override
+	public void visit(EqualsTo arg0) {
+		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		long left = curValue;
+		arg0.getRightExpression().accept(this);
+		long right = curValue;
+		curStatus = (left == right);
+	}
+
+	@Override
+	public void visit(GreaterThan arg0) {
+		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		long left = curValue;
+		arg0.getRightExpression().accept(this);
+		long right = curValue;
+		curStatus = (left > right);
+	}
+
+	@Override
+	public void visit(GreaterThanEquals arg0) {
+		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		long left = curValue;
+		arg0.getRightExpression().accept(this);
+		long right = curValue;
+		curStatus = (left >= right);
+	}
+
+	@Override
+	public void visit(NotEqualsTo arg0) {
+		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		long left = curValue;
+		arg0.getRightExpression().accept(this);
+		long right = curValue;
+		curStatus = (left != right);
+	}
+
+	@Override
+	public void visit(MinorThan arg0) {
+		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		long left = curValue;
+		arg0.getRightExpression().accept(this);
+		long right = curValue;
+		curStatus = (left < right);
+	}
+
+	@Override
+	public void visit(MinorThanEquals arg0) {
+		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		long left = curValue;
+		arg0.getRightExpression().accept(this);
+		long right = curValue;
+		curStatus = (left <= right);
+	}
+	
+	@Override
+	public void visit(LongValue arg0) {
+		// TODO Auto-generated method stub
+		this.curValue = arg0.getValue();
+	}
 	
 	@Override
 	public void visit(Addition arg0) {
@@ -268,17 +337,6 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 
 	@Override
 	public void visit(LikeExpression arg0) {
-		// TODO Auto-generated method stub
-		try {
-			throw new UnsupportedException(msg);
-		} catch (UnsupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void visit(LongValue arg0) {
 		// TODO Auto-generated method stub
 		try {
 			throw new UnsupportedException(msg);
