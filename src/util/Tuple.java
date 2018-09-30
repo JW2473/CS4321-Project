@@ -3,6 +3,7 @@ package util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import net.sf.jsqlparser.schema.Column;
 
@@ -17,6 +18,34 @@ public class Tuple {
 	HashMap<String, Integer> schemaIndex = new HashMap<>();
 	int size;
 	String tableName;
+
+	/*
+	 * Return the schema list of the tuple
+	 * @return the list of the schema in the tuple
+	 */
+	public List<String> getAllSchemas() {
+		List<String> schemas = new ArrayList<>();
+		for (Entry<String, Integer> entry : schemaIndex.entrySet()) {
+			schemas.add(entry.getKey());
+		}
+		return schemas;
+	}
+	
+	/*
+	 * Return the data list of the tuple
+	 * @return the list of the data in the tuple
+	 */
+	public List<Long> getAllColumn() {
+		return value;
+	}
+
+	/*
+	 * Get the number of columns of the tuple
+	 * @return the columns number
+	 */
+	public int getSize() {
+		return size;
+	}
 
 	/*
 	 * Create a new tuple from an original table in the db directory

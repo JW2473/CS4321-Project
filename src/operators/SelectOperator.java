@@ -1,7 +1,5 @@
 package operators;
 
-import java.io.PrintStream;
-
 import net.sf.jsqlparser.expression.Expression;
 import util.Tuple;
 import visitor.SelectExpVisitor;
@@ -14,7 +12,7 @@ import visitor.SelectExpVisitor;
  */
 public class SelectOperator extends Operator{
 
-	ScanOperator child;
+	Operator child;
 	Expression expr;
 	SelectExpVisitor sv = new SelectExpVisitor();
 	
@@ -51,8 +49,8 @@ public class SelectOperator extends Operator{
 	 * @param scanOp the child operator of select operator
 	 * @param expr the Expression object from the WHERE clause
 	 */
-	public SelectOperator(ScanOperator scanOp, Expression expr) {
-		child = scanOp;
+	public SelectOperator(Operator op, Expression expr) {
+		child = op;
 		this.expr = expr;
 	}	
 }
