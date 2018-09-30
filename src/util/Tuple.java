@@ -56,6 +56,10 @@ public class Tuple {
 	public Tuple(String[] val, String tableName) {
 		this.tableName = tableName;
 		size = val.length;
+		List<String> s = Catalog.getSchema(tableName);
+		for (int i = 0; i < s.size(); i++) {
+			schemaIndex.put(s.get(i), i);
+		}
 		for (int i = 0; i < val.length; i++) {
 			this.value.add(Long.valueOf(val[i]));
 		}
@@ -106,6 +110,7 @@ public class Tuple {
 				return value.get(Catalog.getIndex(tableName, c.getWholeColumnName().split("\\.")[1]));
 			}else {
 				String colName = c.getWholeColumnName().split("\\.")[1];
+//				System.out.println(c.getTable().getWholeTableName());
 				return value.get(schemaIndex.get(colName));
 			}
 		}catch (Exception e) {

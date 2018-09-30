@@ -23,7 +23,7 @@ public class JoinOperator extends Operator{
 	@Override
 	public Tuple getNextTuple() {
 		Tuple t = null;
-		while ((t1 = left.getNextTuple()) != null && (t2 = right.getNextTuple()) != null) {
+		while (t1 != null && t2 != null) {
 			if (expr == null) t = combineTuples(t1, t2);
 			jv.readTuple(t1, t2);
 			expr.accept(jv);
@@ -66,6 +66,8 @@ public class JoinOperator extends Operator{
 		this.left = left;
 		this.right = right;
 		this.expr = expr;
+		t1 = left.getNextTuple();
+		t2 = right.getNextTuple();
 	}
 
 }
