@@ -8,14 +8,21 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
 
+
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * 
+ * This is the interpreter class that takes in the input/output directory and 
+ * calls other methods to perform parsing
+ */
 public class Interpreter {
 
 	public static void main(String[] args) throws FileNotFoundException {
-		// TODO Auto-generated method stub
-//		if (args.length != 2) {
-//			throw new IllegalArgumentException("Wrong arguments!");
-//		}
-//		Catalog.initialize(args[0], args[1]);
+		if (args.length != 2) {
+			throw new IllegalArgumentException("Wrong arguments!");
+		}
+		Catalog.initialize(args[0], args[1]);
 		Catalog.getInstance();
 		try {
 			CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());

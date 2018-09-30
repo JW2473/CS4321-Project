@@ -40,24 +40,43 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * ExpVisitor implements the expressions we have to support
+ *
+ */
 public abstract class ExpVisitor implements ExpressionVisitor{
 	
-	private final String msg = "this operation is not supported";
+	private final String msg = "This operation is not supported";
 	
 	long curValue = 0;
 	boolean curStatus = true;
+	
+	/*
+	 * Get current value from the specified column or constant in the query
+	 * @return a long value 
+	 */
 	public long getCurValue() {
 		return curValue;
 	}
-
+	
+	/*
+	 * Get current statues of the expression
+	 * @return a boolean indicates a true or false status of the expression
+	 */
 	public boolean getCurStatus() {
 		return curStatus;
 	}
 
-
+	/*
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the current variable in this object (curStatus or curValue)
+	 * meets the specified condition, in this case left >= right, and update current value in the variable
+	 * @param arg0 the expression of AND
+	 */
 	@Override
 	public void visit(AndExpression arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		boolean left  = curStatus;
 		arg0.getRightExpression().accept(this);
@@ -65,9 +84,14 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left && right);
 	}
 
+	/*
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the current variable in this object (curStatus or curValue)
+	 * meets the specified condition, in this case left == right, and update current value in the variable
+	 * @param arg0 the expression of =
+	 */
 	@Override
 	public void visit(EqualsTo arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		long left = curValue;
 		arg0.getRightExpression().accept(this);
@@ -75,9 +99,14 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left == right);
 	}
 
+	/*
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the current variable in this object (curStatus or curValue)
+	 * meets the specified condition, in this case left == right, and update current value in the variable
+	 * @param arg0 the expression of =
+	 */
 	@Override
 	public void visit(GreaterThan arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		long left = curValue;
 		arg0.getRightExpression().accept(this);
@@ -85,9 +114,14 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left > right);
 	}
 
+	/*
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the current variable in this object (curStatus or curValue)
+	 * meets the specified condition, in this case left >= right, and update current value in the variable
+	 * @param arg0 the expression of >=
+	 */
 	@Override
 	public void visit(GreaterThanEquals arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		long left = curValue;
 		arg0.getRightExpression().accept(this);
@@ -95,9 +129,14 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left >= right);
 	}
 
+	/*
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the current variable in this object (curStatus or curValue)
+	 * meets the specified condition, in this case left != right, and update current value in the variable
+	 * @param arg0 the expression of !=
+	 */
 	@Override
 	public void visit(NotEqualsTo arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		long left = curValue;
 		arg0.getRightExpression().accept(this);
@@ -105,9 +144,14 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left != right);
 	}
 
+	/*
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the current variable in this object (curStatus or curValue)
+	 * meets the specified condition, in this case left < right, and update current value in the variable
+	 * @param arg0 the expression of <
+	 */
 	@Override
 	public void visit(MinorThan arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		long left = curValue;
 		arg0.getRightExpression().accept(this);
@@ -115,9 +159,14 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left < right);
 	}
 
+	/*
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the current variable in this object (curStatus or curValue)
+	 * meets the specified condition, in this case left <= right, and update current value in the variable
+	 * @param arg0 the expression of <=
+	 */
 	@Override
 	public void visit(MinorThanEquals arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		long left = curValue;
 		arg0.getRightExpression().accept(this);
@@ -125,12 +174,18 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left <= right);
 	}
 	
+	/*
+	 * Visit the constant in the expression and update curValue
+	 * @param arg0 the constant long value in the expression
+	 */
 	@Override
 	public void visit(LongValue arg0) {
-		// TODO Auto-generated method stub
 		this.curValue = arg0.getValue();
 	}
 	
+	/*
+	 * All the following expressions are unsupported expressions
+	 */
 	@Override
 	public void visit(Addition arg0) {
 		// TODO Auto-generated method stub

@@ -2,35 +2,45 @@ package operators;
 
 import util.MyTable;
 
-import java.io.PrintStream;
 import java.util.List;
 
 import util.Tuple;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * ScanOperator class scan the whole table
+ *
+ */
 public class ScanOperator extends Operator{
 	
 	MyTable table;
 	List<String> schema;
 	
+	/*
+	 * Create a ScanOperator 
+	 * @param table the table to be scanned
+	 */
 	public ScanOperator(MyTable table) {
 		this.table = table;
 		schema = table.getSchemaName();
 	}
 	
+	/*
+	 * Call nextTuple in the table object to get next tuple in that table
+	 * @return next tuple
+	 */
 	@Override
 	public Tuple getNextTuple() {
-		// TODO Auto-generated method stub
 		return table.nextTuple();
 	}
 
+	/*
+	 * reset the table
+	 */
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
 		table.reset();
-	}
-	
-	public void dump(PrintStream ps) {
-		super.dump(ps);
 	}
 	
 }

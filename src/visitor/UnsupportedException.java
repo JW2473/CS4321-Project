@@ -1,10 +1,13 @@
 package visitor;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * UnsupportedException deals with exceptions returned by the unsupported expressions
+ *
+ */
 public class UnsupportedException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public UnsupportedException() {

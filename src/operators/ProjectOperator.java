@@ -10,15 +10,25 @@ import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import util.Tuple;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * ProjectOperator class select the specific column of the tuple
+ *
+ */
 public class ProjectOperator extends Operator{
 
 	Operator child;
 	List<SelectItem> si;
 	List<String> schemas = new ArrayList<>();
 	
+	/*
+	 * Create a new tuple from the Column object and child operator's tuple
+	 * It can determine whether the SelectItem is * or a certain column in a tuple
+	 * @return the projected tuple
+	 */
 	@Override
 	public Tuple getNextTuple() {
-		// TODO Auto-generated method stub
 		Tuple t = child.getNextTuple();
 		if (t == null) return null;
 		List<Long> projection = new ArrayList<>();
@@ -34,13 +44,20 @@ public class ProjectOperator extends Operator{
 		}
 		return new Tuple(projection, schemas);
 	}
-
+	
+	/*
+	 * Reset the child's operator
+	 */
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
 		child.reset();
 	}
 	
+	/*
+	 * Create a ProjectOperator object
+	 * @param si the SelectItem object from the query
+	 * @param op the child operator
+	 */
 	public ProjectOperator(List<SelectItem> si, Operator op) {
 		this.si = si;
 		child = op;

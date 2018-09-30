@@ -3,6 +3,12 @@ package util;
 import java.io.*;
 import java.util.*;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * Catalog class uses singleton pattern to access tables and schemas information from the file system
+ *
+ */
 public class Catalog {
 	private static Catalog instance = null;
 	
@@ -12,15 +18,29 @@ public class Catalog {
 	public static String schema = "";
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 
+	/*
+	 * Create the Catalog object then initialize it
+	 */
 	private Catalog() throws FileNotFoundException {
 		initialize(input, output);
 	}
 	
+	/*
+	 * getInstance() is used to create the object from other classes
+	 * and make sure there is only one Catalog object at the same time
+	 * @return the Catalog object that it created
+	 */
 	public static synchronized Catalog getInstance() throws FileNotFoundException {
 		if (instance == null) instance = new Catalog();
 		return instance;
 	}
 	
+	/*
+	 * Initialize the Catalog with the new input address and output address
+	 * Read the schema data from file and save data in a map
+	 * @param input user specified input address
+	 * @param output user specified output address
+	 */
 	public static void initialize(String input, String output) throws FileNotFoundException {
 		if (!input.isEmpty()) {
 			Catalog.input = input;
@@ -29,9 +49,6 @@ public class Catalog {
 			Catalog.output = output + File.separator;
 		}
 		schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
-//		System.out.println(input);
-//		System.out.println(Catalog.input);
-//		System.out.println(schema);
 		File file = new File(schema);
 		Scanner in = new Scanner(file);
 		while(in.hasNextLine()) {
@@ -48,6 +65,10 @@ public class Catalog {
 		in.close();
 	}
 	
+	/*
+	 * Find the location of queries file and read the query file
+	 * @return the FileReader of the query file
+	 */
 	public static FileReader getQueryFiles() {
 		query = Catalog.input + File.separator + "queries.sql";
 		try {
@@ -59,6 +80,11 @@ public class Catalog {
 		return null;
 	}
 	
+	/*
+	 * Find the specified table in the input directory and read it
+	 * @param tName the name of the table
+	 * @return the BufferedReader of the table file
+	 */
 	public static BufferedReader getTableFiles(String tName) {
 		String table = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + tName;
 		try {
@@ -70,10 +96,21 @@ public class Catalog {
 		return null;
 	}
 	
+	/*
+	 * Get the schema of specified table
+	 * @param tName the name of the table
+	 * @return the list that contains all the schema of that table
+	 */
 	public static List<String> getSchema(String tName) {
 		return schema_map.get(tName);
 	}
 	
+	/*
+	 * Get the index of the specified column in the specified table
+	 * @param tableName the name of the table
+	 * @param schemaName the name of the schema
+	 * @return the index of the column
+	 */
 	public static int getIndex(String tableName, String schemaName) {
 		return schema_map.get(tableName).indexOf(schemaName);
 	}
