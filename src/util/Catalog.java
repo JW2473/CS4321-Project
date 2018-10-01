@@ -17,6 +17,7 @@ public class Catalog {
 	public static String query = "";
 	public static String schema = "";
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
+	public static HashMap<String, String> aliases = new HashMap<>();
 
 	/*
 	 * Create the Catalog object then initialize it
@@ -102,7 +103,8 @@ public class Catalog {
 	 * @return the list that contains all the schema of that table
 	 */
 	public static List<String> getSchema(String tName) {
-		return schema_map.get(tName);
+		String tFullName = getTableFullName(tName);
+		return schema_map.get(tFullName);
 	}
 	
 	/*
@@ -115,4 +117,31 @@ public class Catalog {
 		return schema_map.get(tableName).indexOf(schemaName);
 	}
 	
+	/*
+	 * Get the original table name from the alias
+	 * @param alias the alias of the table
+	 * @return the full table name
+	 */
+	public static String getTableFullName(String tName) {
+		if (aliases.containsKey(tName)) {
+			return aliases.get(tName);
+		}
+		return tName;
+	}
+	
+	/*
+	 * Assign alias to corresponding table name
+	 * @param alias the alias of table
+	 * @param table the original table name
+	 */
+	public static void setAlias(String alias, String tableName) {
+		aliases.put(alias, tableName);
+	}
+	
+	/*
+	 * Clear aliases map for next query
+	 */
+	public static void resetAlias() {
+		aliases.clear();
+	}
 }

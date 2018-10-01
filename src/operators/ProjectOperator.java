@@ -8,6 +8,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
+import util.Tools;
 import util.Tuple;
 
 /**
@@ -39,7 +40,7 @@ public class ProjectOperator extends Operator{
 				Column col = (Column) expr;
 //				System.out.println(col.getColumnName());
 				projection.add(t.getValue(col));
-				schemas.add(col.getColumnName());
+				schemas.add(Tools.rebuildWholeColumnName(col));
 			}
 		}
 		return new Tuple(projection, schemas);

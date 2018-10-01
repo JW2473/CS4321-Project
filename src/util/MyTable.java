@@ -29,6 +29,8 @@ public class MyTable{
 		tname = t.getWholeTableName();
 		schemaName = Catalog.getSchema(tname);
 		br = Catalog.getTableFiles(tname);
+		if (alias != null)
+			Catalog.setAlias(alias, tname);
 	}
 	
 	/*
