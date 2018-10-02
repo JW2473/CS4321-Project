@@ -17,9 +17,16 @@ import operators.ProjectOperator;
 import operators.ScanOperator;
 import operators.SelectOperator;
 import operators.SortOperator;
-
 import java.util.*;
+
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * SelectParserTree class builds an operator tree from the select query to get the final result.
+ *
+ */
 public class SelectParserTree {
+
 	private Select sel;
 	private PlainSelect ps;
 	private List<String> froms;
@@ -31,7 +38,12 @@ public class SelectParserTree {
 	private Map<String, FromItem> from_map;
 	public Operator root;
 	
-	private List<Expression> splitAnds(Expression exp) {
+	/*
+	 * split Expression from 'Where' to non and Expressions.
+	 * @param exp the Expression get from where
+	 * @return the list of expression from where
+	 */
+	private List<Expression> splitWhere(Expression exp) {
 		List<Expression> res = new ArrayList<>();
 		if(exp == null)
 			return res;
@@ -44,6 +56,11 @@ public class SelectParserTree {
 		return res;
 	}
 	
+	/*
+	 * split Expression from 'Where' to non and Expressions.
+	 * @param exp the Expression get from where
+	 * @return the list of expression from where
+	 */
 	private Expression rebuildExpression(List<Expression> exps) {
 		if( exps.size() == 0 ) return null;
 		Expression res = exps.get(0);
@@ -84,7 +101,7 @@ public class SelectParserTree {
 	}
 	public SelectParserTree(Select select) {
 		this.sel = select;
-		this.ps = (PlainSelect)sel.getSelectBody();
+		PlainSelect ps = (PlainSelect)sel.getSelectBody();
 		this.from_map = new HashMap<>();
 		this.froms = new ArrayList<>();
 		this.selItems = ps.getSelectItems();
@@ -113,9 +130,11 @@ public class SelectParserTree {
 			}
 		Expression e = ps.getWhere();
 
+
 		List<Expression> exps = splitAnds(e);
 		Map<String,List<Expression>> tempselcon = new HashMap<>();
 		Map<String,List<Expression>> tempjoincon = new HashMap<>();
+
 		for(String name : froms) {
 			tempselcon.put(name,new ArrayList<>());
 			tempjoincon.put(name,new ArrayList<>());
@@ -136,8 +155,6 @@ public class SelectParserTree {
 			this.selcon.put(from, rebuildExpression(tempselcon.get(from)));
 			this.joincon.put(from, rebuildExpression(tempjoincon.get(from)));
 		}
-			
-
 		buildTree();
 	}
 	

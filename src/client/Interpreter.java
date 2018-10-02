@@ -27,7 +27,13 @@ public class Interpreter {
 		Interpreter interpreter = new Interpreter();
 		interpreter.ExecuteSel( args[0], args[1] );
 	}
-	
+	/**
+	 * @author Yixin Cui
+	 * @author Haodong Ping
+	 * 
+	 * This is the method that execute the select querys from input
+	 * path and output the result to output path
+	 */
 	public void ExecuteSel( String input, String output ) {
 		Catalog.initialize(input, output);
 		Catalog.getInstance();
