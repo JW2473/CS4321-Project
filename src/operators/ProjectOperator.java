@@ -30,6 +30,7 @@ public class ProjectOperator extends Operator{
 	 */
 	@Override
 	public Tuple getNextTuple() {
+		schemas.clear();
 		Tuple t = child.getNextTuple();
 		if (t == null) return null;
 		List<Long> projection = new ArrayList<>();

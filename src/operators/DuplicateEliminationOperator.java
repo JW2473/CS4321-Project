@@ -4,18 +4,22 @@ import util.Tuple;
 
 public class DuplicateEliminationOperator extends Operator{
 
-	SortOperator child;
+	Operator child;
+	Tuple returned;
 	
 	@Override
 	public Tuple getNextTuple() {
-		// TODO Auto-generated method stub
-//		Tuple t = child.getNextTuple();
-		Tuple t;
-		while ((t = child.getNextTuple()) != null) {
-			
+		if (returned == null) {
+			returned = child.getNextTuple();
+			return returned;
+		}else {
+			Tuple t = null;
+			while ((t = child.getNextTuple()) != null) {
+				if (t.equals(returned)) break;
+			}
+			returned = t;
+			return t;
 		}
-		
-		return null;
 	}
 
 	@Override
@@ -25,8 +29,13 @@ public class DuplicateEliminationOperator extends Operator{
 		
 	}
 	
-	public DuplicateEliminationOperator(SortOperator sortOp) {
-		child = sortOp;
+	public DuplicateEliminationOperator(Operator op) {
+		if (child instanceof SortOperator) {
+			child = op;
+		}else{
+			SortOperator sortOp = new SortOperator(op);
+			child = sortOp;
+		}
 	}
 	
 }
