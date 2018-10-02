@@ -42,8 +42,6 @@ public class Interpreter {
 					SelectParserTree spt = new SelectParserTree(select);
 					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)));
 					spt.root.dump(ps);
-					System.out.println("Processing finished!\n");
-					count++;
 				} catch (Exception e) {					
 					System.err.println("Exception occurred during parsing");
 					continue;
