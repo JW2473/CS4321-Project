@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
@@ -63,8 +62,8 @@ public class UtilTest {
 			System.out.println("Read statement: " + statement);
 			Select select = (Select) statement;
 			PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
-			JoinExpVisitor jv = new JoinExpVisitor();
-			ScanOperator s1 = new ScanOperator(new MyTable(plainSelect.getFromItem()));
+			//JoinExpVisitor jv = new JoinExpVisitor();
+			//ScanOperator s1 = new ScanOperator(new MyTable(plainSelect.getFromItem()));
 			List<Join> joins = plainSelect.getJoins();
 			for(Join j : joins)
 				System.out.println(j.toString());

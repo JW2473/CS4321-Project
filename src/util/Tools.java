@@ -53,7 +53,11 @@ public class Tools {
 		}
 		return ret;	
 	}
-	
+	/*
+	 * Get the Related TableName from the Expression
+	 * @param exp: the binary expression
+	 * @return the list of related tablename
+	 */
 	public static List<String> getRelativeTabAlias(Expression exp) {
 		List<String> res = new ArrayList<>();
 		if( !(exp instanceof BinaryExpression)) return res;
@@ -75,7 +79,11 @@ public class Tools {
 		}
 		return res;
 	}
-	
+	/*
+	 * Get table name from Join
+	 * @param j: Join 
+	 * @return the table name from join class
+	 */
 	public static String Join2Tabname(Join j) {
 		FromItem fi = j.getRightItem();
 		String s = fi.getAlias();

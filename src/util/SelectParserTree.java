@@ -55,9 +55,9 @@ public class SelectParserTree {
 	}
 	
 	/*
-	 * split Expression from 'Where' to non and Expressions.
-	 * @param exp the Expression get from where
-	 * @return the list of expression from where
+	 * get the final Expression for a table.
+	 * @param exps the expression list related to a table
+	 * @return the final Expression for a table.
 	 */
 	private Expression rebuildExpression(List<Expression> exps) {
 		if( exps.size() == 0 ) return null;
@@ -67,6 +67,12 @@ public class SelectParserTree {
 		}
 		return res;
 	}
+	
+	/*
+	 * get the most right table ID from the from list.
+	 * @param relateTable the list of table we need to distinguish
+	 * @return the final Expression for a table.
+	 */
 	private int getRightTableId(List<String> relateTable) {
 		int id = 0;
 		if( relateTable.size()==0 )
@@ -76,6 +82,9 @@ public class SelectParserTree {
 		}
 		return id;
 	}
+	/*
+	 * build the operator tree
+	 */
 	private void buildTree() {
 		Operator op = new ScanOperator(new MyTable(from_map.get(froms.get(0))));
 		if(selcon.get(froms.get(0))!=null)
@@ -97,6 +106,11 @@ public class SelectParserTree {
 		this.root = op;
 		
 	}
+	
+	/*
+	 * Create the Select Parser Tree from the select query.
+	 * @param select the select query.
+	 */
 	public SelectParserTree(Select select) {
 		this.sel = select;
 		PlainSelect ps = (PlainSelect)sel.getSelectBody();
