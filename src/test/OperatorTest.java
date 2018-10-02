@@ -98,6 +98,7 @@ public class OperatorTest {
 				proOp.dump(ps);
 				System.out.println("Dumping finished !");
 				count++;
+				Catalog.resetAlias();
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
@@ -134,6 +135,7 @@ public class OperatorTest {
 					}
 				}
 				count++;
+				Catalog.resetAlias();
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");

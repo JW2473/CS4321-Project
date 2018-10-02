@@ -18,6 +18,7 @@ public class Catalog {
 	public static String schema = "";
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 	public static HashMap<String, String> aliases = new HashMap<>();
+	public static HashMap<String, String> uniqueAliases = new HashMap<>();
 
 	/*
 	 * Create the Catalog object then initialize it
@@ -71,7 +72,7 @@ public class Catalog {
 	 * @return the FileReader of the query file
 	 */
 	public static FileReader getQueryFiles() {
-		query = Catalog.input + File.separator + "queries1.sql";
+		query = Catalog.input + File.separator + "queries.sql";
 		try {
 			return new FileReader(query);
 		} catch (FileNotFoundException e) {
@@ -102,8 +103,7 @@ public class Catalog {
 	 * @param tName the name of the table
 	 * @return the list that contains all the schema of that table
 	 */
-	public static List<String> getSchema(String tName) {
-		String tFullName = getTableFullName(tName);
+	public static List<String> getSchema(String tFullName) {
 		return schema_map.get(tFullName);
 	}
 	
@@ -129,6 +129,11 @@ public class Catalog {
 		return tName;
 	}
 	
+	public static String getUniqueName(String tName) {
+		if (uniqueAliases.containsKey(tName)) return uniqueAliases.get(tName);
+		return tName;
+	}
+	
 	/*
 	 * Assign alias to corresponding table name
 	 * @param alias the alias of table
@@ -136,6 +141,7 @@ public class Catalog {
 	 */
 	public static void setAlias(String alias, String tableName) {
 		aliases.put(alias, tableName);
+		uniqueAliases.put(tableName, alias);
 	}
 	
 	/*
@@ -143,5 +149,6 @@ public class Catalog {
 	 */
 	public static void resetAlias() {
 		aliases.clear();
+		uniqueAliases.clear();
 	}
 }
