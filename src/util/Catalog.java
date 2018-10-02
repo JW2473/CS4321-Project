@@ -129,6 +129,11 @@ public class Catalog {
 		return tName;
 	}
 	
+	/*
+	 * Get the unique identity name of the input table name
+	 * @param tName the table name
+	 * @return the unique identity of the table
+	 */
 	public static String getUniqueName(String tName) {
 		if (uniqueAliases.containsKey(tName)) return uniqueAliases.get(tName);
 		return tName;
