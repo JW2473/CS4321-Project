@@ -11,7 +11,11 @@ import net.sf.jsqlparser.statement.select.Select;
 import operators.ScanOperator;
 import util.Catalog;
 import util.MyTable;
+import util.SelectParserTree;
 import visitor.*;
+
+import java.io.File;
+import java.io.PrintStream;
 import java.util.*;
 
 public class UtilTest {
@@ -78,5 +82,29 @@ public class UtilTest {
 		System.err.println("Exception occurred during parsing");
 		e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void SelTreeTest() throws Exception{
+
+		Catalog.getInstance();
+	
+		// TODO Auto-generated catch block
+		try {
+			CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
+			Statement statement;
+			int count = 1;
+			while ((statement = parser.Statement()) != null) {
+				System.out.println("Read statement: " + statement);
+				Select select = (Select) statement;
+				SelectParserTree spt = new SelectParserTree(select);
+				PrintStream ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count) + ".txt"));
+				spt.root.dump(ps);
+				count++;
+			}
+		} catch (Exception e) {
+			System.err.println("Exception occurred during parsing");
+			e.printStackTrace();
+			}
 	}
 }

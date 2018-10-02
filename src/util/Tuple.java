@@ -108,7 +108,16 @@ public class Tuple {
 	public Long getValue(Column c) {
 		String wholeColumnName = Tools.rebuildWholeColumnName(c);
 		try{
-			return value.get(schemaIndex.get(wholeColumnName));
+			if(schemaIndex.containsKey(wholeColumnName))
+				return value.get(schemaIndex.get(wholeColumnName));
+			else {
+				String name = wholeColumnName.split("\\.")[1];
+				if(schemaIndex.containsKey(name))
+					return value.get(schemaIndex.get(name));
+				else
+					return null;
+			}
+			
 		}catch (NullPointerException e) {
 			return null;
 		}
