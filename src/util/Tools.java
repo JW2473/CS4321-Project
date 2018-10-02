@@ -10,8 +10,19 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * Tools class provides some helpful tools for other classes to call
+ *
+ */
 public class Tools {
 
+	/*
+	 * Rebuild the whole column Name from the column object with the unique identity name of the table
+	 * @param col the column
+	 * @return the whole column name
+	 */
 	public static String rebuildWholeColumnName(Column col) {
 		String colName = col.getColumnName();
 		String tName = col.getWholeColumnName().split("\\.")[0];
@@ -23,6 +34,12 @@ public class Tools {
 		return sb.toString();	
 	}
 	
+	/*
+	 * Initialize the whole column Name from the the table full name and unique identity name
+	 * @param uniqueName the unique identity name of the table
+	 * @param tableFullName the full name of the table
+	 * @return the whole column name
+	 */
 	public static List<String> InitilaizeWholeColumnName(String uniqueName, String tableFullName) {
 		List<String> ret = new ArrayList<>();
 		List<String> schemas = Catalog.getSchema(tableFullName);
