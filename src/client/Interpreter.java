@@ -30,7 +30,13 @@ public class Interpreter {
 		Interpreter interpreter = new Interpreter();
 		interpreter.ExecuteSel( args[0], args[1] );
 	}
-	
+	/**
+	 * @author Yixin Cui
+	 * @author Haodong Ping
+	 * 
+	 * This is the method that execute the select querys from input
+	 * path and output the result to output path
+	 */
 	public void ExecuteSel( String input, String output ) {
 		Catalog.initialize(input, output);
 		Catalog.getInstance();
@@ -38,17 +44,18 @@ public class Interpreter {
 		Statement statement;
 		int count = 1;
 		try {
-			while ( (statement = parser.Statement()) != null ) {				
+			while ( (statement = parser.Statement()) != null ) {	
+				PrintStream ps = null;
 				try {
 					Select select = (Select) statement;
 					SelectParserTree spt = new SelectParserTree(select);
-					PrintStream ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count) + ".txt"));
+					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count) + ".txt"));
 					spt.root.dump(ps);
-					count++;
 				} catch (Exception e) {					
 					System.err.println("Exception occurred during parsing");
 					continue;
 				}finally {
+					if( ps != null ) ps.close();
 					count++;
 				}
 			}
