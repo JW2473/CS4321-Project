@@ -1,12 +1,16 @@
 package client;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 import net.sf.jsqlparser.parser.CCJSqlParser;
+import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
+import util.SelectParserTree;
 
 
 /**
@@ -18,23 +22,38 @@ import util.Catalog;
  */
 public class Interpreter {
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) {
 		if (args.length != 2) {
 			throw new IllegalArgumentException("Wrong arguments!");
 		}
-		Catalog.initialize(args[0], args[1]);
+		Interpreter interpreter = new Interpreter();
+		interpreter.ExecuteSel( args[0], args[1] );
+	}
+	
+	public void ExecuteSel( String input, String output ) {
+		Catalog.initialize(input, output);
 		Catalog.getInstance();
+		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
+		Statement statement;
+		int count = 1;
 		try {
-			CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
-			Statement statement;
 			while ((statement = parser.Statement()) != null) {
-				System.out.println("Read statement: " + statement);
-				Select select = (Select) statement;
-				PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
-				System.out.println(plainSelect.getFromItem());
+				//System.out.println("Read statement: " + statement);
+				
+				try {
+					Select select = (Select) statement;
+					SelectParserTree spt = new SelectParserTree(select);
+					PrintStream ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count) + ".txt"));
+					spt.root.dump(ps);
+					count++;
+				} catch (Exception e) {
+					
+					System.err.println("Exception occurred during parsing");
+					continue;
+				}
 			}
 		} catch (Exception e) {
-			System.err.println("Exception occurred during parsing");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
