@@ -20,6 +20,10 @@ public class JoinOperator extends Operator{
 	Tuple t1, t2;
 	JoinExpVisitor jv = new JoinExpVisitor();
 	
+	/*
+	 * Check whether two tuple meets the join condition and get the result after join
+	 * @return the tuple after join
+	 */
 	@Override
 	public Tuple getNextTuple() {
 		Tuple t = null;
@@ -36,6 +40,12 @@ public class JoinOperator extends Operator{
 		return null;
 	}
 
+	/*
+	 * Combine two tuples that meet the join condition
+	 * @param t1 the first tuple
+	 * @param t2 the second tuple
+	 * @return the combined tuple
+	 */
 	private Tuple combineTuples(Tuple t1, Tuple t2) {
 		List<Long> value = new ArrayList<>();
 		value.addAll(t1.getAllColumn());
@@ -46,6 +56,9 @@ public class JoinOperator extends Operator{
 		return new Tuple(value, schemas);
 	}
 
+	/*
+	 * Look for next pair of tuples 
+	 */
 	public void nextPair() {
 		if (t1 == null) return;
 		if (t2 != null) t2 = right.getNextTuple();
@@ -56,12 +69,21 @@ public class JoinOperator extends Operator{
 		}
 	}
 	
+	/*
+	 * Rest the child operators
+	 */
 	@Override
 	public void reset() {
 		left.reset();
 		right.reset();
 	}
 	
+	/*
+	 * Create a JoinOperator object
+	 * @param left the child operator
+	 * @param right the child operator
+	 * @param expr the join condition
+	 */
 	public JoinOperator (Operator left, Operator right, Expression expr) {
 		this.left = left;
 		this.right = right;

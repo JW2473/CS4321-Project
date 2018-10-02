@@ -23,7 +23,8 @@ public class Tuple {
 	/*
 	 * Create a new tuple from an original table in the db directory
 	 * @param val the array of tuple data as string
-	 * @param tableName the name of the table
+	 * @param uniqueName the unique identity name of the table
+	 * @param tableFullName the full name of the table
 	 * @return the tuple in the table
 	 */
 	public Tuple(String[] val, String uniqueName, String tableFullName) {
@@ -83,8 +84,8 @@ public class Tuple {
 	}
 
 	/*
-	 * Get the name of the table
-	 * @return the name of the table
+	 * Get the unique identity name of the table
+	 * @return the unique identity name of the table
 	 */
 	public String getUniqueName() {
 		return this.uniqueName;
@@ -101,39 +102,17 @@ public class Tuple {
 	
 	/*
 	 * Get the specified value in the tuple according to the Column object in the query
-	 * It checks whether the tuple is in the original table or a temperate tuple and calls corresponding functions
+	 * It checks whether the tuple is in the original table or a temperate tuple and performs corresponding functions
 	 * @param c the column object in the query
 	 * @return the value in that tuple
 	 */
 	public Long getValue(Column c) {
 		String wholeColumnName = Tools.rebuildWholeColumnName(c);
 		try{
-			if(schemaIndex.containsKey(wholeColumnName))
-				return value.get(schemaIndex.get(wholeColumnName));
-			else {
-				String name = wholeColumnName.split("\\.")[1];
-				if(schemaIndex.containsKey(name))
-					return value.get(schemaIndex.get(name));
-				else
-					return null;
-			}
-			
+			return value.get(schemaIndex.get(wholeColumnName));	
 		}catch (NullPointerException e) {
 			return null;
 		}
-//		try {
-//			if (tableName != null) {
-//				return value.get(Catalog.getIndex(tableName, c.getWholeColumnName().split("\\.")[1]));
-//			}else {
-//				String colName = c.getWholeColumnName().split("\\.")[1];
-//				System.out.println(c.getTable().getWholeTableName());
-//				return value.get(schemaIndex.get(colName));
-//			}
-//		}catch (Exception e) {
-//			return null;
-//		}
-		
-	}
 
 	/*
 	 * Override equals to check whether two tuples have exactly same value.

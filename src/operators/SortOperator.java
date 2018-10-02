@@ -11,6 +11,12 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
 import util.Tools;
 import util.Tuple;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ *SortOperator class creates a list of tuple its child operator returns
+ *and sort the tuple according to the OrderByElement
+ */
 public class SortOperator extends Operator{
 
 	Column col;
@@ -19,6 +25,10 @@ public class SortOperator extends Operator{
 	List<Column> orderBy = new ArrayList<>();
 	int index = 0;
 	
+	/*
+	 * Get the next tuple in the tuple list
+	 * @return next tuple
+	 */
 	@Override
 	public Tuple getNextTuple() {
 		// TODO Auto-generated method stub
@@ -26,13 +36,19 @@ public class SortOperator extends Operator{
 		return null;
 	}
 
+	/*
+	 * Set the index to 0 so that it can return tuple from the beginning
+	 */
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
-		child.reset();
 		index = 0;
 	}
 	
+	/*
+	 * Create a SortOperator object with OrderByElements
+	 * @param obe the list of OrderByElement
+	 * @param op the child operator
+	 */
 	public SortOperator(Operator op, List<OrderByElement> obe) {
 		child = op;
 		try {
@@ -50,6 +66,10 @@ public class SortOperator extends Operator{
 		}
 	}
 	
+	/*
+	 * Create a ProjectOperator object without OrderByElements means sort the tuple by all schemas
+	 * @param op the child operator
+	 */
 	public SortOperator(Operator op) {
 		child = op;
 		Tuple t = child.getNextTuple();
@@ -60,11 +80,22 @@ public class SortOperator extends Operator{
 		Collections.sort(tps, new tupleComp());
 	}
 	
+	/*
+	 * tupleComp class implements Comparator interface and compare two tuples according to
+	 * OrderByElement and schemas
+	 * 
+	 */
 	public class tupleComp implements Comparator<Tuple> {
 		
 		List<Column> cols = new ArrayList<>();
 		HashSet<String> orderByElements = new HashSet<>();
 		
+		/*
+		 * compare two tuples according to the order
+		 * @param o1 tuple 1
+		 * @param o2 tuple 2
+		 * @return cmp the result after comparison
+		 */
 		@Override
 		public int compare(Tuple o1, Tuple o2) {
 			// TODO Auto-generated method stub
@@ -94,6 +125,10 @@ public class SortOperator extends Operator{
 			return 0;
 		}
 		
+		/*
+		 * Create a compare object with order
+		 * @param cols the list of schema of order
+		 */
 		public tupleComp(List<Column> cols) {
 			this.cols = cols;
 			for (Column col : cols) {
@@ -101,6 +136,10 @@ public class SortOperator extends Operator{
 			}
 		}
 		
+		/*
+		 * Create a compare object
+		 * 
+		 */
 		public tupleComp() {
 			this.cols = null;
 			this.orderByElements = new HashSet<>();
