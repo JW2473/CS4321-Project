@@ -2,7 +2,6 @@ package util;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.Distinct;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
@@ -28,7 +27,6 @@ import java.util.*;
 public class SelectParserTree {
 
 	private Select sel;
-	private PlainSelect ps;
 	private List<String> froms;
 	private List<SelectItem> selItems;
 	private List<OrderByElement> orders;
@@ -112,8 +110,6 @@ public class SelectParserTree {
 		if(fi != null) {
 			if ( fi.getAlias() != null) {
 				froms.add(fi.getAlias());
-				//Table t = (Table) fi;
-				//Catalog.setAlias(t.getAlias(), t.getWholeTableName());
 				from_map.put(fi.getAlias(), fi);
 			}				
 			else {
@@ -131,7 +127,7 @@ public class SelectParserTree {
 		Expression e = ps.getWhere();
 
 
-		List<Expression> exps = splitAnds(e);
+		List<Expression> exps = splitWhere(e);
 		Map<String,List<Expression>> tempselcon = new HashMap<>();
 		Map<String,List<Expression>> tempjoincon = new HashMap<>();
 
