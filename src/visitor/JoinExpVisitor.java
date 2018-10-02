@@ -38,10 +38,10 @@ public class JoinExpVisitor extends ExpVisitor{
 	@Override
 	public void visit(Column arg0) {
 		Long value = t1.getValue(arg0);
+		
 		if (value == null) {
 			value = t2.getValue(arg0);
 		}
-		
 		this.curValue = value;
 	}
 

@@ -14,7 +14,7 @@ import net.sf.jsqlparser.statement.select.FromItem;
  *
  */
 public class MyTable{
-	String tname;
+	String tFullName;
 	String alias;
 	List<String> schemaName;
 	BufferedReader br = null;
@@ -26,26 +26,35 @@ public class MyTable{
 	public MyTable(FromItem fromItem) {
 		Table t = (Table) fromItem;
 		alias = t.getAlias();
-		tname = t.getWholeTableName();
-		schemaName = Catalog.getSchema(tname);
-		br = Catalog.getTableFiles(tname);
+		tFullName = t.getWholeTableName();
+		schemaName = Catalog.getSchema(tFullName);
+		br = Catalog.getTableFiles(tFullName);
 		if (alias != null)
-			Catalog.setAlias(alias, tname);
+			Catalog.setAlias(alias, tFullName);
 	}
 	
 	/*
 	 * Get table name
 	 * @return table name
 	 */
-	public String getTname() {
-		return tname;
+	public String getFullTableName() {
+		return tFullName;
 	}
+	
 	/*
 	 * Get the alias of the table
 	 * @return the alias of the table
 	 */
 	public String getAlias() {
 		return alias;
+	}
+	
+	/*
+	 * Get the unique identity for the table
+	 * @return the unique identity name for the table
+	 */
+	public String getUniqueName() {
+		return alias == null ? tFullName : alias;
 	}
 
 	/*
@@ -65,7 +74,7 @@ public class MyTable{
 	public Tuple nextTuple() {
 		try {
 			String[] val = br.readLine().split(",");
-			return new Tuple(val, this.tname);
+			return new Tuple(val, getUniqueName(), tFullName);
 		} catch (NullPointerException e) {
 			return null;
 		} catch (IOException e) {
@@ -80,7 +89,7 @@ public class MyTable{
 	public void reset() {
 		try {
 			br.close();
-			br = Catalog.getTableFiles(tname);
+			br = Catalog.getTableFiles(tFullName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
