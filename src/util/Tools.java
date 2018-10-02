@@ -15,21 +15,20 @@ public class Tools {
 	public static String rebuildWholeColumnName(Column col) {
 		String colName = col.getColumnName();
 		String tName = col.getWholeColumnName().split("\\.")[0];
-		String fullTableName = Catalog.getTableFullName(tName);
+		String uniqueTableName = Catalog.getUniqueName(tName);
 		StringBuilder sb = new StringBuilder();
-		sb.append(fullTableName);
+		sb.append(uniqueTableName);
 		sb.append(".");
 		sb.append(colName);
 		return sb.toString();	
 	}
 	
-	public static List<String> InitilaizeWholeColumnName(String tableName) {
+	public static List<String> InitilaizeWholeColumnName(String uniqueName, String tableFullName) {
 		List<String> ret = new ArrayList<>();
-		List<String> schemas = Catalog.getSchema(tableName);
-		String fullTableName = Catalog.getTableFullName(tableName);
+		List<String> schemas = Catalog.getSchema(tableFullName);
 		StringBuilder sb = new StringBuilder();
 		for (String colName : schemas) {
-			sb.append(fullTableName);
+			sb.append(uniqueName);
 			sb.append(".");
 			sb.append(colName);
 			ret.add(sb.toString());

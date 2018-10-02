@@ -18,8 +18,7 @@ public class Tuple {
 	List<Long> value = new ArrayList<>();
 	HashMap<String, Integer> schemaIndex = new HashMap<>();
 	int size;
-	String tableName;
-	String tableAlias;
+	String uniqueName;
 
 	/*
 	 * Create a new tuple from an original table in the db directory
@@ -27,10 +26,10 @@ public class Tuple {
 	 * @param tableName the name of the table
 	 * @return the tuple in the table
 	 */
-	public Tuple(String[] val, String tableName) {
-		this.tableName = tableName;
+	public Tuple(String[] val, String uniqueName, String tableFullName) {
+		this.uniqueName = uniqueName;
 		size = val.length;
-		List<String> s = Tools.InitilaizeWholeColumnName(tableName);
+		List<String> s = Tools.InitilaizeWholeColumnName(uniqueName, tableFullName);
 		for (int i = 0; i < s.size(); i++) {
 			schemaIndex.put(s.get(i), i);
 		}
@@ -47,7 +46,7 @@ public class Tuple {
 	 * @return the newly created tuple that has been processed by the operator
 	 */
 	public Tuple(List<Long> value, List<String> schemas) {
-		this.tableName = null;
+		this.uniqueName = null;
 		size = value.size();
 		this.value = value;
 		for (int i = 0; i < schemas.size(); i++) {
@@ -87,12 +86,11 @@ public class Tuple {
 	 * Get the name of the table
 	 * @return the name of the table
 	 */
-	public String getTableName() {
-		return this.tableName;
+	public String getUniqueName() {
+		return this.uniqueName;
 	}
 	
 	/*
-	 * @Author£º Huamiaomiao
 	 * Override toString() to format the output string
 	 * @return the formatted string
 	 */
@@ -125,14 +123,6 @@ public class Tuple {
 //		}catch (Exception e) {
 //			return null;
 //		}
-	}
-
-	public String getTableAlias() {
-		return tableAlias;
-	}
-
-	public void setTableAlias(String tableAlias) {
-		this.tableAlias = tableAlias;
 	}
 	
 }
