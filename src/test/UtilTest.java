@@ -107,4 +107,37 @@ public class UtilTest {
 			e.printStackTrace();
 			}
 	}
+	
+	@Test
+	public void ExeTest() {
+		//Catalog.initialize(input, output);
+		Catalog.getInstance();
+		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
+		Statement statement;
+		int count = 1;
+		try {
+			while ( (statement = parser.Statement()) != null ) {	
+				PrintStream ps = null;
+				Catalog.resetAlias();
+				try {
+					Select select = (Select) statement;
+					SelectParserTree spt = new SelectParserTree(select);
+					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
+					spt.root.dump(ps);
+				} catch (Exception e) {					
+					System.err.println("Exception occurred during parsing");
+					continue;
+				}finally {
+					if ( ps != null ) ps.close();
+					count++;
+					Catalog.resetAlias();
+					
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	}
 }

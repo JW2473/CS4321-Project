@@ -20,15 +20,15 @@ import operators.SortOperator;
 
 import java.util.*;
 public class SelectParserTree {
-	Select sel;
-	PlainSelect ps;
-	List<String> froms;
-	List<SelectItem> selItems;
-	List<OrderByElement> orders;
-	Distinct delDup;
-	Map<String, Expression> selcon;
-	Map<String, Expression> joincon;
-	Map<String, FromItem> from_map;
+	private Select sel;
+	private PlainSelect ps;
+	private List<String> froms;
+	private List<SelectItem> selItems;
+	private List<OrderByElement> orders;
+	private Distinct delDup;
+	private Map<String, Expression> selcon;
+	private Map<String, Expression> joincon;
+	private Map<String, FromItem> from_map;
 	public Operator root;
 	
 	private List<Expression> splitAnds(Expression exp) {
@@ -95,8 +95,8 @@ public class SelectParserTree {
 		if(fi != null) {
 			if ( fi.getAlias() != null) {
 				froms.add(fi.getAlias());
-				Table t = (Table) fi;
-				Catalog.setAlias(t.getAlias(), t.getWholeTableName());
+				//Table t = (Table) fi;
+				//Catalog.setAlias(t.getAlias(), t.getWholeTableName());
 				from_map.put(fi.getAlias(), fi);
 			}				
 			else {
@@ -139,7 +139,6 @@ public class SelectParserTree {
 			
 
 		buildTree();
-		Catalog.resetAlias();
 	}
 	
 }

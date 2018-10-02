@@ -37,6 +37,7 @@ public class Interpreter {
 		try {
 			while ( (statement = parser.Statement()) != null ) {	
 				PrintStream ps = null;
+				Catalog.resetAlias();
 				try {
 					Select select = (Select) statement;
 					SelectParserTree spt = new SelectParserTree(select);
@@ -47,11 +48,10 @@ public class Interpreter {
 					continue;
 				}finally {
 					if ( ps != null ) ps.close();
-					count++;
+					count++;	
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
