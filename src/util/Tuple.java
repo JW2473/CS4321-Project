@@ -132,6 +132,21 @@ public class Tuple {
 //		}catch (Exception e) {
 //			return null;
 //		}
+		
+	}
+
+	/*
+	 * Override equals to check whether two tuples have exactly same value.
+	 * @param the tuple need to be compared
+	 * @return true if equals, false if not equal
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Tuple))
+			return false;
+		Tuple t = (Tuple)obj;
+		if(t.size != this.size) return false;
+		return t.value.equals(this.value);
 	}
 	
 }

@@ -3,16 +3,20 @@ package util;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.select.Distinct;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
+import operators.DuplicateEliminationOperator;
 import operators.JoinOperator;
 import operators.Operator;
 import operators.ProjectOperator;
 import operators.ScanOperator;
 import operators.SelectOperator;
+import operators.SortOperator;
 
 import java.util.*;
 public class SelectParserTree {
@@ -20,6 +24,8 @@ public class SelectParserTree {
 	PlainSelect ps;
 	List<String> froms;
 	List<SelectItem> selItems;
+	List<OrderByElement> orders;
+	Distinct delDup;
 	Map<String, Expression> selcon;
 	Map<String, Expression> joincon;
 	Map<String, FromItem> from_map;
@@ -69,6 +75,10 @@ public class SelectParserTree {
 			op = new JoinOperator(op, temp_op, joinExp);
 		}
 		op = new ProjectOperator(selItems, op);
+		if( orders != null )
+			op = new SortOperator(op, orders);
+		if( delDup != null )
+			op = new DuplicateEliminationOperator(op);
 		this.root = op;
 		
 	}
@@ -78,6 +88,9 @@ public class SelectParserTree {
 		this.from_map = new HashMap<>();
 		this.froms = new ArrayList<>();
 		this.selItems = ps.getSelectItems();
+		this.orders = ps.getOrderByElements();
+		this.delDup = ps.getDistinct();
+		ps.getOrderByElements();
 		FromItem fi = ps.getFromItem();
 		if(fi != null) {
 			if ( fi.getAlias() != null) {
@@ -127,8 +140,6 @@ public class SelectParserTree {
 
 		buildTree();
 		Catalog.resetAlias();
-		//this.selcon.clear();
-		//this.joincon.clear();
 	}
 	
 }
