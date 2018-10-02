@@ -97,7 +97,7 @@ public class Tuple {
 	 */
 	@Override
 	public String toString() {
-		return value.toString().replaceAll("\\[", "").replaceAll("\\]", "");
+		return value.toString().replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
 	}
 	
 	/*

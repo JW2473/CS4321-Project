@@ -26,8 +26,9 @@ import java.util.*;
  *
  */
 public class SelectParserTree {
-	
+
 	private Select sel;
+	private PlainSelect ps;
 	private List<String> froms;
 	private List<SelectItem> selItems;
 	private List<OrderByElement> orders;
@@ -35,7 +36,7 @@ public class SelectParserTree {
 	private Map<String, Expression> selcon;
 	private Map<String, Expression> joincon;
 	private Map<String, FromItem> from_map;
-	Operator root;
+	public Operator root;
 	
 	/*
 	 * split Expression from 'Where' to non and Expressions.
@@ -111,8 +112,8 @@ public class SelectParserTree {
 		if(fi != null) {
 			if ( fi.getAlias() != null) {
 				froms.add(fi.getAlias());
-				Table t = (Table) fi;
-				Catalog.setAlias(t.getAlias(), t.getWholeTableName());
+				//Table t = (Table) fi;
+				//Catalog.setAlias(t.getAlias(), t.getWholeTableName());
 				from_map.put(fi.getAlias(), fi);
 			}				
 			else {
@@ -129,9 +130,11 @@ public class SelectParserTree {
 			}
 		Expression e = ps.getWhere();
 
-		List<Expression> exps = splitWhere(e);
-		Map<String,List<Expression>> tempselcon = new HashMap();
-		Map<String,List<Expression>> tempjoincon = new HashMap();
+
+		List<Expression> exps = splitAnds(e);
+		Map<String,List<Expression>> tempselcon = new HashMap<>();
+		Map<String,List<Expression>> tempjoincon = new HashMap<>();
+
 		for(String name : froms) {
 			tempselcon.put(name,new ArrayList<>());
 			tempjoincon.put(name,new ArrayList<>());
@@ -152,10 +155,7 @@ public class SelectParserTree {
 			this.selcon.put(from, rebuildExpression(tempselcon.get(from)));
 			this.joincon.put(from, rebuildExpression(tempjoincon.get(from)));
 		}
-			
-
 		buildTree();
-		Catalog.resetAlias();
 	}
 	
 }

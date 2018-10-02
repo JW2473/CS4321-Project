@@ -55,7 +55,7 @@ public class Tools {
 	}
 	
 	public static List<String> getRelativeTabAlias(Expression exp) {
-		List<String> res = new ArrayList();
+		List<String> res = new ArrayList<>();
 		if( !(exp instanceof BinaryExpression)) return res;
 		Expression left = ((BinaryExpression)exp).getLeftExpression();
 		Expression right = ((BinaryExpression)exp).getRightExpression();
