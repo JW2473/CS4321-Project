@@ -24,7 +24,7 @@ public class DuplicateEliminationOperator extends Operator{
 		}else {
 			Tuple t = null;
 			while ((t = child.getNextTuple()) != null) {
-				if (t.equals(returned)) break;
+				if ( !t.equals(returned) ) break;
 			}
 			returned = t;
 			return t;
