@@ -23,8 +23,9 @@ public class Catalog {
 	/*
 	 * Create the Catalog object then initialize it
 	 */
-	private Catalog() throws FileNotFoundException {
-		initialize(input, output);
+	private Catalog() {
+		
+			initialize(input, output);					
 	}
 	
 	/*
@@ -32,7 +33,7 @@ public class Catalog {
 	 * and make sure there is only one Catalog object at the same time
 	 * @return the Catalog object that it created
 	 */
-	public static synchronized Catalog getInstance() throws FileNotFoundException {
+	public static synchronized Catalog getInstance() {
 		if (instance == null) instance = new Catalog();
 		return instance;
 	}
@@ -43,7 +44,7 @@ public class Catalog {
 	 * @param input user specified input address
 	 * @param output user specified output address
 	 */
-	public static void initialize(String input, String output) throws FileNotFoundException {
+	public static void initialize(String input, String output) {
 		if (!input.isEmpty()) {
 			Catalog.input = input;
 		}
@@ -52,19 +53,28 @@ public class Catalog {
 		}
 		schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
 		File file = new File(schema);
-		Scanner in = new Scanner(file);
-		while(in.hasNextLine()) {
-			String[] fi = in.nextLine().split(" ");
-			if (fi.length >= 2) {
-				String key = fi[0];
-				List<String> value = new LinkedList<>();
-				for (int i = 1; i < fi.length; i++) {
-					value.add(fi[i]);
+		Scanner in = null;
+		try {
+			in = new Scanner(file);
+			while(in.hasNextLine()) {
+				String[] fi = in.nextLine().split(" ");
+				if (fi.length >= 2) {
+					String key = fi[0];
+					List<String> value = new LinkedList<>();
+					for (int i = 1; i < fi.length; i++) {
+						value.add(fi[i]);
+					}
+					schema_map.put(key, value);
 				}
-				schema_map.put(key, value);
 			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if( in != null ) in.close();
 		}
-		in.close();
+		
+		
 	}
 	
 	/*
