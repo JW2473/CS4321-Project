@@ -24,7 +24,7 @@ public class JoinOperator extends Operator{
 	public Tuple getNextTuple() {
 		Tuple t = null;
 		while (t1 != null && t2 != null) {
-			if (expr == null) t = combineTuples(t1, t2);
+			if (expr == null) return combineTuples(t1, t2);
 			jv.readTuple(t1, t2);
 			expr.accept(jv);
 			if (jv.getCurStatus()) {

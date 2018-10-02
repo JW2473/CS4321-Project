@@ -65,7 +65,10 @@ public class MyTable{
 	public Tuple nextTuple() {
 		try {
 			String[] val = br.readLine().split(",");
-			return new Tuple(val, this.tname);
+			Tuple t = new Tuple(val, this.tname);
+			if( this.getAlias() != null )
+				t.setTableAlias(this.alias);
+			return t;
 		} catch (NullPointerException e) {
 			return null;
 		} catch (IOException e) {

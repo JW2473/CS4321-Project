@@ -12,6 +12,7 @@ import operators.ScanOperator;
 import util.Catalog;
 import util.MyTable;
 import visitor.*;
+import java.util.*;
 
 public class UtilTest {
 	
@@ -60,6 +61,10 @@ public class UtilTest {
 			PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
 			JoinExpVisitor jv = new JoinExpVisitor();
 			ScanOperator s1 = new ScanOperator(new MyTable(plainSelect.getFromItem()));
+			List<Join> joins = plainSelect.getJoins();
+			for(Join j : joins)
+				System.out.println(j.toString());
+			/*
 			if (plainSelect.getJoins() != null) {
 				ScanOperator s2 = new ScanOperator(new MyTable(((Join) plainSelect.getJoins().get(0)).getRightItem()));
 				if (plainSelect.getWhere() != null) {
@@ -67,7 +72,7 @@ public class UtilTest {
 					plainSelect.getWhere().accept(jv);
 					System.out.println(jv.getCurStatus());
 				}
-			}
+			}*/
 		}
 	} catch (Exception e) {
 		System.err.println("Exception occurred during parsing");

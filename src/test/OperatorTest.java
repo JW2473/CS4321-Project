@@ -124,7 +124,9 @@ public class OperatorTest {
 				if (plainSelect.getJoins() != null) {
 					FromItem fi = ((Join) plainSelect.getJoins().get(0)).getRightItem();
 					System.out.println(fi.toString());
-					ScanOperator s2 = new ScanOperator(new MyTable(fi));
+					MyTable mt = new MyTable(fi);
+					System.out.println(mt.getAlias());
+					ScanOperator s2 = new ScanOperator(mt);
 					if (plainSelect.getWhere() != null) {
 						JoinOperator j = new JoinOperator(s1, s2, plainSelect.getWhere());
 						ProjectOperator proOp = new ProjectOperator(plainSelect.getSelectItems(), j);

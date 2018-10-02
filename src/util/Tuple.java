@@ -19,6 +19,7 @@ public class Tuple {
 	HashMap<String, Integer> schemaIndex = new HashMap<>();
 	int size;
 	String tableName;
+	String tableAlias;
 
 	/*
 	 * Create a new tuple from an original table in the db directory
@@ -91,6 +92,7 @@ public class Tuple {
 	}
 	
 	/*
+	 * @Author£º Huamiaomiao
 	 * Override toString() to format the output string
 	 * @return the formatted string
 	 */
@@ -123,6 +125,14 @@ public class Tuple {
 //		}catch (Exception e) {
 //			return null;
 //		}
+	}
+
+	public String getTableAlias() {
+		return tableAlias;
+	}
+
+	public void setTableAlias(String tableAlias) {
+		this.tableAlias = tableAlias;
 	}
 	
 }
