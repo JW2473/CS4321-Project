@@ -114,8 +114,8 @@ public class SelectParserTree {
 		Expression e = ps.getWhere();
 
 		List<Expression> exps = splitAnds(e);
-		Map<String,List<Expression>> tempselcon = new HashMap();
-		Map<String,List<Expression>> tempjoincon = new HashMap();
+		Map<String,List<Expression>> tempselcon = new HashMap<>();
+		Map<String,List<Expression>> tempjoincon = new HashMap<>();
 		for(String name : froms) {
 			tempselcon.put(name,new ArrayList<>());
 			tempjoincon.put(name,new ArrayList<>());

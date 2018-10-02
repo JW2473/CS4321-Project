@@ -1,13 +1,10 @@
 package client;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 import net.sf.jsqlparser.parser.CCJSqlParser;
-import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
 import util.SelectParserTree;
@@ -38,13 +35,14 @@ public class Interpreter {
 		int count = 1;
 		try {
 			while ((statement = parser.Statement()) != null) {
-				//System.out.println("Read statement: " + statement);
+				System.out.println("Processing statement: " + statement);
 				
 				try {
 					Select select = (Select) statement;
 					SelectParserTree spt = new SelectParserTree(select);
-					PrintStream ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count) + ".txt"));
+					PrintStream ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)));
 					spt.root.dump(ps);
+					System.out.println("Processing finished!\n");
 					count++;
 				} catch (Exception e) {
 					
