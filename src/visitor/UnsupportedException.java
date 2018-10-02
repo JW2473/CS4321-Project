@@ -6,7 +6,7 @@ package visitor;
  * UnsupportedException deals with exceptions returned by the unsupported expressions
  *
  */
-public class UnsupportedException extends Exception {
+public class UnsupportedException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
