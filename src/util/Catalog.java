@@ -82,7 +82,7 @@ public class Catalog {
 	 * @return the FileReader of the query file
 	 */
 	public static FileReader getQueryFiles() {
-		query = Catalog.input + File.separator + "queries1.sql";
+		query = Catalog.input + File.separator + "queries.sql";
 		try {
 			return new FileReader(query);
 		} catch (FileNotFoundException e) {

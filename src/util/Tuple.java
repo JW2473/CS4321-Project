@@ -113,6 +113,7 @@ public class Tuple {
 		}catch (NullPointerException e) {
 			return null;
 		}
+	}
 
 	/*
 	 * Override equals to check whether two tuples have exactly same value.
