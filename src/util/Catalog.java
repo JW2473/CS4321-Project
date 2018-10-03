@@ -145,6 +145,7 @@ public class Catalog {
 	 * @return the unique identity of the table
 	 */
 	public static String getUniqueName(String tName) {
+		if (tName == null && uniqueAliases.size() == 1) return uniqueAliases.values().toString().replaceAll("\\[", "").replaceAll("\\]", "");
 		if (uniqueAliases.containsKey(tName)) return uniqueAliases.get(tName);
 		return tName;
 	}

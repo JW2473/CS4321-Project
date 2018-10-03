@@ -25,7 +25,8 @@ public class Tools {
 	 */
 	public static String rebuildWholeColumnName(Column col) {
 		String colName = col.getColumnName();
-		String tName = col.getWholeColumnName().split("\\.")[0];
+		String tName = col.getTable().getName();
+		//String tName = col.getWholeColumnName().split("\\.")[0];
 		String uniqueTableName = Catalog.getUniqueName(tName);
 		StringBuilder sb = new StringBuilder();
 		sb.append(uniqueTableName);

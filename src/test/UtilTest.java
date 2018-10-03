@@ -120,6 +120,7 @@ public class UtilTest {
 				Catalog.resetAlias();
 				try {
 					Select select = (Select) statement;
+					System.out.println(select.toString());
 					SelectParserTree spt = new SelectParserTree(select);
 					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
 					spt.root.dump(ps);
