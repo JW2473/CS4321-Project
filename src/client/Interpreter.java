@@ -59,6 +59,9 @@ public class Interpreter {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			Catalog.resetAlias();
+			Catalog.schema_map.clear();
 		}
 	}
 

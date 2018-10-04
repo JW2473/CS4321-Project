@@ -31,71 +31,25 @@ public class SelectParserTree {
 	private List<SelectItem> selItems;
 	private List<OrderByElement> orders;
 	private Distinct delDup;
-	private Map<String, Expression> selcon;
-	private Map<String, Expression> joincon;
 	private Map<String, FromItem> from_map;
+	private ParseWhere pw;
 	public Operator root;
 	
-	/*
-	 * split Expression from 'Where' to non and Expressions.
-	 * @param exp the Expression get from where
-	 * @return the list of expression from where
-	 */
-	private List<Expression> splitWhere(Expression exp) {
-		List<Expression> res = new ArrayList<>();
-		if(exp == null)
-			return res;
-		while(exp instanceof AndExpression) {
-			AndExpression ae = (AndExpression)exp;
-			res.add(ae.getRightExpression());
-			exp = ae.getLeftExpression();
-		}
-		res.add(exp);
-		return res;
-	}
-	
-	/*
-	 * get the final Expression for a table.
-	 * @param exps the expression list related to a table
-	 * @return the final Expression for a table.
-	 */
-	private Expression rebuildExpression(List<Expression> exps) {
-		if( exps.size() == 0 ) return null;
-		Expression res = exps.get(0);
-		for ( int i = 1; i< exps.size(); i++ ) {
-			res = new AndExpression(res,exps.get(i));
-		}
-		return res;
-	}
-	
-	/*
-	 * get the most right table ID from the from list.
-	 * @param relateTable the list of table we need to distinguish
-	 * @return the final Expression for a table.
-	 */
-	private int getRightTableId(List<String> relateTable) {
-		int id = 0;
-		if( relateTable.size()==0 )
-			return froms.size()-1;
-		for(String table:relateTable) {
-			id = Math.max(id, froms.indexOf(table));
-		}
-		return id;
-	}
 	/*
 	 * build the operator tree
 	 */
 	private void buildTree() {
 		Operator op = new ScanOperator(new MyTable(from_map.get(froms.get(0))));
-		if(selcon.get(froms.get(0))!=null)
-			op = new SelectOperator(op,selcon.get(froms.get(0)));
+		if((pw.getSelExp(froms.get(0)))!=null)
+			op = new SelectOperator(op,pw.getSelExp(froms.get(0)));
 		for ( int i = 1; i < froms.size(); i++ ) {
 			String name = froms.get(i);
 			FromItem temp = from_map.get(name);
 			Operator temp_op = new ScanOperator(new MyTable(temp));
-			if(selcon.get(name)!=null)
-				temp_op = new SelectOperator(temp_op, selcon.get(name));
-			Expression joinExp = joincon.get(name);
+			Expression selExp = pw.getSelExp(name);
+			if(selExp!=null)
+				temp_op = new SelectOperator(temp_op, selExp);
+			Expression joinExp = pw.getJoinExp(name);
 			op = new JoinOperator(op, temp_op, joinExp);
 		}
 		op = new ProjectOperator(selItems, op);
@@ -138,33 +92,8 @@ public class SelectParserTree {
 				froms.add(name);
 				from_map.put(name, j.getRightItem());
 			}
-		Expression e = ps.getWhere();
 
-
-		List<Expression> exps = splitWhere(e);
-		Map<String,List<Expression>> tempselcon = new HashMap<>();
-		Map<String,List<Expression>> tempjoincon = new HashMap<>();
-
-		for(String name : froms) {
-			tempselcon.put(name,new ArrayList<>());
-			tempjoincon.put(name,new ArrayList<>());
-		}
-		for(Expression exp : exps) {
-			List<String> relateTable = Tools.getRelativeTabAlias(exp);
-			if( relateTable.size() == 0 ) {
-				tempjoincon.get(froms.get(getRightTableId(relateTable))).add(exp);
-			}else if( relateTable.size() == 1 ) {
-				tempselcon.get(froms.get(getRightTableId(relateTable))).add(exp);
-			}else {
-				tempjoincon.get(froms.get(getRightTableId(relateTable))).add(exp);
-			}
-		}
-		this.selcon = new HashMap<>();
-		this.joincon = new HashMap<>();
-		for(String from:froms) {
-			this.selcon.put(from, rebuildExpression(tempselcon.get(from)));
-			this.joincon.put(from, rebuildExpression(tempjoincon.get(from)));
-		}
+		this.pw = new ParseWhere(froms, ps.getWhere());
 		buildTree();
 	}
 	
