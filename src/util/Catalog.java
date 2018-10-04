@@ -13,9 +13,7 @@ public class Catalog {
 	private static Catalog instance = null;
 	
 	public static String input = "samples" + File.separator + "input";
-	public static String output = "samples" + File.separator + "output" + File.separator;
-	public static String query = "";
-	public static String schema = "";
+	public static String output = "samples" + File.separator + "output" + File.separator;;
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 	public static HashMap<String, String> aliases = new HashMap<>();
 	public static HashMap<String, String> uniqueAliases = new HashMap<>();
@@ -51,7 +49,7 @@ public class Catalog {
 		if (!output.isEmpty()) {
 			Catalog.output = output + File.separator;
 		}
-		schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
+		String schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
 		File file = new File(schema);
 		Scanner in = null;
 		try {
@@ -82,7 +80,7 @@ public class Catalog {
 	 * @return the FileReader of the query file
 	 */
 	public static FileReader getQueryFiles() {
-		query = Catalog.input + File.separator + "queries.sql";
+		String query = Catalog.input + File.separator + "queries.sql";
 		try {
 			return new FileReader(query);
 		} catch (FileNotFoundException e) {
