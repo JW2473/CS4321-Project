@@ -1,4 +1,4 @@
-package operators;
+package physicaloperators;
 
 import util.Tuple;
 

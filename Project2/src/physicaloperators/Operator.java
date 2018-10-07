@@ -1,8 +1,10 @@
-package operators;
+package physicaloperators;
 
+import java.io.IOException;
 import java.io.PrintStream;
 
 import util.Tuple;
+import util.TupleWriter;
 
 /**
  * @author Yixin Cui
@@ -24,5 +26,20 @@ public abstract class Operator {
 			ps.println(curr);
 			curr = getNextTuple();
 		}
+	}
+	
+	public void dump(String filePath, String fileName) {
+		String out = filePath + fileName;
+		TupleWriter tw = new TupleWriter(out);
+		try {
+			Tuple curr = getNextTuple();
+			while (curr != null) {
+				tw.writeTuple(curr);
+				curr = getNextTuple();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		tw.close();
 	}
 }

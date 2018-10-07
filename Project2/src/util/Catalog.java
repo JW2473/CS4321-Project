@@ -122,15 +122,8 @@ public class Catalog {
 	 * @param tName the name of the table
 	 * @return the BufferedReader of the table file
 	 */
-	public static BufferedReader getTableFiles(String tName) {
-		String table = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + tName;
-		try {
-			return new BufferedReader(new FileReader(table));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+	public static TupleReader getTableFiles(String tName) {
+		return new TupleReader(tName);
 	}
 	
 	/*

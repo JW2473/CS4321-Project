@@ -1,7 +1,5 @@
 package util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.List;
 
 import net.sf.jsqlparser.schema.Table;
@@ -17,7 +15,7 @@ public class MyTable{
 	String tFullName;
 	String alias;
 	List<String> schemaName;
-	BufferedReader br = null;
+	TupleReader tr = null;
 	
 	/*
 	 * Create a MyTable object from the query
@@ -28,7 +26,7 @@ public class MyTable{
 		alias = t.getAlias();
 		tFullName = t.getWholeTableName();
 		schemaName = Catalog.getSchema(tFullName);
-		br = Catalog.getTableFiles(tFullName);
+		tr = Catalog.getTableFiles(tFullName);
 		if (alias != null) {
 			Catalog.setAlias(alias, tFullName);
 		}else {
@@ -76,29 +74,18 @@ public class MyTable{
 	 */
 	public Tuple nextTuple() {
 		try {
-			String[] val = br.readLine().split(",");
-			int[] value = new int[val.length];
-			for (int i = 0; i < val.length; i++) {
-				value[i] = Integer.valueOf(val[i]);
-			}
+			int[] value = tr.nextTuple();
 			return new Tuple(value, getUniqueName(), tFullName);
 		} catch (NullPointerException e) {
 			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		return null;
 	}
 	
 	/*
 	 * Close the table file and reopen it through the Catalog object
 	 */
 	public void reset() {
-		try {
-			br.close();
-			br = Catalog.getTableFiles(tFullName);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		tr.close();
+		tr = Catalog.getTableFiles(tFullName);
 	}
 }
