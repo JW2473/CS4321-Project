@@ -1,4 +1,4 @@
-package operators;
+package physicaloperators;
 
 import net.sf.jsqlparser.expression.Expression;
 import util.Tuple;

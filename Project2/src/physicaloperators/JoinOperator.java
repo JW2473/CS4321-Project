@@ -1,4 +1,4 @@
-package operators;
+package physicaloperators;
 
 import java.util.ArrayList;
 import java.util.List;

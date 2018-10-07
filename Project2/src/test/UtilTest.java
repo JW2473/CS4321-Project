@@ -7,11 +7,10 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import operators.ScanOperator;
+import physicaloperators.ScanOperator;
 import util.Catalog;
 import util.MyTable;
 import util.SelectParserTree;
-import util.Tuple;
 import util.TupleReader;
 import visitor.*;
 
@@ -146,9 +145,44 @@ public class UtilTest {
 	@Test
 	public void ReaderTest() {
 		Catalog.getInstance();
-		TupleReader tr = new TupleReader("Sailors");
+		String filePath = Catalog.output + "query15";
+		File inputFile = new File(filePath);
+		TupleReader tr = new TupleReader(inputFile);
 		System.out.println(tr.getAttrNum());
 		System.out.println(tr.getSize());
-		tr.convertToReadableFile();
+		tr.convertToReadableFile(filePath);
+	}
+	
+	@Test
+	public void newExeTest() {
+		Catalog.initialize("samples/input", "samples/output", "samples/temp");
+		Catalog.getInstance();
+		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
+		Statement statement;
+		int count = 1;
+		try {
+			while ( (statement = parser.Statement()) != null ) {	
+				Catalog.resetAlias();
+				try {
+					Select select = (Select) statement;
+					System.out.println(select.toString());
+					SelectParserTree spt = new SelectParserTree(select);
+					String filePath = Catalog.output;
+					String fileName = "query" + String.valueOf(count);
+					spt.root.dump(filePath, fileName);
+				} catch (Exception e) {	
+					e.printStackTrace();
+					System.err.println("Exception occurred during parsing");
+					continue;
+				}finally {
+					count++;
+					Catalog.resetAlias();
+					
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

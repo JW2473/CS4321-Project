@@ -1,11 +1,9 @@
 package util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -13,7 +11,6 @@ public class TupleWriter {
 	FileOutputStream fout = null;
 	FileChannel fc;
 	ByteBuffer buffer;
-	String tableFile;
 	int bytesRead = 0;
 	int numAttr;
 	int size;
@@ -25,8 +22,8 @@ public class TupleWriter {
 		START, CHGPAGE, INSERT;
 	}
 	
-	public TupleWriter(String tablename) {
-		File f = new File(tablename);
+	public TupleWriter(String filePath) {
+		File f = new File(filePath);
 		try {
 			fout = new FileOutputStream(f);
 			fc = fout.getChannel();

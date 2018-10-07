@@ -9,20 +9,34 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class TupleReader {
-	FileInputStream fin;
-	FileChannel fc;
-	ByteBuffer buffer;
-	String tableFile;
-	int bytesRead = 0;
-	int numAttr;
-	int size;
-	int count;
-	int index;
+	private FileInputStream fin;
+	private FileChannel fc;
+	private ByteBuffer buffer;
+	private String tableFile;
+	private File file;
+	private int bytesRead = 0;
+	private int numAttr;
+	private int size;
+	private int count;
+	private int index;
 	
 	public TupleReader(String tableName) {
 		tableFile = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + tableName;
 		try {
-			fin = new FileInputStream(tableFile);
+			file = new File(tableFile);
+			fin = new FileInputStream(file);
+			fc = fin.getChannel();
+			buffer = ByteBuffer.allocate(4096);
+			readPage();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public TupleReader(File file) {
+		try {
+			this.file = file;
+			fin = new FileInputStream(file);
 			fc = fin.getChannel();
 			buffer = ByteBuffer.allocate(4096);
 			readPage();
@@ -91,7 +105,7 @@ public class TupleReader {
 	public void reset() {
 		try {
 			close();
-			fin = new FileInputStream(tableFile);
+			fin = new FileInputStream(file);
 			fc = fin.getChannel();
 			buffer = ByteBuffer.allocate(4096);
 			readPage();
@@ -100,13 +114,18 @@ public class TupleReader {
 		}
 	}
 	
-	public void convertToReadableFile() {
+	public void convertToReadableFile(String outputFile) {
 		reset();
 		int[] val = nextTuple();
 		try {
-			PrintStream ps = new PrintStream(new File(tableFile + "_humanreadable.txt"));
+			PrintStream ps = new PrintStream(new File(outputFile + "_humanreadable.txt"));
 			while (val != null) {
-				ps.println(val[0] + "," + val[1] + "," + val[2]);
+				for( int i = 0; i < val.length; i++ ) {
+					ps.print(val[i]);
+					if( i != val.length-1 )
+					   ps.print( "," );
+				}
+				ps.println();
 				val = nextTuple();
 			}
 		} catch (FileNotFoundException e) {
