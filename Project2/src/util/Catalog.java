@@ -22,6 +22,13 @@ public class Catalog {
 	public static int joinBuffer = 0;
 	public static int sortConfig = 0;
 	public static int sortBuffer = 0;
+	
+	public static final int TNLJ = 0;
+	public static final int BNLJ = 1;
+	public static final int SMJ = 2;
+	
+	public static final int IMS = 0;
+	public static final int EMS = 1;
 
 	/*
 	 * Create the Catalog object then initialize it
@@ -84,12 +91,14 @@ public class Catalog {
 		try {
 			in = new Scanner(conf);
 			String[] joinMethod = in.nextLine().split(" ");
-			if (joinMethod.length == 2) {
-				Catalog.joinConfig = 1;
-				Catalog.joinBuffer = Integer.valueOf(joinMethod[1]);
-			}else {
-				Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
-			}
+			Catalog.joinBuffer = joinMethod.length == 2 ? Catalog.joinBuffer = Integer.valueOf(joinMethod[1]) : 0;
+			Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
+//			if (joinMethod.length == 2) {
+//				Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
+//				Catalog.joinBuffer = Integer.valueOf(joinMethod[1]);
+//			}else {
+//				Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
+//			}
 			String[] sortMethod = in.nextLine().split(" ");
 			if (sortMethod.length == 2) {
 				Catalog.sortConfig = 1;

@@ -35,7 +35,7 @@ public class Interpreter {
 	 * path and output the result to output path
 	 */
 	public void ExecuteSel( String input, String output ) {
-		Catalog.initialize(input, output);
+		Catalog.initialize(input, output, "");
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
