@@ -2,12 +2,12 @@ package visitor;
 
 import logicaloperators.*;
 import physicaloperators.DuplicateEliminationOperator;
+import physicaloperators.InMemorySortOperator;
 import physicaloperators.JoinOperator;
 import physicaloperators.Operator;
 import physicaloperators.ProjectOperator;
 import physicaloperators.ScanOperator;
 import physicaloperators.SelectOperator;
-import physicaloperators.SortOperator;
 import util.Catalog;;
 
 public class PhysicalPlanBuilder {
@@ -34,7 +34,7 @@ public class PhysicalPlanBuilder {
 		sortop.getChild().accept(this);
 		switch (Catalog.sortConfig) {
 			case Catalog.IMS:
-				op = new SortOperator(op,sortop.getObe());
+				op = new InMemorySortOperator(op,sortop.getObe());
 				break;
 			case Catalog.EMS:
 				break;

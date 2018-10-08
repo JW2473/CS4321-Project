@@ -15,6 +15,7 @@ import util.TupleReader;
 import visitor.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -145,12 +146,19 @@ public class UtilTest {
 	@Test
 	public void ReaderTest() {
 		Catalog.getInstance();
-		String filePath = Catalog.output + "query15";
+//		String filePath = Catalog.tempDir + "ExSort0/Pass4_0";
+		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Test";
 		File inputFile = new File(filePath);
-		TupleReader tr = new TupleReader(inputFile);
-		System.out.println(tr.getAttrNum());
-		System.out.println(tr.getSize());
-		tr.convertToReadableFile(filePath);
+		TupleReader tr;
+		try {
+			tr = new TupleReader(inputFile);
+			System.out.println(tr.getAttrNum());
+			System.out.println(tr.getSize());
+			tr.convertToReadableFile(filePath);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Test

@@ -26,6 +26,7 @@ public abstract class Operator {
 			ps.println(curr);
 			curr = getNextTuple();
 		}
+		ps.close();
 	}
 	
 	public void dump(String filePath, String fileName) {

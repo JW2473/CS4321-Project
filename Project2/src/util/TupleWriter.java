@@ -17,6 +17,7 @@ public class TupleWriter {
 	int count;
 	int id;
 	int maxsize;
+	int pageSize = Catalog.pageSize;
 	STATE state;
 	public enum STATE {
 		START, CHGPAGE, INSERT;
@@ -27,7 +28,7 @@ public class TupleWriter {
 		try {
 			fout = new FileOutputStream(f);
 			fc = fout.getChannel();
-			buffer = ByteBuffer.allocate(4096);
+			buffer = ByteBuffer.allocate(pageSize);
 			numAttr = 0;
 			size = 0;
 			maxsize = 0;
@@ -63,14 +64,14 @@ public class TupleWriter {
 						id += 4;
 					}
 					count++;
-					if ( count == maxsize || id == 4096) state = STATE.CHGPAGE;
+					if ( count == maxsize || id == pageSize) state = STATE.CHGPAGE;
 						break;
 				case CHGPAGE:
 					fillRemainingPage();
 					buffer.putInt(4,count);
 					fc.write(buffer);
 					buffer.clear();
-					buffer.put(new byte[4096]);
+					buffer.put(new byte[pageSize]);
 					buffer.clear();
 					state = STATE.START;
 					count = 0;
@@ -78,7 +79,7 @@ public class TupleWriter {
 	}
 	
 	public void fillRemainingPage() {
-		while ( id < 4096) {
+		while ( id < pageSize) {
 			buffer.putInt(id, 0);
 			id += 4;
 		}

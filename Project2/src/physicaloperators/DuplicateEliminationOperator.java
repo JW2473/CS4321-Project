@@ -50,7 +50,7 @@ public class DuplicateEliminationOperator extends Operator{
 		if (child instanceof SortOperator) {
 			child = op;
 		}else{
-			SortOperator sortOp = new SortOperator(op);
+			SortOperator sortOp = new InMemorySortOperator(op);
 			child = sortOp;
 		}
 	}

@@ -1,7 +1,6 @@
 package physicaloperators;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -17,32 +16,25 @@ import util.Tuple;
  *SortOperator class creates a list of tuple its child operator returns
  *and sort the tuple according to the OrderByElement
  */
-public class SortOperator extends Operator{
+public abstract class SortOperator extends Operator{
 
 	Column col;
 	Operator child;
-	List<Tuple> tps = new ArrayList<>();
 	List<Column> orderBy = new ArrayList<>();
-	int index = 0;
+	
 	
 	/*
 	 * Get the next tuple in the tuple list
 	 * @return next tuple
 	 */
 	@Override
-	public Tuple getNextTuple() {
-		// TODO Auto-generated method stub
-		if (index < tps.size()) return tps.get(index++);
-		return null;
-	}
+	public abstract Tuple getNextTuple();
 
 	/*
 	 * Set the index to 0 so that it can return tuple from the beginning
 	 */
 	@Override
-	public void reset() {
-		index = 0;
-	}
+	public abstract void reset();
 	
 	/*
 	 * Create a SortOperator object with OrderByElements
@@ -56,11 +48,6 @@ public class SortOperator extends Operator{
 				Column col = (Column) obelement.getExpression();
 				orderBy.add(col);
 			}
-			Tuple t = null;
-			while ((t = child.getNextTuple()) != null) {
-				tps.add(t);
-			}
-			Collections.sort(tps, new tupleComp(orderBy));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -72,12 +59,6 @@ public class SortOperator extends Operator{
 	 */
 	public SortOperator(Operator op) {
 		child = op;
-		Tuple t = child.getNextTuple();
-		while (t != null) {
-			tps.add(t);
-			t = child.getNextTuple();
-		}
-		Collections.sort(tps, new tupleComp());
 	}
 	
 	/*

@@ -18,6 +18,7 @@ public class Catalog {
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 	public static HashMap<String, String> aliases = new HashMap<>();
 	public static HashMap<String, String> uniqueAliases = new HashMap<>();
+	public static int pageSize = 4096;
 	public static int joinConfig = 0;
 	public static int joinBuffer = 0;
 	public static int sortConfig = 0;
