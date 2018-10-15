@@ -197,10 +197,6 @@ public class ExternalSortOperator extends SortOperator{
 		// TODO Auto-generated method stub
 		
 	}
-
-	public void setID(int iD) {
-		ID = iD;
-	}
 	
 	private String getFileName(int pass, int run) {
 		return File.separator + "Pass" + pass + "_" + (run);

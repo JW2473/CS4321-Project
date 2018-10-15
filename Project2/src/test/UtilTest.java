@@ -147,8 +147,8 @@ public class UtilTest {
 	public void ReaderTest() {
 		Catalog.getInstance();
 //		String filePath = Catalog.tempDir + "ExSort0/Pass2_0";
-		String filePath = Catalog.output + "ref/query14";
-//		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Test";
+		String filePath = Catalog.output + "query15";
+//		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Reserves";
 		File inputFile = new File(filePath);
 		TupleReader tr;
 		try {

@@ -21,11 +21,11 @@ import util.SelectParserTree;
 public class Interpreter {
 
 	public static void main(String[] args) {
-		if (args.length != 2) {
+		if (args.length != 3) {
 			throw new IllegalArgumentException("Wrong arguments!");
 		}
 		Interpreter interpreter = new Interpreter();
-		interpreter.ExecuteSel( args[0], args[1] );
+		interpreter.ExecuteSel( args[0], args[1], args[2] );
 	}
 	/**
 	 * @author Yixin Cui
@@ -34,8 +34,8 @@ public class Interpreter {
 	 * This is the method that execute the select querys from input
 	 * path and output the result to output path
 	 */
-	public void ExecuteSel( String input, String output ) {
-		Catalog.initialize(input, output, "");
+	public void ExecuteSel( String input, String output, String temp ) {
+		Catalog.initialize(input, output, temp);
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
@@ -47,8 +47,9 @@ public class Interpreter {
 				try {
 					Select select = (Select) statement;
 					SelectParserTree spt = new SelectParserTree(select);
-					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)));
-					spt.root.dump(ps);
+					String filePath = Catalog.output;
+					String fileName = "query" + String.valueOf(count);
+					spt.root.dump(filePath, fileName);
 				} catch (Exception e) {					
 					System.err.println("Exception occurred during parsing");
 					continue;

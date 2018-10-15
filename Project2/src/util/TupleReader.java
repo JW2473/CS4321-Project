@@ -69,7 +69,7 @@ public class TupleReader {
 	
 	public long[] nextTuple() {
 		long[] val = new long[numAttr];
-		if (index < buffer.capacity() - 8 && count < size) {
+		if (index < buffer.capacity() && count < size) {
 			for (int i = 0; i < numAttr; i++) {
 				val[i] = (long) buffer.getInt(index);
 				index += 4;
