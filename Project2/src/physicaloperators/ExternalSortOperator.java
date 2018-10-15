@@ -112,6 +112,10 @@ public class ExternalSortOperator extends SortOperator{
 			while (!trs.isEmpty() && !tps.isEmpty()) {
 				fillBuffer(popMin());
 			}
+			if (buff.size() != 0) {
+				writeTuples(buff);
+				buff.clear();
+			}
 		}
 		numRun = outputRun;
 		trs.clear();
@@ -133,7 +137,7 @@ public class ExternalSortOperator extends SortOperator{
 			}
 		}
 		Tuple ret = tps.get(minTr);
-		System.out.println(tps.size());
+//		System.out.println(tps.size());
 		long[] val = trs.get(minTr).nextTuple();
 		if (val == null) {
 			trs.get(minTr).close();

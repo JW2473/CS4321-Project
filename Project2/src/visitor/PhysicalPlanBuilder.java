@@ -2,6 +2,7 @@ package visitor;
 
 import logicaloperators.*;
 import physicaloperators.DuplicateEliminationOperator;
+import physicaloperators.ExternalSortOperator;
 import physicaloperators.InMemorySortOperator;
 import physicaloperators.JoinOperator;
 import physicaloperators.Operator;
@@ -37,6 +38,7 @@ public class PhysicalPlanBuilder {
 				op = new InMemorySortOperator(op,sortop.getObe());
 				break;
 			case Catalog.EMS:
+				op = new ExternalSortOperator(op,sortop.getObe());
 				break;
 			default:
 				throw new UnsupportedException();
