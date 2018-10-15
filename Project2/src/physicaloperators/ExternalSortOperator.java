@@ -30,7 +30,7 @@ public class ExternalSortOperator extends SortOperator{
 	private int totalCount = 0;
 	private int totalPass = 0;
 	private String tempDir = Catalog.tempDir;
-	private int ID = 0;
+	private int ID;
 	private List<String> allSchema;
 	private int tupleSize;
 	private int tuplePerFile;
@@ -51,6 +51,7 @@ public class ExternalSortOperator extends SortOperator{
 	}
 
 	public void sort() {
+		ID = Catalog.sortID();
 		initialPass(orderBy);
 		totalPass = (int) Math.ceil((Math.log(totalCount / bufferSize / tuplePerPage) / Math.log(fanIn)));
 		while (inputPass < totalPass) {
