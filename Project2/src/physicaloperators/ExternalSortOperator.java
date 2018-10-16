@@ -50,6 +50,11 @@ public class ExternalSortOperator extends SortOperator{
 		sort();
 	}
 
+	public ExternalSortOperator(Operator op, Column col) {
+		super(op, col);
+		sort();
+	}
+	
 	public void sort() {
 		ID = Catalog.sortID();
 		initialPass(orderBy);

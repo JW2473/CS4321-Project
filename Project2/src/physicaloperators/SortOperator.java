@@ -61,6 +61,11 @@ public abstract class SortOperator extends Operator{
 		child = op;
 	}
 	
+	public SortOperator(Operator op, Column col) {
+		child = op;
+		orderBy.add(col);
+	}
+	
 	/*
 	 * tupleComp class implements Comparator interface and compare two tuples according to
 	 * OrderByElement and schemas
