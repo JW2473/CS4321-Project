@@ -1,13 +1,17 @@
 package visitor;
 
 import logicaloperators.*;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.schema.Column;
 import physicaloperators.DuplicateEliminationOperator;
-import physicaloperators.JoinOperator;
+import physicaloperators.ExternalSortOperator;
+import physicaloperators.InMemorySortOperator;
 import physicaloperators.Operator;
 import physicaloperators.ProjectOperator;
 import physicaloperators.ScanOperator;
 import physicaloperators.SelectOperator;
-import physicaloperators.SortOperator;
+import physicaloperators.TupleNestedLoopJoinOperator;
 import util.Catalog;;
 
 public class PhysicalPlanBuilder {
@@ -34,9 +38,10 @@ public class PhysicalPlanBuilder {
 		sortop.getChild().accept(this);
 		switch (Catalog.sortConfig) {
 			case Catalog.IMS:
-				op = new SortOperator(op,sortop.getObe());
+				op = new InMemorySortOperator(op,sortop.getObe());
 				break;
 			case Catalog.EMS:
+				op = new ExternalSortOperator(op,sortop.getObe());
 				break;
 			default:
 				throw new UnsupportedException();
@@ -59,11 +64,18 @@ public class PhysicalPlanBuilder {
 		p.right = op;
 		switch (Catalog.joinConfig) {
 			case Catalog.TNLJ:
-				op = new JoinOperator(p.left,p.right,ljo.getExpr());
+				op = new TupleNestedLoopJoinOperator(p.left,p.right,ljo.getExpr());
+				System.out.println(ljo.getExpr().toString());
 				break;
 			case Catalog.BNLJ:
 				break;
 			case Catalog.SMJ:
+				
+//				EqualsTo exp = (EqualsTo)(ljo.getExpr());
+//				Column left = (Column)(exp.getLeftExpression());
+//				
+//				EqualsTo exp1 = (EqualsTo)(ljo.getExpr());
+//				Column right = (Column)(exp.getLeftExpression());
 				break;
 			default:
 				throw new UnsupportedException();			

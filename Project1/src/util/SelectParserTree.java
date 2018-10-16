@@ -49,6 +49,7 @@ public class SelectParserTree {
 			Expression selExp = pw.getSelExp(name);
 			if(selExp!=null)
 				temp_op = new SelectOperator(temp_op, selExp);
+				
 			Expression joinExp = pw.getJoinExp(name);
 			op = new JoinOperator(op, temp_op, joinExp);
 		}
@@ -57,6 +58,7 @@ public class SelectParserTree {
 			op = new SortOperator(op, orders);
 		if( delDup != null )
 			op = new DuplicateEliminationOperator(op);
+			
 		this.root = op;
 		
 	}

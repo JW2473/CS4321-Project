@@ -27,7 +27,7 @@ public class Tuple {
 	 * @param tableFullName the full name of the table
 	 * @return the tuple in the table
 	 */
-	public Tuple(int[] val, String uniqueName, String tableFullName) {
+	public Tuple(long[] val, String uniqueName, String tableFullName) {
 		this.uniqueName = uniqueName;
 		size = val.length;
 		List<String> s = Tools.InitilaizeWholeColumnName(uniqueName, tableFullName);
@@ -35,7 +35,7 @@ public class Tuple {
 			schemaIndex.put(s.get(i), i);
 		}
 		for (int i = 0; i < val.length; i++) {
-			this.value.add(Long.valueOf(val[i]));
+			this.value.add(val[i]);
 		}
 	}
 	
@@ -50,6 +50,17 @@ public class Tuple {
 		this.uniqueName = null;
 		size = value.size();
 		this.value = value;
+		for (int i = 0; i < schemas.size(); i++) {
+			schemaIndex.put(schemas.get(i), i);
+		}
+	}
+	
+	public Tuple(long[] value, List<String> schemas) {
+		this.uniqueName = null;
+		size = value.length;
+		for (long val : value) {
+			this.value.add(val);
+		}
 		for (int i = 0; i < schemas.size(); i++) {
 			schemaIndex.put(schemas.get(i), i);
 		}

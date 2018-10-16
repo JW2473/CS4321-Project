@@ -5,6 +5,7 @@ import java.io.PrintStream;
 
 import util.Tuple;
 import util.TupleWriter;
+import java.util.*;
 
 /**
  * @author Yixin Cui
@@ -26,6 +27,7 @@ public abstract class Operator {
 			ps.println(curr);
 			curr = getNextTuple();
 		}
+		ps.close();
 	}
 	
 	public void dump(String filePath, String fileName) {

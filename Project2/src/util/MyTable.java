@@ -74,7 +74,7 @@ public class MyTable{
 	 */
 	public Tuple nextTuple() {
 		try {
-			int[] value = tr.nextTuple();
+			long[] value = tr.nextTuple();
 			return new Tuple(value, getUniqueName(), tFullName);
 		} catch (NullPointerException e) {
 			return null;

@@ -19,6 +19,7 @@ public class TupleReader {
 	private int size;
 	private int count;
 	private int index;
+	private int pageSize = Catalog.pageSize;
 	
 	public TupleReader(String tableName) {
 		tableFile = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + tableName;
@@ -26,23 +27,19 @@ public class TupleReader {
 			file = new File(tableFile);
 			fin = new FileInputStream(file);
 			fc = fin.getChannel();
-			buffer = ByteBuffer.allocate(4096);
+			buffer = ByteBuffer.allocate(pageSize);
 			readPage();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public TupleReader(File file) {
-		try {
-			this.file = file;
-			fin = new FileInputStream(file);
-			fc = fin.getChannel();
-			buffer = ByteBuffer.allocate(4096);
-			readPage();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public TupleReader(File file) throws FileNotFoundException {
+		this.file = file;
+		fin = new FileInputStream(file);
+		fc = fin.getChannel();
+		buffer = ByteBuffer.allocate(pageSize);
+		readPage();
 	}
 	
 	public boolean readPage() {
@@ -70,11 +67,11 @@ public class TupleReader {
 		return this.size;
 	}
 	
-	public int[] nextTuple() {
-		int[] val = new int[numAttr];
-		if (index < buffer.capacity() - 8 && count < size) {
+	public long[] nextTuple() {
+		long[] val = new long[numAttr];
+		if (index < buffer.capacity() && count < size) {
 			for (int i = 0; i < numAttr; i++) {
-				val[i] = buffer.getInt(index);
+				val[i] = (long) buffer.getInt(index);
 				index += 4;
 			}
 			count++;
@@ -107,7 +104,7 @@ public class TupleReader {
 			close();
 			fin = new FileInputStream(file);
 			fc = fin.getChannel();
-			buffer = ByteBuffer.allocate(4096);
+			buffer = ByteBuffer.allocate(pageSize);
 			readPage();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -116,7 +113,7 @@ public class TupleReader {
 	
 	public void convertToReadableFile(String outputFile) {
 		reset();
-		int[] val = nextTuple();
+		long[] val = nextTuple();
 		try {
 			PrintStream ps = new PrintStream(new File(outputFile + "_humanreadable.txt"));
 			while (val != null) {

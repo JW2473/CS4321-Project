@@ -47,7 +47,7 @@ public class DuplicateEliminationOperator extends Operator{
 	 * @param op the child operator
 	 */
 	public DuplicateEliminationOperator(Operator op) {
-		if (child instanceof SortOperator) {
+		if (op instanceof SortOperator) {
 			child = op;
 		}else{
 			SortOperator sortOp = new SortOperator(op);
