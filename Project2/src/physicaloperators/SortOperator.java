@@ -40,12 +40,12 @@ public abstract class SortOperator extends Operator{
 	 * @param obe the list of OrderByElement
 	 * @param op the child operator
 	 */
-	public SortOperator(Operator op, List<OrderByElement> obe) {
+	public SortOperator(Operator op, List<?> obe) {
 		child = op;
 		this.uniqueSchema = child.uniqueSchema;
 		try {
-			for (OrderByElement obelement : obe) {
-				Column col = (Column) obelement.getExpression();
+			for (Object obelement : obe) {
+				Column col = obelement instanceof OrderByElement ? (Column) ((OrderByElement) obelement).getExpression() : (Column) obelement;
 				orderBy.add(col);
 			}
 		} catch (Exception e) {
@@ -56,16 +56,10 @@ public abstract class SortOperator extends Operator{
 	/*
 	 * Create a ProjectOperator object without OrderByElements means sort the tuple by all schemas
 	 * @param op the child operator
-	 */
-	public SortOperator(Operator op, List<Column> orderBy, boolean join) {
-		child = op;
-		this.orderBy = orderBy;
-	}
-	
+	 */	
 	public SortOperator(Operator op) {
 		child = op;
 	}
-	
 
 	/*
 	 * tupleComp class implements Comparator interface and compare two tuples according to

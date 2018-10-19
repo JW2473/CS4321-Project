@@ -69,7 +69,7 @@ public class PhysicalPlanBuilder {
 		switch (Catalog.joinConfig) {
 			case Catalog.TNLJ:
 				op = new TupleNestedLoopJoinOperator(p.left,p.right,ljo.getExpr());
-				System.out.println(ljo.getExpr().toString());
+//				System.out.println(ljo.getExpr().toString());
 				break;
 			case Catalog.BNLJ:
 				op = new BlockNestedJoinOperator(p.left, p.right, ljo.getExpr());

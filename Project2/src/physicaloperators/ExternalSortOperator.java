@@ -40,14 +40,8 @@ public class ExternalSortOperator extends SortOperator{
 	private TupleReader tr = null;
 	private TupleWriter tw = null;
 	
-	public ExternalSortOperator(Operator op, List<OrderByElement> obe) {
+	public ExternalSortOperator(Operator op, List<?> obe) {
 		super(op, obe);
-		this.uniqueSchema = op.uniqueSchema;
-		sort();
-	}
-	
-	public ExternalSortOperator(Operator op, List<Column> orderBy, boolean join) {
-		super(op, orderBy, join);
 		this.uniqueSchema = op.uniqueSchema;
 		sort();
 	}
@@ -55,11 +49,6 @@ public class ExternalSortOperator extends SortOperator{
 	public ExternalSortOperator(Operator op) {
 		super(op);
 		this.uniqueSchema = op.uniqueSchema;
-		sort();
-	}
-/*
-	public ExternalSortOperator(Operator op, Column col) {
-		super(op, col);
 		sort();
 	}
 	

@@ -2,34 +2,22 @@ package logicaloperators;
 
 import java.util.List;
 
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.select.OrderByElement;
-import physicaloperators.Operator;
 import visitor.PhysicalPlanBuilder;
 
 public class LogicSortOperator extends LogicOperator {
 	
 	LogicOperator child;
-	List<OrderByElement> obe;
-	List<Column> orderBy;
-	boolean join;
+	List<?> obe;
 
-	public LogicSortOperator(LogicOperator child, List<OrderByElement> obe) {
+	public LogicSortOperator(LogicOperator child, List<?> obe) {
 		// TODO Auto-generated constructor stub
 		this.child = child;
 		this.obe = obe;
 	}
 	
-	public LogicSortOperator(LogicOperator op, List<Column> orderBy, boolean join) {
-		this.child = op;
-		this.orderBy = orderBy;
-		this.join = join;
-	}
-	
-	public void setOrderBy(List<Column> orderBy) {
-		this.orderBy = orderBy;
-	}
-	
+	public void setOrderBy(List<?> obe) {
+		this.obe = obe;
+  }
 	
 	@Override
 	public void accept(PhysicalPlanBuilder ppb) {
@@ -41,9 +29,8 @@ public class LogicSortOperator extends LogicOperator {
 		return child;
 	}
 
-	public List<OrderByElement> getObe() {
+	public List<?> getObe() {
 		return obe;
 	}
-
 
 }

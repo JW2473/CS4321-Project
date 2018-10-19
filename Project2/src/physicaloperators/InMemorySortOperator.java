@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.select.OrderByElement;
 import util.Tuple;
 
 public class InMemorySortOperator extends SortOperator{
@@ -24,7 +22,7 @@ public class InMemorySortOperator extends SortOperator{
 		Collections.sort(tps, new tupleComp());
 	}
 
-	public InMemorySortOperator(Operator op, List<OrderByElement> obe) {
+	public InMemorySortOperator(Operator op, List<?> obe) {
 		super(op, obe);
 		Tuple t = null;
 		this.uniqueSchema = op.uniqueSchema;
@@ -33,21 +31,7 @@ public class InMemorySortOperator extends SortOperator{
 		}
 		Collections.sort(tps, new tupleComp(orderBy));
 	}
-	public InMemorySortOperator(Operator op, List<Column> orderBy, boolean join) {
-		super(op, orderBy,join);
-		Tuple t = null;
-		this.uniqueSchema = op.uniqueSchema;
-		while ((t = child.getNextTuple()) != null) {
-			tps.add(t);
-		}
-		Collections.sort(tps, new tupleComp(orderBy));
-	}
-/*	
-	public InMemorySortOperator(Operator op, Column col) {
-		super(op, col);
-		Collections.sort(tps, new tupleComp(orderBy));
-	}
-*/
+  
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub

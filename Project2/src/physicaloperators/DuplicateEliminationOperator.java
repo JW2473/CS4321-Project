@@ -1,5 +1,6 @@
 package physicaloperators;
 
+import util.Catalog;
 import util.Tuple;
 
 /**
@@ -50,7 +51,7 @@ public class DuplicateEliminationOperator extends Operator{
 		if (op instanceof SortOperator) {
 			child = op;
 		}else{
-			SortOperator sortOp = new InMemorySortOperator(op);
+			SortOperator sortOp = Catalog.sortConfig == Catalog.IMS ? new InMemorySortOperator(op) : new ExternalSortOperator(op);
 			child = sortOp;
 		}
 		this.uniqueSchema = op.uniqueSchema;
