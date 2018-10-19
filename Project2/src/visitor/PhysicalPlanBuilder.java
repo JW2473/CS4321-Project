@@ -77,11 +77,11 @@ public class PhysicalPlanBuilder {
 			case Catalog.SMJ:
 				Map<String,List<Column>> m = ParseWhere.parseJoin(p.left, p.right, ljo.getExpr());
 				if(Catalog.sortConfig == Catalog.IMS ) {
-					p.left = new InMemorySortOperator(p.left,m.get("left"),true);
-					p.right = new InMemorySortOperator(p.right,m.get("right"),true);
+					p.left = new InMemorySortOperator(p.left,m.get("left"));
+					p.right = new InMemorySortOperator(p.right,m.get("right"));
 				} else {
-					p.left = new ExternalSortOperator(p.left,m.get("left"),true);
-					p.right = new ExternalSortOperator(p.right,m.get("right"),true);
+					p.left = new ExternalSortOperator(p.left,m.get("left"));
+					p.right = new ExternalSortOperator(p.right,m.get("right"));
 				}
 				op = new TupleNestedLoopJoinOperator(p.left,p.right,ljo.getExpr());
 //				EqualsTo exp = (EqualsTo)(ljo.getExpr());

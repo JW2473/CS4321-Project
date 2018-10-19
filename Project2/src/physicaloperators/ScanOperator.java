@@ -26,7 +26,6 @@ public class ScanOperator extends Operator{
 		this.table = table;
 		schema = table.getSchemaName();
 		this.uniqueSchema = Tools.InitilaizeWholeColumnName(table.getUniqueName(), table.getFullTableName());
-		System.out.println(this.uniqueSchema == null);
 	}
 	
 	/*

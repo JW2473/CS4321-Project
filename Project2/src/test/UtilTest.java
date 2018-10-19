@@ -150,8 +150,8 @@ public class UtilTest {
 	@Test
 	public void ReaderTest() {
 		Catalog.getInstance();
-//		String filePath = Catalog.tempDir + "ExSort0/Pass2_0";
-		String filePath = Catalog.output + "query1";
+		String filePath = Catalog.tempDir + "ExSort1/Pass0_0";
+//		String filePath = Catalog.output + "query1";
 //		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Reserves";
 		File inputFile = new File(filePath);
 		TupleReader tr;
@@ -182,15 +182,15 @@ public class UtilTest {
 					System.out.println(select.toString());
 					SelectParserTree spt = new SelectParserTree(select);
 					
-					System.out.println("Dumping binary file...");
-					String filePath = Catalog.output;
-					String fileName = "query" + String.valueOf(count);
-					spt.root.dump(filePath, fileName);
+//					System.out.println("Dumping binary file...");
+//					String filePath = Catalog.output;
+//					String fileName = "query" + String.valueOf(count);
+//					spt.root.dump(filePath, fileName);
 					
-//					System.out.println("Dumping readiable file...");
-//					PrintStream ps = null;
-//					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
-//					spt.root.dump(ps);
+					System.out.println("Dumping readiable file...");
+					PrintStream ps = null;
+					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
+					spt.root.dump(ps);
 					
 				} catch (Exception e) {	
 					e.printStackTrace();

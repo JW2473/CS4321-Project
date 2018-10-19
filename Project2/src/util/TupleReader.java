@@ -91,6 +91,7 @@ public class TupleReader {
 			size = 0;
 			numAttr = 0;
 			bytesRead = 0;
+			count = 0;
 			buffer.clear();
 			fc.close();
 			fin.close();

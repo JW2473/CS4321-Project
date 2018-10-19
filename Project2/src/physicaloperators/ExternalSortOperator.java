@@ -43,6 +43,8 @@ public class ExternalSortOperator extends SortOperator{
 	public ExternalSortOperator(Operator op, List<?> obe) {
 		super(op, obe);
 		this.uniqueSchema = op.uniqueSchema;
+		System.out.println("Unique Schema: " + this.uniqueSchema.toString());
+		System.out.println("Columns: " + obe.toString());
 		sort();
 	}
 	
@@ -52,7 +54,6 @@ public class ExternalSortOperator extends SortOperator{
 		sort();
 	}
 	
-*/
 	public void sort() {
 		ID = Catalog.sortID();
 		initialPass(orderBy);
@@ -198,7 +199,7 @@ public class ExternalSortOperator extends SortOperator{
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-		
+		tr.reset();
 	}
 	
 	private String getFileName(int pass, int run) {
