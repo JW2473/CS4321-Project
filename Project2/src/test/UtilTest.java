@@ -144,10 +144,14 @@ public class UtilTest {
 	}
 	
 	@Test
+	public void ParseJoinTest() {
+		Catalog.getInstance();
+	}
+	@Test
 	public void ReaderTest() {
 		Catalog.getInstance();
 //		String filePath = Catalog.tempDir + "ExSort0/Pass2_0";
-		String filePath = Catalog.output + "query15";
+		String filePath = Catalog.output + "query1";
 //		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Reserves";
 		File inputFile = new File(filePath);
 		TupleReader tr;

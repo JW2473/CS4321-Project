@@ -14,6 +14,7 @@ public class InMemorySortOperator extends SortOperator{
 	public InMemorySortOperator(Operator op) {
 		super(op);
 		Tuple t = child.getNextTuple();
+		this.uniqueSchema = op.uniqueSchema;
 		while (t != null) {
 			tps.add(t);
 			t = child.getNextTuple();
@@ -24,12 +25,13 @@ public class InMemorySortOperator extends SortOperator{
 	public InMemorySortOperator(Operator op, List<?> obe) {
 		super(op, obe);
 		Tuple t = null;
+		this.uniqueSchema = op.uniqueSchema;
 		while ((t = child.getNextTuple()) != null) {
 			tps.add(t);
 		}
 		Collections.sort(tps, new tupleComp(orderBy));
 	}
-
+  
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub

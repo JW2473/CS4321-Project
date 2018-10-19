@@ -17,8 +17,7 @@ import util.Tuple;
  *and sort the tuple according to the OrderByElement
  */
 public abstract class SortOperator extends Operator{
-
-	Column col;
+	
 	Operator child;
 	List<Column> orderBy = new ArrayList<>();
 	
@@ -43,6 +42,7 @@ public abstract class SortOperator extends Operator{
 	 */
 	public SortOperator(Operator op, List<?> obe) {
 		child = op;
+		this.uniqueSchema = child.uniqueSchema;
 		try {
 			for (Object obelement : obe) {
 				Column col = obelement instanceof OrderByElement ? (Column) ((OrderByElement) obelement).getExpression() : (Column) obelement;
@@ -56,11 +56,11 @@ public abstract class SortOperator extends Operator{
 	/*
 	 * Create a ProjectOperator object without OrderByElements means sort the tuple by all schemas
 	 * @param op the child operator
-	 */
+	 */	
 	public SortOperator(Operator op) {
 		child = op;
 	}
-	
+
 	/*
 	 * tupleComp class implements Comparator interface and compare two tuples according to
 	 * OrderByElement and schemas

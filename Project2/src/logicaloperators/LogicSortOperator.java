@@ -15,9 +15,9 @@ public class LogicSortOperator extends LogicOperator {
 		this.obe = obe;
 	}
 	
-	public LogicSortOperator(LogicOperator op) {
-		this.child = op;
-	}
+	public void setOrderBy(List<?> obe) {
+		this.obe = obe;
+  }
 	
 	@Override
 	public void accept(PhysicalPlanBuilder ppb) {
@@ -32,4 +32,5 @@ public class LogicSortOperator extends LogicOperator {
 	public List<?> getObe() {
 		return obe;
 	}
+
 }

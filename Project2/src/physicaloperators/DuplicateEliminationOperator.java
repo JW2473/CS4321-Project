@@ -54,6 +54,7 @@ public class DuplicateEliminationOperator extends Operator{
 			SortOperator sortOp = Catalog.sortConfig == Catalog.IMS ? new InMemorySortOperator(op) : new ExternalSortOperator(op);
 			child = sortOp;
 		}
+		this.uniqueSchema = op.uniqueSchema;
 	}
 	
 }

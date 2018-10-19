@@ -1,6 +1,7 @@
 package physicaloperators;
 
 import util.MyTable;
+import util.Tools;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class ScanOperator extends Operator{
 	public ScanOperator(MyTable table) {
 		this.table = table;
 		schema = table.getSchemaName();
+		this.uniqueSchema = Tools.InitilaizeWholeColumnName(table.getUniqueName(), table.getFullTableName());
+		System.out.println(this.uniqueSchema == null);
 	}
 	
 	/*
