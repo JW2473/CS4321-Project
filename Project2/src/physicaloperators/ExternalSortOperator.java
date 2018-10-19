@@ -42,19 +42,28 @@ public class ExternalSortOperator extends SortOperator{
 	
 	public ExternalSortOperator(Operator op, List<OrderByElement> obe) {
 		super(op, obe);
+		this.uniqueSchema = op.uniqueSchema;
+		sort();
+	}
+	
+	public ExternalSortOperator(Operator op, List<Column> orderBy, boolean join) {
+		super(op, orderBy, join);
+		this.uniqueSchema = op.uniqueSchema;
 		sort();
 	}
 	
 	public ExternalSortOperator(Operator op) {
 		super(op);
+		this.uniqueSchema = op.uniqueSchema;
 		sort();
 	}
-
+/*
 	public ExternalSortOperator(Operator op, Column col) {
 		super(op, col);
 		sort();
 	}
 	
+*/
 	public void sort() {
 		ID = Catalog.sortID();
 		initialPass(orderBy);

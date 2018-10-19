@@ -62,6 +62,15 @@ public class ProjectOperator extends Operator{
 	public ProjectOperator(List<SelectItem> si, Operator op) {
 		this.si = si;
 		child = op;
+		this.uniqueSchema = new ArrayList<>();
+		for (SelectItem item : si) {
+			if (item instanceof AllColumns) this.uniqueSchema = child.uniqueSchema;
+			if (item instanceof SelectExpressionItem) {
+				Expression expr = ((SelectExpressionItem) item).getExpression();
+				Column col = (Column) expr;
+				this.uniqueSchema.add(Tools.rebuildWholeColumnName(col));
+			}
+		}
 	}
 
 }

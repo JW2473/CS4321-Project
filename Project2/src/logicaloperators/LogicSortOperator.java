@@ -11,7 +11,8 @@ public class LogicSortOperator extends LogicOperator {
 	
 	LogicOperator child;
 	List<OrderByElement> obe;
-	private Column col;
+	List<Column> orderBy;
+	boolean join;
 
 	public LogicSortOperator(LogicOperator child, List<OrderByElement> obe) {
 		// TODO Auto-generated constructor stub
@@ -19,14 +20,16 @@ public class LogicSortOperator extends LogicOperator {
 		this.obe = obe;
 	}
 	
-	public LogicSortOperator(LogicOperator op) {
+	public LogicSortOperator(LogicOperator op, List<Column> orderBy, boolean join) {
 		this.child = op;
+		this.orderBy = orderBy;
+		this.join = join;
 	}
-
-	public LogicSortOperator(LogicOperator op, Column col) {
-		this.child = op;
-		this.col = col;
+	
+	public void setOrderBy(List<Column> orderBy) {
+		this.orderBy = orderBy;
 	}
+	
 	
 	@Override
 	public void accept(PhysicalPlanBuilder ppb) {
@@ -42,7 +45,5 @@ public class LogicSortOperator extends LogicOperator {
 		return obe;
 	}
 
-	public Column getColumn() {
-		return col;
-	}
+
 }

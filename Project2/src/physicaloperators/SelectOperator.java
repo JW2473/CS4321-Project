@@ -52,5 +52,6 @@ public class SelectOperator extends Operator{
 	public SelectOperator(Operator op, Expression expr) {
 		child = op;
 		this.expr = expr;
+		this.uniqueSchema = child.uniqueSchema;
 	}	
 }
