@@ -1,7 +1,11 @@
 package util;
 
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.schema.Column;
+import physicaloperators.Operator;
+
 import java.util.*;
 
 /**
@@ -19,7 +23,7 @@ public class ParseWhere {
 	 * @param exp the Expression get from where
 	 * @return the list of expression from where
 	 */
-	private List<Expression> splitWhere(Expression exp) {
+	private static List<Expression> splitWhere(Expression exp) {
 		List<Expression> res = new ArrayList<>();
 		if(exp == null)
 			return res;
@@ -32,6 +36,33 @@ public class ParseWhere {
 		return res;
 	}
 	
+	public static Map<String,List<Column>> parseJoin(Operator left, Operator right, Expression joinCon) {
+		Map<String,List<Column>> res = new HashMap<>();
+		res.put("left", new ArrayList<Column>());
+		res.put("right", new ArrayList<Column>());
+		List<String> schema_left = left.getUniqueSchema();
+		List<String> schema_right = right.getUniqueSchema();
+		List<Expression> RemoveAnds = splitWhere(joinCon);
+		for(Expression exp : RemoveAnds) {
+			Column col_left = (Column) ( ((BinaryExpression)exp).getLeftExpression() );
+			Column col_right = (Column) ( ((BinaryExpression)exp).getRightExpression() );
+			
+			String leftColumnName = Tools.rebuildWholeColumnName(col_left);
+			String rightColumnName = Tools.rebuildWholeColumnName(col_right);
+			
+			//just a simple implementation, may have bugs
+			
+			if( schema_left.indexOf(leftColumnName) != -1 ) {
+				res.get("left").add(col_left);
+				res.get("right").add(col_right);
+			} else {
+				res.get("right").add(col_left);
+				res.get("left").add(col_right);
+			}
+			
+		}
+		return res;
+	}
 	/*
 	 * get the final Expression for a table.
 	 * @param exps the expression list related to a table

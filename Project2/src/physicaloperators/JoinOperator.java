@@ -66,6 +66,11 @@ public abstract class JoinOperator extends Operator{
 		this.left = left;
 		this.right = right;
 		this.expr = expr;
+		
+
+		this.uniqueSchema = new ArrayList<>();
+		uniqueSchema.addAll(left.uniqueSchema);
+		uniqueSchema.addAll(right.uniqueSchema);
 	}
 
 }

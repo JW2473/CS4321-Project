@@ -14,6 +14,7 @@ import java.util.*;
  */
 public abstract class Operator {
 	
+	List<String> uniqueSchema;
 	public abstract Tuple getNextTuple();
 	
 	public abstract void reset();
@@ -29,7 +30,9 @@ public abstract class Operator {
 		}
 		ps.close();
 	}
-	
+	public List<String> getUniqueSchema() {
+		return this.uniqueSchema;
+	}
 	public void dump(String filePath, String fileName) {
 		String out = filePath + fileName;
 		TupleWriter tw = new TupleWriter(out);

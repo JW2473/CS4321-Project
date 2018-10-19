@@ -53,6 +53,7 @@ public class DuplicateEliminationOperator extends Operator{
 			SortOperator sortOp = new InMemorySortOperator(op);
 			child = sortOp;
 		}
+		this.uniqueSchema = op.uniqueSchema;
 	}
 	
 }
