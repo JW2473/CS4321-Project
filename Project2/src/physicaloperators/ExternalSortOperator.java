@@ -40,18 +40,13 @@ public class ExternalSortOperator extends SortOperator{
 	private TupleReader tr = null;
 	private TupleWriter tw = null;
 	
-	public ExternalSortOperator(Operator op, List<OrderByElement> obe) {
+	public ExternalSortOperator(Operator op, List<?> obe) {
 		super(op, obe);
 		sort();
 	}
 	
 	public ExternalSortOperator(Operator op) {
 		super(op);
-		sort();
-	}
-
-	public ExternalSortOperator(Operator op, Column col) {
-		super(op, col);
 		sort();
 	}
 	

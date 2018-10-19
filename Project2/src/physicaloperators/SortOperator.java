@@ -41,11 +41,11 @@ public abstract class SortOperator extends Operator{
 	 * @param obe the list of OrderByElement
 	 * @param op the child operator
 	 */
-	public SortOperator(Operator op, List<OrderByElement> obe) {
+	public SortOperator(Operator op, List<?> obe) {
 		child = op;
 		try {
-			for (OrderByElement obelement : obe) {
-				Column col = (Column) obelement.getExpression();
+			for (Object obelement : obe) {
+				Column col = obelement instanceof OrderByElement ? (Column) ((OrderByElement) obelement).getExpression() : (Column) obelement;
 				orderBy.add(col);
 			}
 		} catch (Exception e) {
@@ -59,11 +59,6 @@ public abstract class SortOperator extends Operator{
 	 */
 	public SortOperator(Operator op) {
 		child = op;
-	}
-	
-	public SortOperator(Operator op, Column col) {
-		child = op;
-		orderBy.add(col);
 	}
 	
 	/*
