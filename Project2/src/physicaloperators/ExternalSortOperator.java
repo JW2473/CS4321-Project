@@ -35,27 +35,26 @@ public class ExternalSortOperator extends SortOperator{
 	private int tupleSize;
 	private int tuplePerFile;
 	private List<Tuple> tps = new LinkedList<>();
-	List<TupleReader> trs = new ArrayList<>();
-	List<Tuple> buff = new LinkedList<>();
+	private List<TupleReader> trs = new ArrayList<>();
+	private List<Tuple> buff = new LinkedList<>();
 	private TupleReader tr = null;
 	private TupleWriter tw = null;
 	
-	public ExternalSortOperator(Operator op, List<OrderByElement> obe) {
+	public ExternalSortOperator(Operator op, List<?> obe) {
 		super(op, obe);
+		this.uniqueSchema = op.uniqueSchema;
+		System.out.println("Unique Schema: " + this.uniqueSchema.toString());
+		System.out.println("Columns: " + obe.toString());
 		sort();
 	}
 	
 	public ExternalSortOperator(Operator op) {
 		super(op);
-		sort();
-	}
-
-	public ExternalSortOperator(Operator op, Column col) {
-		super(op, col);
+		this.uniqueSchema = op.uniqueSchema;
 		sort();
 	}
 	
-	public void sort() {
+	private void sort() {
 		ID = Catalog.sortID();
 		initialPass(orderBy);
 		totalPass = (int) Math.ceil((Math.log(totalCount / bufferSize / tuplePerPage) / Math.log(fanIn)));
@@ -69,7 +68,7 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 	
-	public void initialPass(List<Column> orderBy) {
+	private void initialPass(List<Column> orderBy) {
 		tempDir = Catalog.tempDir + "ExSort" + ID;
 		File tempPath = new File(tempDir);
 		tempPath.mkdirs();
@@ -197,10 +196,18 @@ public class ExternalSortOperator extends SortOperator{
 		
 	}
 
+	public List<Column> getColumns() {
+		return this.orderBy;
+	}
+	
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-		
+		tr.reset();
+	}
+	
+	public void reset(int index) {
+		tr.reset(index);
 	}
 	
 	private String getFileName(int pass, int run) {

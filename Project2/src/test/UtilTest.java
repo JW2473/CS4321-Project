@@ -144,10 +144,14 @@ public class UtilTest {
 	}
 	
 	@Test
+	public void ParseJoinTest() {
+		Catalog.getInstance();
+	}
+	@Test
 	public void ReaderTest() {
 		Catalog.getInstance();
-//		String filePath = Catalog.tempDir + "ExSort0/Pass2_0";
-		String filePath = Catalog.output + "query15";
+		String filePath = Catalog.tempDir + "ExSort1/Pass0_0";
+//		String filePath = Catalog.output + "query1";
 //		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Reserves";
 		File inputFile = new File(filePath);
 		TupleReader tr;
@@ -165,6 +169,7 @@ public class UtilTest {
 	@Test
 	public void newExeTest() {
 		Catalog.initialize("samples/input", "samples/output", "samples/temp");
+//		Catalog.initialize("/Users/cuiyixin/Desktop/Submission/p2_ckpt/input", "/Users/cuiyixin/Desktop/Submission/p2_ckpt/output", "/Users/cuiyixin/Desktop/Submission/p2_ckpt/temp");
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
@@ -176,9 +181,17 @@ public class UtilTest {
 					Select select = (Select) statement;
 					System.out.println(select.toString());
 					SelectParserTree spt = new SelectParserTree(select);
-					String filePath = Catalog.output;
-					String fileName = "query" + String.valueOf(count);
-					spt.root.dump(filePath, fileName);
+					
+//					System.out.println("Dumping binary file...");
+//					String filePath = Catalog.output;
+//					String fileName = "query" + String.valueOf(count);
+//					spt.root.dump(filePath, fileName);
+					
+					System.out.println("Dumping readiable file...");
+					PrintStream ps = null;
+					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
+					spt.root.dump(ps);
+					
 				} catch (Exception e) {	
 					e.printStackTrace();
 					System.err.println("Exception occurred during parsing");

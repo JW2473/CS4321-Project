@@ -4,13 +4,9 @@ import net.sf.jsqlparser.expression.Expression;
 import util.Tuple;
 
 public class TupleNestedLoopJoinOperator extends JoinOperator{
-
-	Tuple t1, t2;
 	
 	public TupleNestedLoopJoinOperator(Operator left, Operator right, Expression expr) {
 		super(left, right, expr);
-		t1 = left.getNextTuple();
-		t2 = right.getNextTuple();
 	}
 
 	@Override

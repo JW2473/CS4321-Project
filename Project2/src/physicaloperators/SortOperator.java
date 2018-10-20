@@ -1,5 +1,6 @@
 package physicaloperators;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -17,8 +18,7 @@ import util.Tuple;
  *and sort the tuple according to the OrderByElement
  */
 public abstract class SortOperator extends Operator{
-
-	Column col;
+	
 	Operator child;
 	List<Column> orderBy = new ArrayList<>();
 	
@@ -37,15 +37,21 @@ public abstract class SortOperator extends Operator{
 	public abstract void reset();
 	
 	/*
+	 * Set the index to a specified value so that it can return tuple from the specified location
+	 */
+	public abstract void reset(int index);
+	
+	/*
 	 * Create a SortOperator object with OrderByElements
 	 * @param obe the list of OrderByElement
 	 * @param op the child operator
 	 */
-	public SortOperator(Operator op, List<OrderByElement> obe) {
+	public SortOperator(Operator op, List<?> obe) {
 		child = op;
+		this.uniqueSchema = child.uniqueSchema;
 		try {
-			for (OrderByElement obelement : obe) {
-				Column col = (Column) obelement.getExpression();
+			for (Object obelement : obe) {
+				Column col = obelement instanceof OrderByElement ? (Column) ((OrderByElement) obelement).getExpression() : (Column) obelement;
 				orderBy.add(col);
 			}
 		} catch (Exception e) {
@@ -56,16 +62,11 @@ public abstract class SortOperator extends Operator{
 	/*
 	 * Create a ProjectOperator object without OrderByElements means sort the tuple by all schemas
 	 * @param op the child operator
-	 */
+	 */	
 	public SortOperator(Operator op) {
 		child = op;
 	}
-	
-	public SortOperator(Operator op, Column col) {
-		child = op;
-		orderBy.add(col);
-	}
-	
+
 	/*
 	 * tupleComp class implements Comparator interface and compare two tuples according to
 	 * OrderByElement and schemas

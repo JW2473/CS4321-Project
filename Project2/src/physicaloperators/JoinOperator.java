@@ -17,6 +17,7 @@ public abstract class JoinOperator extends Operator{
 	protected Operator left;
 	protected Operator right;
 	protected Expression expr;
+	protected Tuple t1, t2;
 	protected JoinExpVisitor jv = new JoinExpVisitor();
 	
 	/*
@@ -66,6 +67,13 @@ public abstract class JoinOperator extends Operator{
 		this.left = left;
 		this.right = right;
 		this.expr = expr;
+		t1 = left.getNextTuple();
+		t2 = right.getNextTuple();
+		
+
+		this.uniqueSchema = new ArrayList<>();
+		uniqueSchema.addAll(left.uniqueSchema);
+		uniqueSchema.addAll(right.uniqueSchema);
 	}
 
 }
