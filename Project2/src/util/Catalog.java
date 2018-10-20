@@ -53,9 +53,11 @@ public class Catalog {
 	
 	/*
 	 * Initialize the Catalog with the new input address and output address
+	 * and temp directory address. It also processes the config file
 	 * Read the schema data from file and save data in a map
 	 * @param input user specified input address
 	 * @param output user specified output address
+	 * @param tempDir the temp dirctory address
 	 */
 	public static void initialize(String input, String output, String tempDir) {
 		if (!input.isEmpty()) {
@@ -96,12 +98,6 @@ public class Catalog {
 			String[] joinMethod = in.nextLine().split(" ");
 			Catalog.joinBuffer = joinMethod.length == 2 ? Catalog.joinBuffer = Integer.valueOf(joinMethod[1]) : 0;
 			Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
-//			if (joinMethod.length == 2) {
-//				Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
-//				Catalog.joinBuffer = Integer.valueOf(joinMethod[1]);
-//			}else {
-//				Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
-//			}
 			String[] sortMethod = in.nextLine().split(" ");
 			if (sortMethod.length == 2) {
 				Catalog.sortConfig = 1;
@@ -148,16 +144,6 @@ public class Catalog {
 	}
 	
 	/*
-	 * Get the index of the specified column in the specified table
-	 * @param tableName the name of the table
-	 * @param schemaName the name of the schema
-	 * @return the index of the column
-	 */
-	public static int getIndex(String tableName, String schemaName) {
-		return schema_map.get(tableName).indexOf(schemaName);
-	}
-	
-	/*
 	 * Get the original table name from the alias
 	 * @param alias the alias of the table
 	 * @return the full table name
@@ -198,8 +184,11 @@ public class Catalog {
 		uniqueAliases.clear();
 	}
 	
+	/**
+	 * Get the number of external sort
+	 * @return the number of external sort
+	 */
 	public static int sortID() {
 		return ID++;
-		
 	}
 }

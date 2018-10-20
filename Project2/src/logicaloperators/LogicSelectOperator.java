@@ -1,7 +1,6 @@
 package logicaloperators;
 
 import net.sf.jsqlparser.expression.Expression;
-import physicaloperators.Operator;
 import visitor.PhysicalPlanBuilder;
 
 public class LogicSelectOperator extends LogicOperator{

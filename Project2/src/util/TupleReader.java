@@ -11,6 +11,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * Read tuples from binary file using NIO
+ *
+ */
 public class TupleReader {
 	private FileInputStream fin;
 	private FileChannel fc;
@@ -25,6 +32,10 @@ public class TupleReader {
 	private int pageSize = Catalog.pageSize;
 	private List<Integer> totalCount = new ArrayList<>();
 	
+	/**
+	 * Read tuples from an original table
+	 * @param tableName the name of original table
+	 */
 	public TupleReader(String tableName) {
 		tableFile = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + tableName;
 		try {
@@ -39,6 +50,11 @@ public class TupleReader {
 		}
 	}
 	
+	/**
+	 * Read tuples from a file
+	 * @param file the file to be read
+	 * @throws FileNotFoundException
+	 */
 	public TupleReader(File file) throws FileNotFoundException {
 		this.file = file;
 		fin = new FileInputStream(file);
@@ -48,6 +64,10 @@ public class TupleReader {
 		readPage();
 	}
 	
+	/**
+	 * Fetch the next page in the table
+	 * @return whether the reader reaches the end of the file
+	 */
 	private boolean readPage() {
 		try {
 			clearBuffer();
@@ -66,15 +86,26 @@ public class TupleReader {
 			return false;
 		}
 	}
-	
+	/**
+	 * Return the number of attributes of the tuple in the page
+	 * @return the number of attributes
+	 */
 	public int getAttrNum() {
 		return numAttr;
 	}
 	
+	/**
+	 * Return the number of tuples in a page
+	 * @return the number of tuples
+	 */
 	public int getSize() {
 		return this.size;
 	}
 	
+	/**
+	 * Get the tuple value from the buffer
+	 * @return the array contains values of the tuple
+	 */
 	public long[] nextTuple() {
 		long[] val = new long[numAttr];
 		if (index < buffer.capacity() && count < size) {
@@ -93,6 +124,9 @@ public class TupleReader {
 		return null;
 	}
 	
+	/**
+	 * Close the tuple reader
+	 */
 	public void close() {
 		try {
 			index = 0;
@@ -109,6 +143,9 @@ public class TupleReader {
 		}
 	}
 	
+	/**
+	 * Reset the tuple reader to the beginning
+	 */
 	public void reset() {
 		try {
 			close();
@@ -123,6 +160,10 @@ public class TupleReader {
 		}
 	}
 	
+	/**
+	 * Reset the tuple reader to a specified index
+	 * @param index the index we want to go
+	 */
 	public void reset(int index) {
 		int pageNum = Collections.binarySearch(totalCount, new Integer(index));
 		pageNum = pageNum >= 0 ? pageNum : -(pageNum + 1) - 1;
@@ -138,12 +179,19 @@ public class TupleReader {
 		buffer.position(this.index);
 	}
 	
+	/**
+	 * Fill buffer with 0
+	 */
 	private void clearBuffer() {
 		buffer.clear();
 		buffer.put(new byte[pageSize]);
 		buffer.clear();
 	}
 	
+	/**
+	 * Convert binary file to readable file for debugging
+	 * @param outputFile the output file
+	 */
 	public void convertToReadableFile(String outputFile) {
 		reset();
 		long[] val = nextTuple();

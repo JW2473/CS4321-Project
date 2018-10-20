@@ -20,7 +20,7 @@ public class Tuple {
 	int size;
 	String uniqueName;
 
-	/*
+	/**
 	 * Create a new tuple from an original table in the db directory
 	 * @param val the array of tuple data as string
 	 * @param uniqueName the unique identity name of the table
@@ -39,7 +39,7 @@ public class Tuple {
 		}
 	}
 	
-	/*
+	/**
 	 * Create a new tuple from a returned long value list and its corresponding schemas list
 	 * It maps from column reference to indexes by using the hashmap
 	 * @param value the list of the tuple's data returned by another operator
@@ -55,6 +55,13 @@ public class Tuple {
 		}
 	}
 	
+	/**
+	 * Create a new tuple from a returned long value list and its corresponding schemas list
+	 * It maps from column reference to indexes by using the hashmap
+	 * @param value the list of the tuple's data returned by another operator
+	 * @param schemas the list of schemas returned by another operator
+	 * @return the newly created tuple that has been processed by the operator
+	 */
 	public Tuple(long[] value, List<String> schemas) {
 		this.uniqueName = null;
 		size = value.length;

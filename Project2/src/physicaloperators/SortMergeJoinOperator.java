@@ -8,6 +8,13 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import util.Tuple;
 
+
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * SortMergeJoinOperator join two relations by using SMJ 
+ *
+ */
 public class SortMergeJoinOperator extends JoinOperator{
 
 	private List<Column> rightColumns;
@@ -16,6 +23,14 @@ public class SortMergeJoinOperator extends JoinOperator{
 	private int index = 0;
 	private int startIndex;
 	
+	/**
+	 * Create a SMJ operator and initialize it
+	 * @param left the left child operator
+	 * @param right the right child operator
+	 * @param expr the join condition
+	 * @param leftColumns the columns used to compare tuples
+	 * @param rightColumns the columns used to compare tuples
+	 */
 	public SortMergeJoinOperator(Operator left, Operator right, Expression expr, List<Column> leftColumns, List<Column> rightColumns) {
 		super(left, right, expr);
 		t1 = left.getNextTuple();
@@ -25,6 +40,10 @@ public class SortMergeJoinOperator extends JoinOperator{
 		tc = new tupleComp(this.leftColumns, this.rightColumns);
 	}
 
+	/**
+	 * return the next tuple after join
+	 * @return the next tuple 
+	 */
 	@Override
 	public Tuple getNextTuple() {
 		Tuple t = null;
@@ -55,6 +74,9 @@ public class SortMergeJoinOperator extends JoinOperator{
 		return null;
 	}
 
+	/**
+	 * Set tuples to the next pair from two relations
+	 */
 	@Override
 	public void nextPair() {
 		t2 = right.getNextTuple();
@@ -67,12 +89,25 @@ public class SortMergeJoinOperator extends JoinOperator{
 			index = startIndex;
 		}
 	}
-	
+
+/**
+ * 
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * The class that used to compare two tuples with given columns
+ *
+ */
 public class tupleComp implements Comparator<Tuple> {
 		
 		List<Column> leftColumns = new ArrayList<>();
 		List<Column> rightColumns = new ArrayList<>();
 
+		/**
+		 * compare two tuples with given columns
+		 * @param o1 the first tuple
+		 * @param o2 the second tuple
+		 * @return the compare result
+		 */
 		@Override
 		public int compare(Tuple o1, Tuple o2) {
 			for (int i = 0; i < leftColumns.size(); i++) {
@@ -83,6 +118,11 @@ public class tupleComp implements Comparator<Tuple> {
 			return 0;
 		}
 		
+		/**
+		 * Create the compare object and set the columns
+		 * @param leftColumns columns used to compare in the left tuple
+		 * @param rightColumns columns used to compare in the right tuple
+		 */
 		public tupleComp(List<Column> leftColumns, List<Column> rightColumns) {
 			this.leftColumns = leftColumns;
 			this.rightColumns = rightColumns;

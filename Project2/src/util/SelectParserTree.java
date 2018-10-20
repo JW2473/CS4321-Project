@@ -8,13 +8,7 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
-import physicaloperators.DuplicateEliminationOperator;
-import physicaloperators.JoinOperator;
 import physicaloperators.Operator;
-import physicaloperators.ProjectOperator;
-import physicaloperators.ScanOperator;
-import physicaloperators.SelectOperator;
-import physicaloperators.SortOperator;
 import visitor.PhysicalPlanBuilder;
 
 import java.util.*;

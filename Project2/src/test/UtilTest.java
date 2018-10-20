@@ -168,8 +168,8 @@ public class UtilTest {
 	
 	@Test
 	public void newExeTest() {
-		Catalog.initialize("samples/input", "samples/output", "samples/temp");
-//		Catalog.initialize("/Users/cuiyixin/Desktop/Submission/p2_ckpt/input", "/Users/cuiyixin/Desktop/Submission/p2_ckpt/output", "/Users/cuiyixin/Desktop/Submission/p2_ckpt/temp");
+//		Catalog.initialize("samples/input", "samples/output", "samples/temp");
+		Catalog.initialize("/Users/cuiyixin/Desktop/Submission/p2/input", "/Users/cuiyixin/Desktop/Submission/p2/output", "/Users/cuiyixin/Desktop/Submission/p2/temp");
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
@@ -182,15 +182,15 @@ public class UtilTest {
 					System.out.println(select.toString());
 					SelectParserTree spt = new SelectParserTree(select);
 					
-//					System.out.println("Dumping binary file...");
-//					String filePath = Catalog.output;
-//					String fileName = "query" + String.valueOf(count);
-//					spt.root.dump(filePath, fileName);
+					System.out.println("Dumping binary file...");
+					String filePath = Catalog.output;
+					String fileName = "query" + String.valueOf(count);
+					spt.root.dump(filePath, fileName);
 					
-					System.out.println("Dumping readiable file...");
-					PrintStream ps = null;
-					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
-					spt.root.dump(ps);
+//					System.out.println("Dumping readiable file...");
+//					PrintStream ps = null;
+//					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
+//					spt.root.dump(ps);
 					
 				} catch (Exception e) {	
 					e.printStackTrace();
@@ -199,7 +199,6 @@ public class UtilTest {
 				}finally {
 					count++;
 					Catalog.resetAlias();
-					
 				}
 			}
 		} catch (Exception e) {

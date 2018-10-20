@@ -3,8 +3,6 @@ package visitor;
 import java.util.*;
 
 import logicaloperators.*;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import physicaloperators.BlockNestedJoinOperator;
 import physicaloperators.DuplicateEliminationOperator;
@@ -84,7 +82,6 @@ public class PhysicalPlanBuilder {
 					p.left = new ExternalSortOperator(p.left,m.get("left"));
 					p.right = new ExternalSortOperator(p.right,m.get("right"));
 				}
-//				op = new TupleNestedLoopJoinOperator(p.left,p.right,ljo.getExpr());
 				op = new SortMergeJoinOperator(p.left, p.right, ljo.getExpr(), m.get("left"), m.get("right"));
 				break;
 			default:

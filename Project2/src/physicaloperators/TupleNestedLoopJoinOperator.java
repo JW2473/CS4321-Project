@@ -5,12 +5,21 @@ import util.Tuple;
 
 public class TupleNestedLoopJoinOperator extends JoinOperator{
 	
+	/**
+	 * Create the TNLJ operator
+	 * @param left the left child operator
+	 * @param right the right child operator
+	 * @param expr the join condition
+	 */
 	public TupleNestedLoopJoinOperator(Operator left, Operator right, Expression expr) {
 		super(left, right, expr);
 		t1 = left.getNextTuple();
 		t2 = right.getNextTuple();
 	}
 
+	/**
+	 * Set the tuples to next pair from the two relations
+	 */
 	@Override
 	public void nextPair() {
 		if (t1 == null) return;
@@ -22,6 +31,10 @@ public class TupleNestedLoopJoinOperator extends JoinOperator{
 		}
 	}
 
+	/**
+	 * Get next tuple after join
+	 * @return the next tuple
+	 */
 	@Override
 	public Tuple getNextTuple() {
 		Tuple t = null;

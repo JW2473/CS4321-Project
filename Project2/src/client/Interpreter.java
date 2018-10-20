@@ -1,6 +1,5 @@
 package client;
 
-import java.io.File;
 import java.io.PrintStream;
 
 import net.sf.jsqlparser.parser.CCJSqlParser;
@@ -63,6 +62,7 @@ public class Interpreter {
 		} finally {
 			Catalog.resetAlias();
 			Catalog.schema_map.clear();
+			
 		}
 	}
 

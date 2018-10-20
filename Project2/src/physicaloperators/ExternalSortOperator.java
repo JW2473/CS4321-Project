@@ -10,12 +10,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.select.OrderByElement;
 import util.Catalog;
 import util.Tuple;
 import util.TupleReader;
 import util.TupleWriter;
 
+
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * ExternalSortOperator sort tables by creating intermediate files to keep 
+ * the partial sorted runs which are pending a merge in the next pass
+ * 
+ */
 public class ExternalSortOperator extends SortOperator{
 
 	private int bufferSize = Catalog.sortBuffer;
@@ -40,20 +47,32 @@ public class ExternalSortOperator extends SortOperator{
 	private TupleReader tr = null;
 	private TupleWriter tw = null;
 	
+	/*
+	 * Create the externalsortoperator with a list of orders
+	 * @param op the child operator
+	 * @param obe the column list contains orders
+	 */
 	public ExternalSortOperator(Operator op, List<?> obe) {
 		super(op, obe);
 		this.uniqueSchema = op.uniqueSchema;
-		System.out.println("Unique Schema: " + this.uniqueSchema.toString());
-		System.out.println("Columns: " + obe.toString());
+//		System.out.println("Unique Schema: " + this.uniqueSchema.toString());
+//		System.out.println("Columns: " + obe.toString());
 		sort();
 	}
 	
+	/*
+	 * Create the externalsortoperator that sorts by every column
+	 * @param op the child operator
+	 */
 	public ExternalSortOperator(Operator op) {
 		super(op);
 		this.uniqueSchema = op.uniqueSchema;
 		sort();
 	}
 	
+	/*
+	 * sort method sort the table
+	 */
 	private void sort() {
 		ID = Catalog.sortID();
 		initialPass(orderBy);
@@ -68,6 +87,10 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 	
+	/*
+	 * The initial pass takes all buffers to sort table into partial sorted runs
+	 * @param orderBy the column list contains orders
+	 */
 	private void initialPass(List<Column> orderBy) {
 		tempDir = Catalog.tempDir + "ExSort" + ID;
 		File tempPath = new File(tempDir);
@@ -101,6 +124,10 @@ public class ExternalSortOperator extends SortOperator{
 		numRun = outputRun;
 	}
 	
+	/*
+	 * The merge pass merge partial sorted runs
+	 * @param orderBy the column list contains orders
+	 */
 	private void mergePass(List<Column> orderBy) {
 		tuplePerFile *= fanIn;
 		while (inputRun <= numRun) {
@@ -131,6 +158,10 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 	
+	/*
+	 * Get the minimum tuple from current buffers
+	 * @return the minimum tuple
+	 */
 	private Tuple popMin() {
 		Tuple min = tps.get(0);
 		int minTr = 0;
@@ -155,6 +186,10 @@ public class ExternalSortOperator extends SortOperator{
 		return ret;
 	}
 	
+	/*
+	 * Put the minimum tuple in the output buffer
+	 * @param the minimum tuple that need to be stored in the output buffer
+	 */
 	private void fillBuffer(Tuple currMin) {
 		buff.add(currMin);
 		tupleCount++;
@@ -164,6 +199,10 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 	
+	/*
+	 * Write the tuples in the buffer into output file
+	 * @param buff the output buffer
+	 */
 	private void writeTuples(List<Tuple> buff) {
 		tw = (tw == null) ? new TupleWriter(tempDir + getFileName(outputPass, outputRun)) : tw;
 		for (Tuple tp : buff) {
@@ -181,6 +220,10 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 
+	/*
+	 * Return the next tuple in the sorted file
+	 * @return the next tuple
+	 */
 	@Override
 	public Tuple getNextTuple() {
 		try {
@@ -195,21 +238,29 @@ public class ExternalSortOperator extends SortOperator{
 		return null;
 		
 	}
-
-	public List<Column> getColumns() {
-		return this.orderBy;
-	}
 	
+	/*
+	 * Reset the operator
+	 */
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
 		tr.reset();
 	}
 	
+	/*
+	 * Reset the operator to a specified index
+	 * @param index the index we want to go
+	 */
 	public void reset(int index) {
 		tr.reset(index);
 	}
 	
+	/*
+	 * Generate the name of the output file
+	 * @param pass the pass number
+	 * @param run the run number
+	 */
 	private String getFileName(int pass, int run) {
 		return File.separator + "Pass" + pass + "_" + (run);
 	}
