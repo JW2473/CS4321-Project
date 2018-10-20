@@ -1,5 +1,6 @@
 package physicaloperators;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -34,6 +35,11 @@ public abstract class SortOperator extends Operator{
 	 */
 	@Override
 	public abstract void reset();
+	
+	/*
+	 * Set the index to a specified value so that it can return tuple from the specified location
+	 */
+	public abstract void reset(int index);
 	
 	/*
 	 * Create a SortOperator object with OrderByElements

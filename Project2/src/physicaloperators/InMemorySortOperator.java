@@ -34,7 +34,7 @@ public class InMemorySortOperator extends SortOperator{
   
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
+		
 		index = 0;
 	}
 
@@ -42,6 +42,11 @@ public class InMemorySortOperator extends SortOperator{
 	public Tuple getNextTuple() {
 		if (index < tps.size()) return tps.get(index++);
 		return null;
+	}
+
+	@Override
+	public void reset(int index) {
+		this.index = index;
 	}
 	
 	

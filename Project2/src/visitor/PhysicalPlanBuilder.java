@@ -14,6 +14,7 @@ import physicaloperators.Operator;
 import physicaloperators.ProjectOperator;
 import physicaloperators.ScanOperator;
 import physicaloperators.SelectOperator;
+import physicaloperators.SortMergeJoinOperator;
 import physicaloperators.TupleNestedLoopJoinOperator;
 import util.Catalog;
 import util.ParseWhere;;
@@ -83,12 +84,8 @@ public class PhysicalPlanBuilder {
 					p.left = new ExternalSortOperator(p.left,m.get("left"));
 					p.right = new ExternalSortOperator(p.right,m.get("right"));
 				}
-				op = new TupleNestedLoopJoinOperator(p.left,p.right,ljo.getExpr());
-//				EqualsTo exp = (EqualsTo)(ljo.getExpr());
-//				Column left = (Column)(exp.getLeftExpression());
-//				
-//				EqualsTo exp1 = (EqualsTo)(ljo.getExpr());
-//				Column right = (Column)(exp.getLeftExpression());
+//				op = new TupleNestedLoopJoinOperator(p.left,p.right,ljo.getExpr());
+				op = new SortMergeJoinOperator(p.left, p.right, ljo.getExpr(), m.get("left"), m.get("right"));
 				break;
 			default:
 				throw new UnsupportedException();			
