@@ -18,6 +18,8 @@ public class SortMergeJoinOperator extends JoinOperator{
 	
 	public SortMergeJoinOperator(Operator left, Operator right, Expression expr, List<Column> leftColumns, List<Column> rightColumns) {
 		super(left, right, expr);
+		t1 = left.getNextTuple();
+		t2 = right.getNextTuple();
 		this.leftColumns = leftColumns;
 		this.rightColumns = rightColumns;
 		tc = new tupleComp(this.leftColumns, this.rightColumns);

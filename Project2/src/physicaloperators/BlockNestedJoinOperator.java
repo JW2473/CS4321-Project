@@ -62,6 +62,7 @@ public class BlockNestedJoinOperator extends JoinOperator{
 			if( t2  != null ) {
 				id = 0;
 				t1 = getTuple();
+				id++;
 				return;
 			}
 		}
@@ -73,9 +74,9 @@ public class BlockNestedJoinOperator extends JoinOperator{
 	public BlockNestedJoinOperator(Operator left, Operator right, Expression expr) {
 		super(left, right, expr);
 		int tuplesize = left.getUniqueSchema().size() * 4;
-		blocksize = Catalog.joinBuffer * ( (Catalog.pageSize-8)/tuplesize );
+		blocksize = Catalog.joinBuffer * ( (Catalog.pageSize)/tuplesize );
 		System.out.println("blocksize:"+blocksize);
-		block = new ArrayList<>(blocksize);
+		block = new ArrayList<>();
 		nextPair();
 	}
 }

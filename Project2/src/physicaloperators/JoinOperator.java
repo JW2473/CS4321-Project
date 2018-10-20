@@ -67,9 +67,6 @@ public abstract class JoinOperator extends Operator{
 		this.left = left;
 		this.right = right;
 		this.expr = expr;
-		t1 = left.getNextTuple();
-		t2 = right.getNextTuple();
-		
 
 		this.uniqueSchema = new ArrayList<>();
 		uniqueSchema.addAll(left.uniqueSchema);

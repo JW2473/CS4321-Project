@@ -7,6 +7,8 @@ public class TupleNestedLoopJoinOperator extends JoinOperator{
 	
 	public TupleNestedLoopJoinOperator(Operator left, Operator right, Expression expr) {
 		super(left, right, expr);
+		t1 = left.getNextTuple();
+		t2 = right.getNextTuple();
 	}
 
 	@Override
