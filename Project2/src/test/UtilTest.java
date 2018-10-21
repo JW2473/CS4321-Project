@@ -48,6 +48,7 @@ public class UtilTest {
 		System.err.println("Exception occurred during parsing");
 		e.printStackTrace();
 		}
+
 	}
 	
 	@Test
@@ -111,7 +112,7 @@ public class UtilTest {
 	
 	@Test
 	public void ExeTest() {
-		Catalog.initialize("samples/input2", "samples/output2", "samples/temp");
+		Catalog.initialize("samples/test_input", "samples/output2", "samples/temp");
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
@@ -168,12 +169,13 @@ public class UtilTest {
 	
 	@Test
 	public void newExeTest() {
-//		Catalog.initialize("samples/input", "samples/output", "samples/temp");
-		Catalog.initialize("/Users/cuiyixin/Desktop/Submission/p2/input", "/Users/cuiyixin/Desktop/Submission/p2/output", "/Users/cuiyixin/Desktop/Submission/p2/temp");
+		Catalog.initialize("samples/test_input", "samples/output", "samples/temp");
+//		Catalog.initialize("/Users/cuiyixin/Desktop/Submission/p2/input", "/Users/cuiyixin/Desktop/Submission/p2/output", "/Users/cuiyixin/Desktop/Submission/p2/temp");
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
 		int count = 1;
+		long startTime = System.currentTimeMillis();
 		try {
 			while ( (statement = parser.Statement()) != null ) {	
 				Catalog.resetAlias();
@@ -205,5 +207,7 @@ public class UtilTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		System.out.println("Elapsed Time is: " + elapsedTime);
 	}
 }

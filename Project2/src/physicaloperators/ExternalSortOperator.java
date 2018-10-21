@@ -76,7 +76,7 @@ public class ExternalSortOperator extends SortOperator{
 	private void sort() {
 		ID = Catalog.sortID();
 		initialPass(orderBy);
-		totalPass = (int) Math.ceil((Math.log(totalCount / bufferSize / tuplePerPage) / Math.log(fanIn)));
+		totalPass = (int) Math.ceil((Math.log(Math.ceil((double) Math.ceil(totalCount / tuplePerPage) / bufferSize)) / Math.log(fanIn)));
 		while (inputPass < totalPass) {
 			inputRun = 0;
 			outputRun = 0;

@@ -172,7 +172,7 @@ public class TupleReader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		totalCount = totalCount.subList(0, pageNum + 1);
+		totalCount = new ArrayList<Integer>(totalCount.subList(0, pageNum + 1));
 		readPage();
 		count = index - totalCount.get(pageNum);
 		this.index = count * numAttr * 4 + 8;

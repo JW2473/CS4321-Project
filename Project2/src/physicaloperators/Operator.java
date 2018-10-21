@@ -47,7 +47,7 @@ public abstract class Operator {
 	 * @param filename the name of the file
 	 */
 	public void dump(String filePath, String fileName) {
-		long startTime = System.currentTimeMillis();
+		
 		String out = filePath + fileName;
 		TupleWriter tw = new TupleWriter(out);
 		try {
@@ -60,7 +60,6 @@ public abstract class Operator {
 			e.printStackTrace();
 		}
 		tw.close();
-		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.println("Elapsed Time is: " + elapsedTime);
+
 	}
 }
