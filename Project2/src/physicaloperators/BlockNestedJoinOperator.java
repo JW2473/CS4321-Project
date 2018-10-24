@@ -5,7 +5,12 @@ import java.util.*;
 import net.sf.jsqlparser.expression.Expression;
 import util.Catalog;
 import util.Tuple;
-
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * BlockedNestedJoinOperator join two relations by using BNLJ
+ *
+ */
 public class BlockNestedJoinOperator extends JoinOperator{
 	
 	List<Tuple> block = null;
@@ -13,6 +18,9 @@ public class BlockNestedJoinOperator extends JoinOperator{
 	int id = 0;
 	Tuple t1,t2;
 	
+	/**
+	 * read the tuples from the left operator into the block
+	 */
 	private void readBlock() {
 		block.clear();
 		int count = 0;
@@ -21,15 +29,23 @@ public class BlockNestedJoinOperator extends JoinOperator{
 			block.add(tp);
 			count++;
 		}
-//		System.out.println("tuple number:"+block.size());
 		id = 0;
 		t1 = getTuple();
 		id++;
 	}
 	
+	/**
+	 * get the Tuple from the block
+	 * @return the No.id Tuple in the block
+	 */
 	private Tuple getTuple() {
 		return id < block.size() ? block.get(id) : null;
 	}
+	
+	/**
+	 * Get next tuple after join
+	 * @return the next tuple
+	 */
 	@Override
 	public Tuple getNextTuple() {
 		Tuple t = null;
@@ -49,7 +65,10 @@ public class BlockNestedJoinOperator extends JoinOperator{
 		return null;
 		
 	}
-
+	
+	/**
+	 * Set the tuples to next pair from the two relations
+	 */
 	@Override
 	public void nextPair() {
 		// TODO Auto-generated method stub
@@ -71,6 +90,12 @@ public class BlockNestedJoinOperator extends JoinOperator{
 		t2 = right.getNextTuple();				
 	}
 	
+	/**
+	 * Create the BNLJ operator
+	 * @param left the left child operator
+	 * @param right the right child operator
+	 * @param expr the join condition
+	 */
 	public BlockNestedJoinOperator(Operator left, Operator right, Expression expr) {
 		super(left, right, expr);
 		int tuplesize = left.getUniqueSchema().size() * 4;

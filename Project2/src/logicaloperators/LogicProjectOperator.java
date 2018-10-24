@@ -4,7 +4,12 @@ import java.util.List;
 
 import net.sf.jsqlparser.statement.select.SelectItem;
 import visitor.PhysicalPlanBuilder;
-
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ *  Logic project Operator class
+ *
+ */
 public class LogicProjectOperator extends LogicOperator {
 	
 	LogicOperator child;

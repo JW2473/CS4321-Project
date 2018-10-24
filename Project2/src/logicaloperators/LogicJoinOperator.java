@@ -2,7 +2,12 @@ package logicaloperators;
 
 import net.sf.jsqlparser.expression.Expression;
 import visitor.PhysicalPlanBuilder;
-
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ *  Logic Join Operator class
+ *
+ */
 public class LogicJoinOperator extends LogicOperator {
 	
 	LogicOperator left;

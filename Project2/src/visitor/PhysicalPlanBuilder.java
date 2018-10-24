@@ -17,25 +17,44 @@ import physicaloperators.TupleNestedLoopJoinOperator;
 import util.Catalog;
 import util.ParseWhere;;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * build the physical plan using visitor pattern
+ *
+ */
 public class PhysicalPlanBuilder {
 	
 	Operator op;
+	
+	/**
+	 * Get the physical scan operator
+	 */
 	public void visit(LogicScanOperator scanop) {
 		op = new ScanOperator(scanop.mt);
 	}
 	
+	/**
+	 * Get the physical selection operator
+	 */
 	public void visit(LogicSelectOperator selop) {
 		op = null;
 		selop.getChild().accept(this);
 		op = new SelectOperator(op, selop.getExpr());
 	}
 	
+	/**
+	 * Get the physical project operator
+	 */
 	public void visit(LogicProjectOperator lpo) {
 		op = null;
 		lpo.getChild().accept(this);
 		op = new ProjectOperator(lpo.getSi(), op);
 	}
 	
+	/**
+	 * Get the physical sort operator
+	 */
 	public void visit(LogicSortOperator sortop) {
 		op = null;
 		sortop.getChild().accept(this);
@@ -51,12 +70,18 @@ public class PhysicalPlanBuilder {
 		}
 	}
 	
+	/**
+	 * Get the physical distinct operator
+	 */
 	public void visit(LogicDuplicateEliminationOperator ldeo) {
 		op = null;
 		ldeo.getChild().accept(this);
 		op = new DuplicateEliminationOperator(op);
 	}
 	
+	/**
+	 * Get the physical join operator
+	 */
 	public void visit(LogicJoinOperator ljo) {
 		pair p = new pair();
 		op = null;
@@ -68,7 +93,6 @@ public class PhysicalPlanBuilder {
 		switch (Catalog.joinConfig) {
 			case Catalog.TNLJ:
 				op = new TupleNestedLoopJoinOperator(p.left,p.right,ljo.getExpr());
-//				System.out.println(ljo.getExpr().toString());
 				break;
 			case Catalog.BNLJ:
 				op = new BlockNestedJoinOperator(p.left, p.right, ljo.getExpr());
@@ -88,14 +112,21 @@ public class PhysicalPlanBuilder {
 				throw new UnsupportedException();			
 		}
 	}
-
+	/**
+	 * Get the final operator
+	 */
 	public Operator getOp() {
 		return op;
 	}
 
 
 }
-
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * create a pair the class for storing the left operator and right operator for binary operators
+ *
+ */
 class pair {
 	Operator left;
 	Operator right;
