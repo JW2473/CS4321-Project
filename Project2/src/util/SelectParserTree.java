@@ -36,27 +36,6 @@ public class SelectParserTree {
 	 * build the operator tree
 	 */
 	private void buildTree() {
-		/*
-		Operator op = new ScanOperator(new MyTable(from_map.get(froms.get(0))));
-		if((pw.getSelExp(froms.get(0)))!=null)
-			op = new SelectOperator(op,pw.getSelExp(froms.get(0)));
-		for ( int i = 1; i < froms.size(); i++ ) {
-			String name = froms.get(i);
-			FromItem temp = from_map.get(name);
-			Operator temp_op = new ScanOperator(new MyTable(temp));
-			Expression selExp = pw.getSelExp(name);
-			if(selExp!=null)
-				temp_op = new SelectOperator(temp_op, selExp);
-			Expression joinExp = pw.getJoinExp(name);
-			op = new JoinOperator(op, temp_op, joinExp);
-		}
-		op = new ProjectOperator(selItems, op);
-		if( orders != null )
-			op = new SortOperator(op, orders);
-		if( delDup != null )
-			op = new DuplicateEliminationOperator(op);
-		this.root = op;
-		*/
 		LogicOperator op = new LogicScanOperator(new MyTable(from_map.get(froms.get(0))));
 		if((pw.getSelExp(froms.get(0)))!=null)
 			op = new LogicSelectOperator(op,pw.getSelExp(froms.get(0)));

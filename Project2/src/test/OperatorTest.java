@@ -10,7 +10,6 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import physicaloperators.ExternalSortOperator;
-import physicaloperators.InMemorySortOperator;
 import physicaloperators.ScanOperator;
 import physicaloperators.SortOperator;
 import util.Catalog;

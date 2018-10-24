@@ -1,8 +1,6 @@
 package test;
 
 import java.util.ArrayList;
-import java.util.Random;
-
 import org.junit.Test;
 
 import util.Tuple;
