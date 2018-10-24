@@ -169,8 +169,8 @@ public class UtilTest {
 	
 	@Test
 	public void newExeTest() {
-		Catalog.initialize("samples/test_input", "samples/output", "samples/temp");
-//		Catalog.initialize("/Users/cuiyixin/Desktop/Submission/p2/input", "/Users/cuiyixin/Desktop/Submission/p2/output", "/Users/cuiyixin/Desktop/Submission/p2/temp");
+//		Catalog.initialize("samples/test_input", "samples/output", "samples/temp");
+		Catalog.initialize("/Users/cuiyixin/Desktop/Submission/p2/input", "/Users/cuiyixin/Desktop/Submission/p2/output", "/Users/cuiyixin/Desktop/Submission/p2/temp");
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;

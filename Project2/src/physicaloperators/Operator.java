@@ -50,8 +50,10 @@ public abstract class Operator {
 		
 		String out = filePath + fileName;
 		TupleWriter tw = new TupleWriter(out);
+		boolean flag = false;
 		try {
 			Tuple curr = getNextTuple();
+			if(curr != null) flag = true;
 			while (curr != null) {
 				tw.writeTuple(curr);
 				curr = getNextTuple();
@@ -59,7 +61,6 @@ public abstract class Operator {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		tw.close();
-
+		if(flag) tw.close();
 	}
 }

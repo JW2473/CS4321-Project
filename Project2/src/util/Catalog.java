@@ -115,7 +115,7 @@ public class Catalog {
 	 * @return the FileReader of the query file
 	 */
 	public static FileReader getQueryFiles() {
-		String query = Catalog.input + File.separator + "queries3.sql";
+		String query = Catalog.input + File.separator + "queries.sql";
 		try {
 			return new FileReader(query);
 		} catch (FileNotFoundException e) {

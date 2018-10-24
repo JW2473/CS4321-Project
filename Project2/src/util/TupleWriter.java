@@ -40,7 +40,10 @@ public class TupleWriter {
 	}
 	
 	public void writeTuple(Tuple t) throws IOException {
-		if( t == null ) buffer.putInt(4, size);
+		if( t == null ) {
+			buffer.putInt(4, size);
+			return;
+		}
 		boolean insertFlag = true;
 		while(insertFlag)
 			switch (state) {
