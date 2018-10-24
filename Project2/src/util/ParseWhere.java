@@ -35,7 +35,13 @@ public class ParseWhere {
 		res.add(exp);
 		return res;
 	}
-	
+	/*
+	 * pares the join condition allocate the expression to the left operator and right operator
+	 * @param left left operator
+	 * @param right right operator
+	 * @param joinCon
+	 * @return the map contains the list of columns for each operator.
+	 */
 	public static Map<String,List<Column>> parseJoin(Operator left, Operator right, Expression joinCon) {
 		Map<String,List<Column>> res = new HashMap<>();
 		res.put("left", new ArrayList<Column>());

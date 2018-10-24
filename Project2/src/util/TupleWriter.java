@@ -7,6 +7,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * Write tuples to a file in binary
+ *
+ */
 public class TupleWriter {
 	FileOutputStream fout = null;
 	FileChannel fc;
@@ -23,6 +29,10 @@ public class TupleWriter {
 		START, CHGPAGE, INSERT;
 	}
 	
+	/**
+	 * Write tuples to a file under the path provided
+	 * @param filePath the path you want to output
+	 */
 	public TupleWriter(String filePath) {
 		File f = new File(filePath);
 		try {
@@ -38,7 +48,10 @@ public class TupleWriter {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Write tuple to the file
+	 * @param t the tuple you want to write to the file
+	 */
 	public void writeTuple(Tuple t) throws IOException {
 		if( t == null ) {
 			buffer.putInt(4, size);
@@ -80,7 +93,9 @@ public class TupleWriter {
 					count = 0;
 		}			 
 	}
-	
+	/**
+	 * fill the remaining space of page to 0
+	 */
 	public void fillRemainingPage() {
 		while ( id < pageSize) {
 			buffer.putInt(id, 0);
@@ -88,6 +103,9 @@ public class TupleWriter {
 		}
 	}
 	
+	/**
+	 * close the Tuple writer
+	 */
 	public void close() {
 		fillRemainingPage();
 		buffer.putInt(4,count);

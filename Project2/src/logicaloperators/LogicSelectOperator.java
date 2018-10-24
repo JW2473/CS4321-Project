@@ -2,7 +2,12 @@ package logicaloperators;
 
 import net.sf.jsqlparser.expression.Expression;
 import visitor.PhysicalPlanBuilder;
-
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ *  Logic Select Operator class
+ *
+ */
 public class LogicSelectOperator extends LogicOperator{
 	LogicOperator child;
 	Expression expr;

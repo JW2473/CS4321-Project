@@ -3,7 +3,12 @@ package logicaloperators;
 import java.util.List;
 
 import visitor.PhysicalPlanBuilder;
-
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ *  Logic Sort Operator class
+ *
+ */
 public class LogicSortOperator extends LogicOperator {
 	
 	LogicOperator child;
