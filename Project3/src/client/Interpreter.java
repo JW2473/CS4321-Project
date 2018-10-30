@@ -20,11 +20,11 @@ import util.SelectParserTree;
 public class Interpreter {
 
 	public static void main(String[] args) {
-		if (args.length != 3) {
+		if (args.length != 1) {
 			throw new IllegalArgumentException("Wrong arguments!");
 		}
 		Interpreter interpreter = new Interpreter();
-		interpreter.ExecuteSel( args[0], args[1], args[2] );
+		interpreter.ExecuteSel(args[0]);
 	}
 	/**
 	 * @author Yixin Cui
@@ -33,8 +33,8 @@ public class Interpreter {
 	 * This is the method that execute the select querys from input
 	 * path and output the result to output path
 	 */
-	public void ExecuteSel( String input, String output, String temp ) {
-		Catalog.initialize(input, output, temp);
+	public void ExecuteSel(String interpreterConfig) {
+		Catalog.initialize(interpreterConfig);
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;

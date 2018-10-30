@@ -71,7 +71,7 @@ public abstract class SortOperator extends Operator{
 	 * OrderByElement and schemas
 	 * 
 	 */
-	public class tupleComp implements Comparator<Tuple> {
+	public static class tupleComp implements Comparator<Tuple> {
 		
 		List<Column> cols = new ArrayList<>();
 		HashSet<String> orderByElements = new HashSet<>();

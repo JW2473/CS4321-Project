@@ -12,12 +12,15 @@ import java.util.*;
 public class Catalog {
 	private static Catalog instance = null;
 	
+	public static String interpreterConfig = "samples" + File.separator + "interpreter_config_file.txt";
 	public static String input = "samples" + File.separator + "input";
 	public static String output = "samples" + File.separator + "output" + File.separator;
 	public static String tempDir = "samples" + File.separator + "temp" + File.separator;
+	public static String indexDir = "samples" + File.separator + "input" + File.separator + "db" + File.separator + "indexes" + File.separator;
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 	public static HashMap<String, String> aliases = new HashMap<>();
 	public static HashMap<String, String> uniqueAliases = new HashMap<>();
+	public static HashMap<String, String[]> indexInfo = new HashMap<>();
 	
 	public static int ID = 0;
 	public static int pageSize = 4096;
@@ -32,13 +35,17 @@ public class Catalog {
 	
 	public static final int IMS = 0;
 	public static final int EMS = 1;
+	
+	public static boolean buildIndex = false;
+	public static boolean executeQuery = false;
+	public static boolean useIndex = false;
 
 	/*
 	 * Create the Catalog object then initialize it
 	 */
 	private Catalog() {
 		
-			initialize(input, output, tempDir);					
+			initialize(interpreterConfig);					
 	}
 	
 	/*
@@ -59,19 +66,30 @@ public class Catalog {
 	 * @param output user specified output address
 	 * @param tempDir the temp dirctory address
 	 */
-	public static void initialize(String input, String output, String tempDir) {
-		if (!input.isEmpty()) {
-			Catalog.input = input;
-		}
-		if (!output.isEmpty()) {
-			Catalog.output = output + File.separator;
-		}
-		if (!tempDir.isEmpty()) {
-			Catalog.tempDir = tempDir + File.separator;
-		}
+	public static void initialize(String interpreterConfig) {
 		Scanner in = null;
+		if (!interpreterConfig.isEmpty()) {
+			Catalog.interpreterConfig = interpreterConfig;
+		}
+		File interpreterFile = new File(Catalog.interpreterConfig);
+		in  = null;
+		try {
+			in = new Scanner(interpreterFile);
+			Catalog.input = in.nextLine();
+			Catalog.output = in.nextLine() + File.separator;
+			Catalog.tempDir = in.nextLine() + File.separator;
+			Catalog.buildIndex = Integer.valueOf(in.nextLine()) == 1;
+			Catalog.executeQuery = Integer.valueOf(in.nextLine()) == 1;
+			Catalog.indexDir = Catalog.input + File.separator + "db" + File.separator + "indexes" + File.separator;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if( in != null ) in.close();
+		}
+		
 		String schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
 		File file = new File(schema);
+		in = null;
 		try {
 			in = new Scanner(file);
 			while(in.hasNextLine()) {
@@ -90,6 +108,7 @@ public class Catalog {
 		} finally {
 			if( in != null ) in.close();
 		}
+		
 		String configFile = Catalog.input + File.separator + "plan_builder_config.txt";
 		File conf = new File(configFile);
 		in  = null;
@@ -102,6 +121,24 @@ public class Catalog {
 			if (sortMethod.length == 2) {
 				Catalog.sortConfig = 1;
 				Catalog.sortBuffer = Integer.valueOf(sortMethod[1]);
+			}
+			Catalog.useIndex = Integer.valueOf(in.nextLine()) == 1;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if( in != null ) in.close();
+		}
+		
+		String indexInfo = Catalog.input + File.separator + "db" + File.separator + "index_info.txt";
+		File indexInfoFile = new File(indexInfo);
+		in = null;
+		try {
+			in = new Scanner(indexInfoFile);
+			while(in.hasNextLine()) {
+				String[] fi = in.nextLine().split(" ");
+				if (fi.length >= 4) {
+					Catalog.indexInfo.put(fi[0], fi);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -191,4 +228,5 @@ public class Catalog {
 	public static int sortID() {
 		return ID++;
 	}
+
 }

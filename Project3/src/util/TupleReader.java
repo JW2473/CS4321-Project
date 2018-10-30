@@ -102,6 +102,10 @@ public class TupleReader {
 		return this.size;
 	}
 	
+	public String getFile() {
+		return tableFile;
+	}
+	
 	/**
 	 * Get the tuple value from the buffer
 	 * @return the array contains values of the tuple
@@ -153,8 +157,8 @@ public class TupleReader {
 			fc = fin.getChannel();
 			buffer = ByteBuffer.allocate(pageSize);
 			totalCount = new ArrayList<>();
-			readPage();
 			totalCount.add(0);
+			readPage();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

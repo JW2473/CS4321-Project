@@ -1,6 +1,8 @@
 package util;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -9,6 +11,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
+import physicaloperators.SortOperator.tupleComp;
 
 /**
  * @author Yixin Cui
@@ -94,6 +97,39 @@ public class Tools {
 			return s;
 		}
 		return  fi.toString();
+	}
+	
+	private static List<Column> indexBy(String tableName) {
+		List<Column> ret = new ArrayList<>();
+		Column col = new Column();
+		Table t = new Table();
+		t.setName(tableName);
+		String[] indexInfo = Catalog.indexInfo.get(tableName);
+		col.setColumnName(indexInfo[1]);
+		col.setTable(t);
+		ret.add(col);
+		return ret;
+	}
+	
+	public static void sortByIndex(String tableName) {
+		List<Tuple> tps = new ArrayList<>();
+		TupleReader tr = Catalog.getTableFiles(tableName);
+		long[] t = null;
+		while ((t = tr.nextTuple()) != null) {
+			tps.add(new Tuple(t, tableName, tableName));
+		}
+		tr.close();
+		Collections.sort(tps, new tupleComp(indexBy(tableName)));
+		
+		TupleWriter tw = new TupleWriter(tr.getFile());
+		try {
+			for (Tuple tp : tps) {
+				tw.writeTuple(tp);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		tw.close();
 	}
 	
 }
