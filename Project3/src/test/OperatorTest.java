@@ -2,18 +2,20 @@ package test;
 
 import java.io.File;
 import java.io.PrintStream;
-
 import org.junit.Test;
 
 import net.sf.jsqlparser.parser.CCJSqlParser;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import physicaloperators.ExternalSortOperator;
+import physicaloperators.IndexScanOperator;
 import physicaloperators.ScanOperator;
 import physicaloperators.SortOperator;
 import util.Catalog;
 import util.MyTable;
+import util.Tuple;
 
 public class OperatorTest {
 	
@@ -22,7 +24,6 @@ public class OperatorTest {
 
 			Catalog.getInstance();
 		
-			// TODO Auto-generated catch block
 		try {
 			CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 			Statement statement;
@@ -48,5 +49,18 @@ public class OperatorTest {
 			System.err.println("Exception occurred during parsing");
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void IndexScanTest() {
+		Catalog.initialize("samples2/interpreter_config_file.txt");
+		Catalog.getInstance();
+		Table t = new Table();
+		t.setAlias("S");
+		t.setName("Sailors");
+		MyTable table = new MyTable(t);
+		IndexScanOperator iso = new IndexScanOperator(table, 28, 339);
+		Tuple tp = iso.getNextTuple();
+		System.out.println(tp.toString());
 	}
 }

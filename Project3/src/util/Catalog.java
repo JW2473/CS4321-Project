@@ -40,7 +40,7 @@ public class Catalog {
 	public static boolean executeQuery = false;
 	public static boolean useIndex = false;
 
-	/*
+	/**
 	 * Create the Catalog object then initialize it
 	 */
 	private Catalog() {
@@ -48,7 +48,7 @@ public class Catalog {
 			initialize(interpreterConfig);					
 	}
 	
-	/*
+	/**
 	 * getInstance() is used to create the object from other classes
 	 * and make sure there is only one Catalog object at the same time
 	 * @return the Catalog object that it created
@@ -58,7 +58,7 @@ public class Catalog {
 		return instance;
 	}
 	
-	/*
+	/**
 	 * Initialize the Catalog with the new input address and output address
 	 * and temp directory address. It also processes the config file
 	 * Read the schema data from file and save data in a map
@@ -139,6 +139,9 @@ public class Catalog {
 				if (fi.length >= 4) {
 					Catalog.indexInfo.put(fi[0], fi);
 				}
+				if (Integer.valueOf(fi[2]) == 1) {
+					Tools.sortByIndex(fi[0]);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -147,7 +150,7 @@ public class Catalog {
 		}
 	}
 	
-	/*
+	/**
 	 * Find the location of queries file and read the query file
 	 * @return the FileReader of the query file
 	 */
@@ -156,13 +159,17 @@ public class Catalog {
 		try {
 			return new FileReader(query);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	/*
+//	public static TreeReader getIndexFiles() {
+//		File indexFile = new File(Catalog.indexDir + "");
+//		return new TreeReader(indexFile);
+//	}
+	
+	/**
 	 * Find the specified table in the input directory and read it
 	 * @param tName the name of the table
 	 * @return the BufferedReader of the table file
@@ -171,7 +178,7 @@ public class Catalog {
 		return new TupleReader(tName);
 	}
 	
-	/*
+	/**
 	 * Get the schema of specified table
 	 * @param tName the name of the table
 	 * @return the list that contains all the schema of that table
@@ -180,7 +187,7 @@ public class Catalog {
 		return schema_map.get(tFullName);
 	}
 	
-	/*
+	/**
 	 * Get the original table name from the alias
 	 * @param alias the alias of the table
 	 * @return the full table name
@@ -192,7 +199,7 @@ public class Catalog {
 		return tName;
 	}
 	
-	/*
+	/**
 	 * Get the unique identity name of the input table name
 	 * @param tName the table name
 	 * @return the unique identity of the table
@@ -203,7 +210,7 @@ public class Catalog {
 		return tName;
 	}
 	
-	/*
+	/**
 	 * Assign alias to corresponding table name
 	 * @param alias the alias of table
 	 * @param table the original table name
@@ -213,7 +220,7 @@ public class Catalog {
 		uniqueAliases.put(tableName, alias);
 	}
 	
-	/*
+	/**
 	 * Clear aliases map for next query
 	 */
 	public static void resetAlias() {

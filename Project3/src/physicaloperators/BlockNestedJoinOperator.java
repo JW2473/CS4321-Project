@@ -71,7 +71,6 @@ public class BlockNestedJoinOperator extends JoinOperator{
 	 */
 	@Override
 	public void nextPair() {
-		// TODO Auto-generated method stub
 		if( t2 != null ) {
 			t1 = getTuple();
 			id++;

@@ -12,6 +12,7 @@ import util.TupleReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 public class UtilTest {
 	
@@ -25,21 +26,18 @@ public class UtilTest {
 	}
 	
 	@Test
-	public void ReaderTest() {
+	public void ConvertTest() {
 		Catalog.initialize("samples2/interpreter_config_file.txt");
 		Catalog.getInstance();
 //		String filePath = Catalog.tempDir + "ExSort1/Pass0_0";
 //		String filePath = Catalog.output + "query1";
-		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Sailors";
+		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Boats";
 		File inputFile = new File(filePath);
 		TupleReader tr;
 		try {
 			tr = new TupleReader(inputFile);
-			System.out.println(tr.getAttrNum());
-			System.out.println(tr.getSize());
 			tr.convertToReadableFile(filePath);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -82,7 +80,6 @@ public class UtilTest {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		long elapsedTime = System.currentTimeMillis() - startTime;
@@ -94,6 +91,21 @@ public class UtilTest {
 		Catalog.initialize("samples2/interpreter_config_file.txt");
 		Catalog.getInstance();
 		Tools.sortByIndex("Sailors");
-		
+	}
+	
+	@Test
+	public void TupleReaderTest() {
+		Catalog.initialize("samples2/interpreter_config_file.txt");
+		Catalog.getInstance();
+		TupleReader tr = new TupleReader("Sailors");
+		long[] t = null;
+		int i = 0;
+		System.out.println(tr.getAttrNum());
+		System.out.println(tr.getSize());
+		while (i < Integer.MAX_VALUE && (t = tr.nextTuple()) != null) {
+			System.out.println(Arrays.toString(t));
+			System.out.println(tr.pageNum() + ", " + tr.tupleNum());
+			i++;
+		}
 	}
 }

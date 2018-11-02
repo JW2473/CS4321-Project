@@ -29,6 +29,7 @@ public class TupleReader {
 	private int size;
 	private int count;
 	private int index;
+	private int pageCount = -1;
 	private int pageSize = Catalog.pageSize;
 	private List<Integer> totalCount = new ArrayList<>();
 	
@@ -70,6 +71,7 @@ public class TupleReader {
 	 */
 	private boolean readPage() {
 		try {
+			pageCount++;
 			clearBuffer();
 			bytesRead = fc.read(buffer);
 			numAttr = buffer.getInt(0);
@@ -106,6 +108,14 @@ public class TupleReader {
 		return tableFile;
 	}
 	
+	public int pageNum() {
+		return pageCount;
+	}
+	
+	public int tupleNum() {
+		return count - 1;
+	}
+	
 	/**
 	 * Get the tuple value from the buffer
 	 * @return the array contains values of the tuple
@@ -126,6 +136,20 @@ public class TupleReader {
 			}
 		}
 		return null;
+	}
+	
+	public long[] nextTuple(int pageNum, int tupleNum) {
+		clearBuffer();
+		try {
+			fc.position(pageNum * pageSize);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		readPage();
+		count = 0;
+		index = tupleNum * numAttr * 4 + 8;
+		buffer.position(index);
+		return nextTuple();
 	}
 	
 	/**

@@ -114,14 +114,12 @@ public class TupleWriter {
 			if(fc != null )
 				fc.write(buffer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
 			try {
 				if( fc != null ) fc.close();
 				if( fout != null ) fout.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

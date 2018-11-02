@@ -47,7 +47,7 @@ public class ExternalSortOperator extends SortOperator{
 	private TupleReader tr = null;
 	private TupleWriter tw = null;
 	
-	/*
+	/**
 	 * Create the externalsortoperator with a list of orders
 	 * @param op the child operator
 	 * @param obe the column list contains orders
@@ -60,7 +60,7 @@ public class ExternalSortOperator extends SortOperator{
 		sort();
 	}
 	
-	/*
+	/**
 	 * Create the externalsortoperator that sorts by every column
 	 * @param op the child operator
 	 */
@@ -70,7 +70,7 @@ public class ExternalSortOperator extends SortOperator{
 		sort();
 	}
 	
-	/*
+	/**
 	 * sort method sort the table
 	 */
 	private void sort() {
@@ -87,7 +87,7 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 	
-	/*
+	/**
 	 * The initial pass takes all buffers to sort table into partial sorted runs
 	 * @param orderBy the column list contains orders
 	 */
@@ -124,7 +124,7 @@ public class ExternalSortOperator extends SortOperator{
 		numRun = outputRun;
 	}
 	
-	/*
+	/**
 	 * The merge pass merge partial sorted runs
 	 * @param orderBy the column list contains orders
 	 */
@@ -158,7 +158,7 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 	
-	/*
+	/**
 	 * Get the minimum tuple from current buffers
 	 * @return the minimum tuple
 	 */
@@ -186,7 +186,7 @@ public class ExternalSortOperator extends SortOperator{
 		return ret;
 	}
 	
-	/*
+	/**
 	 * Put the minimum tuple in the output buffer
 	 * @param the minimum tuple that need to be stored in the output buffer
 	 */
@@ -199,7 +199,7 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 	
-	/*
+	/**
 	 * Write the tuples in the buffer into output file
 	 * @param buff the output buffer
 	 */
@@ -220,7 +220,7 @@ public class ExternalSortOperator extends SortOperator{
 		}
 	}
 
-	/*
+	/**
 	 * Return the next tuple in the sorted file
 	 * @return the next tuple
 	 */
@@ -244,11 +244,10 @@ public class ExternalSortOperator extends SortOperator{
 	 */
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
 		tr.reset();
 	}
 	
-	/*
+	/**
 	 * Reset the operator to a specified index
 	 * @param index the index we want to go
 	 */
@@ -256,7 +255,7 @@ public class ExternalSortOperator extends SortOperator{
 		tr.reset(index);
 	}
 	
-	/*
+	/**
 	 * Generate the name of the output file
 	 * @param pass the pass number
 	 * @param run the run number

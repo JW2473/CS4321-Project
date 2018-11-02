@@ -84,7 +84,6 @@ public abstract class SortOperator extends Operator{
 		 */
 		@Override
 		public int compare(Tuple o1, Tuple o2) {
-			// TODO Auto-generated method stub
 			if (o1.getSize() != o2.getSize()) {
 				try{
 					throw new Exception("Tuples' lengths don't match!");

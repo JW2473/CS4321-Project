@@ -17,7 +17,7 @@ public class MyTable{
 	List<String> schemaName;
 	TupleReader tr = null;
 	
-	/*
+	/**
 	 * Create a MyTable object from the query
 	 * @param fromItem FromItem in the query
 	 */
@@ -34,7 +34,7 @@ public class MyTable{
 		}
 	}
 	
-	/*
+	/**
 	 * Get table name
 	 * @return table name
 	 */
@@ -42,7 +42,7 @@ public class MyTable{
 		return tFullName;
 	}
 	
-	/*
+	/**
 	 * Get the alias of the table
 	 * @return the alias of the table
 	 */
@@ -50,7 +50,7 @@ public class MyTable{
 		return alias;
 	}
 	
-	/*
+	/**
 	 * Get the unique identity for the table
 	 * @return the unique identity name for the table
 	 */
@@ -58,7 +58,7 @@ public class MyTable{
 		return alias == null ? tFullName : alias;
 	}
 
-	/*
+	/**
 	 * Get the schema list of the table
 	 * @return the list of all schemas in the table
 	 */
@@ -66,7 +66,7 @@ public class MyTable{
 		return schemaName;
 	}
 
-	/*
+	/**
 	 * Read next line from the table until last line
 	 * Convert every text line to an array of string
 	 * Create the tuple from that array
@@ -81,7 +81,17 @@ public class MyTable{
 		}
 	}
 	
-	/*
+	public Tuple nextTuple(int pageNum, int tupleNum) {
+		// TODO Return tuple according to the Rid
+		try {
+			long[] value = tr.nextTuple(pageNum, tupleNum);
+			return new Tuple(value, getUniqueName(), tFullName);
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+	
+	/**
 	 * Close the table file and reopen it through the Catalog object
 	 */
 	public void reset() {

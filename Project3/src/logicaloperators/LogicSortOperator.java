@@ -15,7 +15,6 @@ public class LogicSortOperator extends LogicOperator {
 	List<?> obe;
 
 	public LogicSortOperator(LogicOperator child, List<?> obe) {
-		// TODO Auto-generated constructor stub
 		this.child = child;
 		this.obe = obe;
 	}
@@ -26,7 +25,6 @@ public class LogicSortOperator extends LogicOperator {
 	
 	@Override
 	public void accept(PhysicalPlanBuilder ppb) {
-		// TODO Auto-generated method stub
 		ppb.visit(this);
 	}
 

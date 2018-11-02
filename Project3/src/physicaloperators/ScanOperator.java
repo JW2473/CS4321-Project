@@ -18,7 +18,7 @@ public class ScanOperator extends Operator{
 	MyTable table;
 	List<String> schema;
 	
-	/*
+	/**
 	 * Create a ScanOperator 
 	 * @param table the table to be scanned
 	 */
@@ -28,7 +28,7 @@ public class ScanOperator extends Operator{
 		this.uniqueSchema = Tools.InitilaizeWholeColumnName(table.getUniqueName(), table.getFullTableName());
 	}
 	
-	/*
+	/**
 	 * Call nextTuple in the table object to get next tuple in that table
 	 * @return next tuple
 	 */
@@ -37,7 +37,7 @@ public class ScanOperator extends Operator{
 		return table.nextTuple();
 	}
 
-	/*
+	/**
 	 * reset the table
 	 */
 	@Override

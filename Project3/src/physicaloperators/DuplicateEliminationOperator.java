@@ -37,7 +37,6 @@ public class DuplicateEliminationOperator extends Operator{
 	 */
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
 		child.reset();
 		
 	}
