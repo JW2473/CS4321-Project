@@ -99,7 +99,7 @@ public class Tools {
 		return  fi.toString();
 	}
 	
-	private static List<Column> indexBy(String tableName) {
+	public static List<Column> indexBy(String tableName) {
 		List<Column> ret = new ArrayList<>();
 		Column col = new Column();
 		Table t = new Table();

@@ -8,6 +8,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
 import util.SelectParserTree;
 import util.Tools;
+import util.TreeReader;
 import util.TupleReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,7 +32,7 @@ public class UtilTest {
 		Catalog.getInstance();
 //		String filePath = Catalog.tempDir + "ExSort1/Pass0_0";
 //		String filePath = Catalog.output + "query1";
-		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Boats";
+		String filePath = Catalog.input + File.separator + "db" + File.separator + "data" + File.separator + "Sailors";
 		File inputFile = new File(filePath);
 		TupleReader tr;
 		try {
@@ -106,6 +107,17 @@ public class UtilTest {
 			System.out.println(Arrays.toString(t));
 			System.out.println(tr.pageNum() + ", " + tr.tupleNum());
 			i++;
+		}
+	}
+	
+	@Test
+	public void TreeReaderTest() {
+		Catalog.initialize("samples2/interpreter_config_file.txt");
+		Catalog.getInstance();
+		TreeReader tr = new TreeReader("Sailors", null, 10);
+		int[] rid = null;
+		while ((rid = tr.nextRid()) != null) {
+			System.out.println(Arrays.toString(rid));
 		}
 	}
 }

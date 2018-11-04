@@ -91,11 +91,29 @@ public class MyTable{
 		}
 	}
 	
+	public Tuple nextTuple(int highKey) {
+		try {
+			long[] value = tr.nextTuple();
+			Tuple tp =  new Tuple(value, getUniqueName(), tFullName);
+			if (tp.getValue(Tools.indexBy(tFullName).get(0)) <= highKey) {
+				return tp;
+			}else {
+				return null;
+			}
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+	
 	/**
 	 * Close the table file and reopen it through the Catalog object
 	 */
 	public void reset() {
 		tr.close();
 		tr = Catalog.getTableFiles(tFullName);
+	}
+	
+	public void reset(int pageNum, int tupleNum) {
+		tr.reset(pageNum, tupleNum);
 	}
 }

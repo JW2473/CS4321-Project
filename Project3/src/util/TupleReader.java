@@ -207,6 +207,19 @@ public class TupleReader {
 		buffer.position(this.index);
 	}
 	
+	public void reset(int pageNum, int tupleNum) {
+		clearBuffer();
+		try {
+			fc.position(pageNum * pageSize);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		readPage();
+		count = tupleNum + 1;
+		index = tupleNum * numAttr * 4 + 8;
+		buffer.position(index);
+	}
+	
 	/**
 	 * Fill buffer with 0
 	 */
