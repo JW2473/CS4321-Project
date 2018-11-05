@@ -101,8 +101,7 @@ public class IndexBuilder {
 	}
 	
 	
-	public void putNextRid(ByteBuffer bf, int ind) {
-		n1++;
+	public boolean putNextRid(ByteBuffer bf, int ind, int order) {
 		Rid entry = ridList.get(ind);
 		if(entry.key == key) {
 			n2++;
@@ -112,7 +111,12 @@ public class IndexBuilder {
 		}
 		else {
 			bf.putInt(position_n, n2);
-			n2 = 0;
+			if(n1 == order*2) {
+				return false;
+			}
+			n1++;
+			//System.out.println(entry.key);
+			n2 = 1;
 			key = entry.key;
 			bf.putInt(position, entry.key);
 			position_n = position + 4;
@@ -120,6 +124,7 @@ public class IndexBuilder {
 			bf.putInt(position+12, entry.rNum);
 			position += 16;
 		}
+		return true;
 	}
 	
 	
@@ -140,9 +145,12 @@ public class IndexBuilder {
 		}
 		bf = ByteBuffer.allocate(4096);
 		while(true) {
-			putNextRid(bf, ind);
-			ind++;
-			if(n1==order*2) {
+			boolean a = putNextRid(bf, ind, order);
+			if(a)
+				ind++;
+			if(!a | ind == ridList.size()) {
+				//System.out.println("!!!");
+				bf.putInt(position_n, n2);
 				bf.putInt(4, n1);
 				keyHead.add(bf.getInt(8));
 				keyTail.add(bf.getInt(position_n-4));
@@ -152,62 +160,100 @@ public class IndexBuilder {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				if(ind == ridList.size()) {
+					break;
+				}
 				bf = ByteBuffer.allocate(4096);
 				n1 = 0;
 				n2 = 0;
 				key = -1;
 				position = 8;
 				position_n = 12;
-				if(ind >= ridList.size() - order*3) {
-					break;
-				}
 			}			
 		}
-		if(ind < ridList.size() - order*2) {
-			nLeaves+=2;
-			int k = (ind + ridList.size())/2;
-			while(ind < k) {
-				putNextRid(bf, ind);
-				ind++;
-			}
-			bf.putInt(4, n1);
-			keyHead.add(bf.getInt(8));
-			keyTail.add(bf.getInt(position_n-4));
+		if(n1 <  order) {
+			int k = (n1 + order*2)/2;
+			ByteBuffer bf_read = null;
+			SeekableByteChannel sbc_read = null;
 			try {
-				sbc.write(bf);
+				bf_read = ByteBuffer.allocate(4096);
+				bf = ByteBuffer.allocate(4096);
+				sbc_read = Files.newByteChannel(indexPath, StandardOpenOption.READ);;
+				sbc_read.position(sbc.position()-4096*2);
+				sbc_read.read(bf_read);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			bf = ByteBuffer.allocate(4096);
-			n1 = 0;
-			n2 = 0;
-			key = -1;
+			int position_read = 8;
 			position = 8;
-			position_n = 12;
-			while(ind < ridList.size()) {
-				putNextRid(bf, ind);
-				ind++;
+			int key, n;
+			for(int i = 0; i < order*2; i++) {				
+				key = bf_read.getInt(position_read);
+				n = bf_read.getInt(position_read+4);
+				if(i >= k) {
+					bf.putInt(position, key);
+					bf.putInt(position+4, n);
+					for(int j = 0; j < n; j++) {
+						bf.putInt(position+8+j*8, bf_read.getInt(position_read+8+j*8));
+						bf.putInt(position+8+j*8+4, bf_read.getInt(position_read+8+j*8+4));
+					}
+					position += 8 + n*8;
+				}
+				position_read += 8 + n*8;
+				if(i == k-1) {
+					keyTail.set(keyTail.size()-2, key);
+					keyHead.set(keyHead.size()-1, bf_read.getInt(position_read+4));
+				}
 			}
-			bf.putInt(4, n1);
-			keyHead.add(bf.getInt(8));
-			keyTail.add(bf.getInt(position_n-4));
-		}
-		else {
-			nLeaves++;
-			while(ind < ridList.size()) {
-				putNextRid(bf, ind);
-				ind++;
+			bf_read.putInt(4, k);
+			try {
+				sbc.position(sbc.position()-4096*2);
+				bf_read.rewind();
+				sbc.write(bf_read);
+				sbc_read.position(sbc.position());
+				bf_read = ByteBuffer.allocate(4096);
+				sbc_read.read(bf_read);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			bf.putInt(4, n1);
-			keyHead.add(bf.getInt(8));
-			keyTail.add(bf.getInt(position_n-4));
+			position_read = 8;
+			for(int i = 0; i < bf_read.getInt(4); i++) {
+				key = bf_read.getInt(position_read);
+				n = bf_read.getInt(position_read+4);
+				bf.putInt(position, key);
+				bf.putInt(position+4, n);
+				for(int j = 0; j < n; j++) {
+					bf.putInt(position+8+j*8, bf_read.getInt(position_read+8+j*8));
+					bf.putInt(position+8+j*8+4, bf_read.getInt(position_read+8+j*8+4));
+				}
+				position += 8 + n*8;
+				position_read += 8 + n*8;
+			}
+			bf.putInt(4, 2*order + n1 - k);
 			try {
 				sbc.write(bf);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+		/*
+			bf = ByteBuffer.allocate(4096);
+			try {
+				sbc_read.position(sbc.position()-4096*5);
+				System.out.println(sbc_read.position());
+				sbc_read.read(bf);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			position = 8;
+			for(int i = 0; i < bf.getInt(4); i++) {
+				System.out.println(bf.getInt(position));
+				System.out.println(bf.getInt(position+4));
+				position += 8 + bf.getInt(position+4)*8;
+			}
+		*/
 		}
-		System.out.println(nLeaves);
+		//System.out.println(nLeaves);		
 	}
 	
 	public void IndexNodes() {
@@ -220,6 +266,7 @@ public class IndexBuilder {
 		catch(IOException e) {
 			e.printStackTrace();
 		}
+		int offset = 1;
 		while(keyHead.size() > 1) {
 			List<Integer> keyHead_new = new ArrayList<>();
 			List<Integer> keyTail_new = new ArrayList<>();
@@ -227,22 +274,31 @@ public class IndexBuilder {
 			bf.putInt(0, 1);
 			n1 = 0;
 			position = 8;
-			int ind = 0;		
+			int ind = 0;
+			int offset_new = offset;
 			while(true) {
 				if(n1 == 0) {
 					keyHead_new.add(keyHead.get(ind));
-					bf.putInt(position, ind+1);
+					bf.putInt(position, ind+offset);
+					offset_new++;
 					position+=4;
 					ind++;
 				}				
 				bf.putInt(position, keyHead.get(ind));
-				bf.putInt(position, ind+1);
+				bf.putInt(position+4, ind+offset);
 				position+=8;
 				ind++;
+				offset_new++;
 				n1++;
 				if(ind == keyHead.size() | n1==order*2) {
 					bf.putInt(4, n1);
 					try {
+						/*
+						for(int i = 0; i < n1+1; i++) {
+							System.out.print(bf.getInt(8+i*8)+" ");
+						}
+						System.out.println('\n');
+						*/
 						sbc.write(bf);
 						bf = ByteBuffer.allocate(4096);
 						bf.putInt(0, 1);
@@ -264,14 +320,16 @@ public class IndexBuilder {
 				bf.putInt(position, ind+1);
 				position+=4;
 				ind++;
+				offset_new++;
 				while(ind < k) {
 					bf.putInt(position, keyHead.get(ind));
 					bf.putInt(position, ind+1);
 					position+=8;
 					ind++;
 					n1++;
+					offset_new++;
 				}
-				bf.putInt(1, n1);
+				bf.putInt(4, n1);
 				try {
 					sbc.write(bf);
 				} catch (IOException e) {
@@ -287,14 +345,16 @@ public class IndexBuilder {
 				bf.putInt(position, ind+1);
 				position+=4;
 				ind++;
+				offset_new++;
 				while(ind < keyHead.size()) {
 					bf.putInt(position, keyHead.get(ind));
 					bf.putInt(position, ind+1);
 					position+=8;
 					ind++;
 					n1++;
+					offset_new++;
 				}
-				bf.putInt(1, n1);
+				bf.putInt(4, n1);
 				try {
 					sbc.write(bf);
 				} catch (IOException e) {
@@ -308,14 +368,16 @@ public class IndexBuilder {
 				bf.putInt(position, ind+1);
 				position+=4;
 				ind++;
+				offset_new++;
 				while(ind < keyHead.size()) {
 					bf.putInt(position, keyHead.get(ind));
 					bf.putInt(position, ind+1);
 					position+=8;
 					ind++;
 					n1++;
+					offset_new++;
 				}
-				bf.putInt(1, n1);
+				bf.putInt(4, n1);
 				try {
 					sbc.write(bf);
 				} catch (IOException e) {
@@ -323,6 +385,7 @@ public class IndexBuilder {
 				}
 				keyTail_new.add(keyTail.get(ind-1));
 			}
+			offset = offset_new;
 			keyHead = keyHead_new;
 			keyTail = keyTail_new;
 		}
@@ -335,6 +398,7 @@ public class IndexBuilder {
 		}
 		bf = ByteBuffer.allocate(4096);
 		bf.putInt(0, k);
+		
 		bf.putInt(4, nLeaves);
 		bf.putInt(8, order);
 		try {
