@@ -215,7 +215,7 @@ public class TupleReader {
 			e.printStackTrace();
 		}
 		readPage();
-		count = tupleNum + 1;
+		count = tupleNum;
 		index = tupleNum * numAttr * 4 + 8;
 		buffer.position(index);
 	}

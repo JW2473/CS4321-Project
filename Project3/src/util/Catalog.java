@@ -139,8 +139,14 @@ public class Catalog {
 				if (fi.length >= 4) {
 					Catalog.indexInfo.put(fi[0], fi);
 				}
-				if (Integer.valueOf(fi[2]) == 1) {
-					Tools.sortByIndex(fi[0]);
+				if (buildIndex) {
+					if (Integer.valueOf(fi[2]) == 1) {
+						Tools.sortByIndex(fi[0]);
+					}
+					int index = schema_map.get(fi[0]).indexOf(fi[1]);
+					IndexBuilder ib = new IndexBuilder(Catalog.getTableFiles(fi[0]), index , Integer.valueOf(fi[3]));
+					ib.leafNodes();
+					ib.IndexNodes();
 				}
 			}
 		} catch (IOException e) {

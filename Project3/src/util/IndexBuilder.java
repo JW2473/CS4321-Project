@@ -54,7 +54,7 @@ public class IndexBuilder {
 		this.order = order;
 		String[] tokens = reader.getFile().split(File.separator);
 		String tName = tokens[tokens.length-1];
-		String output_dir = Catalog.output + File.separator + tName + '.' + Catalog.getSchema(tName).get(keyInd);
+		String output_dir = Catalog.indexDir + tName + '.' + Catalog.getSchema(tName).get(keyInd);
 		if (!Files.notExists(Paths.get(output_dir))) {
 			File file = new File(output_dir); 
 			file.delete();
@@ -66,8 +66,8 @@ public class IndexBuilder {
 			e.printStackTrace();
 		}
 		this.path = Paths.get(output_dir);	
-		long[] tuple = reader.nextTuple();
-		while(tuple != null) {
+		long[] tuple = null;
+		while((tuple = reader.nextTuple()) != null) {
 			ridList.add(new Rid((int) tuple[keyInd], reader.pageNum(), reader.tupleNum()));
 		}
 		Collections.sort(ridList, new RidComp());
