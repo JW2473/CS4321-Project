@@ -22,7 +22,7 @@ public class IndexBuilder {
 	int n1 = 0;
 	int n2 = 0;
 	int nLeaves = 0;
-	Path indexPath;
+	Path path;
 	List<Integer> keyHead;
 	List<Integer> keyTail;
 	private class Rid {
@@ -50,8 +50,11 @@ public class IndexBuilder {
 		}
 	}
 
-	public IndexBuilder(String input_dir, String output_dir, int keyInd, int order) {
+	public IndexBuilder(TupleReader reader, int keyInd, int order) {
 		this.order = order;
+		String[] tokens = reader.getFile().split(File.separator);
+		String tName = tokens[tokens.length-1];
+		String output_dir = Catalog.output + File.separator + tName + '.' + Catalog.getSchema(tName).get(keyInd);
 		if (!Files.notExists(Paths.get(output_dir))) {
 			File file = new File(output_dir); 
 			file.delete();
@@ -59,43 +62,13 @@ public class IndexBuilder {
 		File file = new File(output_dir);
 		try {
 			file.createNewFile();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		this.indexPath = Paths.get(output_dir);	
-		Path path = Paths.get(input_dir);
-		SeekableByteChannel sbc = null;
-		ByteBuffer bf = null;
-		int tupleLength;
-		int maxPos;
-		int page_position = 0;
-		keyInd = keyInd*4;
-		try {
-			sbc = Files.newByteChannel(path, StandardOpenOption.READ);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		while(true) {
-			try {
-				bf = ByteBuffer.allocate(4096);
-				sbc.read(bf);
-				tupleLength = bf.getInt(0);
-				maxPos = bf.getInt(4)*bf.getInt(0)*4+8;
-				if(page_position == sbc.position()) {
-					break;
-				}
-				else
-					page_position = (int) sbc.position();
-				int position = 8;
-				while(position < maxPos) {
-					ridList.add(new Rid(bf.getInt(position+keyInd), page_position/4096-1, (position-8)/4));
-					position += tupleLength*4;
-				}				
-			}
-			catch(IOException e) {
-				e.printStackTrace();
-			}
+		this.path = Paths.get(output_dir);	
+		long[] tuple = reader.nextTuple();
+		while(tuple != null) {
+			ridList.add(new Rid((int) tuple[keyInd], reader.pageNum(), reader.tupleNum()));
 		}
 		Collections.sort(ridList, new RidComp());
 	}
@@ -136,7 +109,7 @@ public class IndexBuilder {
 		SeekableByteChannel sbc = null;
 		ByteBuffer bf = null;
 		try {
-			sbc = Files.newByteChannel(indexPath, StandardOpenOption.WRITE);
+			sbc = Files.newByteChannel(path, StandardOpenOption.WRITE);
 			bf = ByteBuffer.allocate(4096);
 			sbc.write(bf);			
 		}
@@ -178,7 +151,7 @@ public class IndexBuilder {
 			try {
 				bf_read = ByteBuffer.allocate(4096);
 				bf = ByteBuffer.allocate(4096);
-				sbc_read = Files.newByteChannel(indexPath, StandardOpenOption.READ);;
+				sbc_read = Files.newByteChannel(path, StandardOpenOption.READ);;
 				sbc_read.position(sbc.position()-4096*2);
 				sbc_read.read(bf_read);
 			} catch (IOException e) {
@@ -260,7 +233,7 @@ public class IndexBuilder {
 		SeekableByteChannel sbc = null;
 		ByteBuffer bf = null;
 		try {
-			sbc = Files.newByteChannel(indexPath, StandardOpenOption.WRITE);	
+			sbc = Files.newByteChannel(path, StandardOpenOption.WRITE);	
 			sbc.position((1+nLeaves)*4096);
 		}
 		catch(IOException e) {
