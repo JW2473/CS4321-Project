@@ -50,6 +50,7 @@ public class IndexBuilder {
 		}
 	}
 
+	//
 	public IndexBuilder(TupleReader reader, int keyInd, int order) {
 		this.order = order;
 		String[] tokens = reader.getFile().split(File.separator);
