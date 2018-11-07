@@ -24,7 +24,7 @@ public class ParseWhere {
 	private List<String> froms;
 	private Map<String, Expression> selcon;
 	private Map<String, Expression> joincon;
-	/*
+	/**
 	 * split Expression from 'Where' to non and Expressions.
 	 * @param exp the Expression get from where
 	 * @return the list of expression from where
@@ -138,7 +138,7 @@ public class ParseWhere {
 		}
 		return res;
 	}
-	/*
+	/**
 	 * pares the join condition allocate the expression to the left operator and right operator
 	 * @param left left operator
 	 * @param right right operator
@@ -172,7 +172,7 @@ public class ParseWhere {
 		}
 		return res;
 	}
-	/*
+	/**
 	 * get the final Expression for a table.
 	 * @param exps the expression list related to a table
 	 * @return the final Expression for a table.
@@ -186,7 +186,7 @@ public class ParseWhere {
 		return res;
 	}
 	
-	/*
+	/**
 	 * get the most right table ID from the from list.
 	 * @param relateTable the list of table we need to distinguish
 	 * @return the final Expression for a table.
@@ -201,7 +201,7 @@ public class ParseWhere {
 		return id;
 	}
 	
-	/*
+	/**
 	 * get the related select expression of a table.
 	 * @param tabName the table name
 	 * @return the select Expression for a table.
@@ -210,7 +210,7 @@ public class ParseWhere {
 		return selcon.get(tabName);
 	}
 	
-	/*
+	/**
 	 * get the related join expression of a table.
 	 * @param tabName the table name
 	 * @return the join Expression for a table.
@@ -219,7 +219,7 @@ public class ParseWhere {
 		return joincon.get(tabName);
 	}
 	
-	/*
+	/**
 	 * Create ParseWhere class from the list of table names and the where expression.
 	 * @param froms the list of table names
 	 * @param whereExpression expression from where

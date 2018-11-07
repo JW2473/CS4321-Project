@@ -62,8 +62,7 @@ public class Catalog {
 	 * Initialize the Catalog with the new input address and output address
 	 * and temp directory address. It also processes the config file
 	 * Read the schema data from file and save data in a map
-	 * @param input user specified input address
-	 * @param output user specified output address
+	 * @param the address of the config file
 	 * @param tempDir the temp dirctory address
 	 */
 	public static void initialize(String interpreterConfig) {
@@ -169,11 +168,6 @@ public class Catalog {
 		}
 		return null;
 	}
-	
-//	public static TreeReader getIndexFiles() {
-//		File indexFile = new File(Catalog.indexDir + "");
-//		return new TreeReader(indexFile);
-//	}
 	
 	/**
 	 * Find the specified table in the input directory and read it

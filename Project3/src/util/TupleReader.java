@@ -104,14 +104,26 @@ public class TupleReader {
 		return this.size;
 	}
 	
+	/**
+	 * Return address of the file
+	 * @return the string contains the address of the file
+	 */
 	public String getFile() {
 		return tableFile;
 	}
 	
+	/**
+	 * Return current page position in the file
+	 * @return the position of the page
+	 */
 	public int pageNum() {
 		return pageCount;
 	}
 	
+	/**
+	 * Return current tuple position in the page
+	 * @return the position of the tuple
+	 */
 	public int tupleNum() {
 		return count - 1;
 	}
@@ -138,6 +150,12 @@ public class TupleReader {
 		return null;
 	}
 	
+	/**
+	 * Fetch the tuple according to the page position and tuple position
+	 * @param pageNum the position of the page in the file
+	 * @param tupleNum the position of the tuple in the page
+	 * @return the next tuple
+	 */
 	public long[] nextTuple(int pageNum, int tupleNum) {
 		clearBuffer();
 		try {

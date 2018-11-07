@@ -12,7 +12,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+/**
+ * @author Ji Wu
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * Build the tree from the index
+ *
+ */
 public class IndexBuilder {
 	List<Rid> ridList = new ArrayList<>();
 	int order = 0;
@@ -50,30 +56,38 @@ public class IndexBuilder {
 		}
 	}
 
+	/**
+	 * Constructor
+	 */
 	public IndexBuilder(TupleReader reader, int keyInd, int order) {
 		this.order = order;
 		String[] tokens = reader.getFile().split(File.separator);
 		String tName = tokens[tokens.length-1];
 		String output_dir = Catalog.indexDir + tName + '.' + Catalog.getSchema(tName).get(keyInd);
-		if (!Files.notExists(Paths.get(output_dir))) {
-			File file = new File(output_dir); 
-			file.delete();
-		}
+//		System.out.println(output_dir);
 		File file = new File(output_dir);
+		file.delete();
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		this.path = Paths.get(output_dir);	
-		long[] tuple = null;
-		while((tuple = reader.nextTuple()) != null) {
+		long[] tuple = reader.nextTuple();
+		while(tuple != null) {
 			ridList.add(new Rid((int) tuple[keyInd], reader.pageNum(), reader.tupleNum()));
+			tuple = reader.nextTuple();
 		}
 		Collections.sort(ridList, new RidComp());
+//		System.out.println(ridList.size());
 	}
 	
-	
+	/**
+	 * Put the next rid entry in the sorted collection into the current leave node
+	 * @param bf: buffer to write
+	 * @param ind: index of current entry being processed
+	 * @param order: order of the tree
+	 */
 	public boolean putNextRid(ByteBuffer bf, int ind, int order) {
 		Rid entry = ridList.get(ind);
 		if(entry.key == key) {
@@ -88,7 +102,6 @@ public class IndexBuilder {
 				return false;
 			}
 			n1++;
-			//System.out.println(entry.key);
 			n2 = 1;
 			key = entry.key;
 			bf.putInt(position, entry.key);
@@ -100,7 +113,9 @@ public class IndexBuilder {
 		return true;
 	}
 	
-	
+	/**
+	 * Build leaf nodes, entries in the last 2 pages are redistributed if the last page contains
+	 * less than order entries.*/
 	public void leafNodes() {
 		nLeaves = 0;
 		int ind = 0;
@@ -160,9 +175,9 @@ public class IndexBuilder {
 			int position_read = 8;
 			position = 8;
 			int key, n;
-			for(int i = 0; i < order*2; i++) {				
+			for(int i = 0; i < order*2; i++) {			
 				key = bf_read.getInt(position_read);
-				n = bf_read.getInt(position_read+4);
+				n = bf_read.getInt(position_read+4);		
 				if(i >= k) {
 					bf.putInt(position, key);
 					bf.putInt(position+4, n);
@@ -175,7 +190,7 @@ public class IndexBuilder {
 				position_read += 8 + n*8;
 				if(i == k-1) {
 					keyTail.set(keyTail.size()-2, key);
-					keyHead.set(keyHead.size()-1, bf_read.getInt(position_read+4));
+					keyHead.set(keyHead.size()-1, bf_read.getInt(position_read));
 				}
 			}
 			bf_read.putInt(4, k);
@@ -209,7 +224,7 @@ public class IndexBuilder {
 				e.printStackTrace();
 			}
 			
-		/*
+/*
 			bf = ByteBuffer.allocate(4096);
 			try {
 				sbc_read.position(sbc.position()-4096*5);
@@ -229,6 +244,9 @@ public class IndexBuilder {
 		//System.out.println(nLeaves);		
 	}
 	
+	/**
+	 * Build index nodes, keep track of the list of high key in current level. When the number of remaining entries 
+	 * is between 2*order+1 and 3*order+2, put each half in one page. */
 	public void IndexNodes() {
 		SeekableByteChannel sbc = null;
 		ByteBuffer bf = null;
@@ -249,29 +267,34 @@ public class IndexBuilder {
 			position = 8;
 			int ind = 0;
 			int offset_new = offset;
+			int k;
+			if(2*order < keyHead.size())
+				k = 2*order;
+			else
+				k = keyHead.size()-1;
 			while(true) {
 				if(n1 == 0) {
 					keyHead_new.add(keyHead.get(ind));
-					bf.putInt(position, ind+offset);
+					bf.putInt(position+k*4, ind+offset);
 					offset_new++;
-					position+=4;
+					//position+=4;
 					ind++;
 				}				
 				bf.putInt(position, keyHead.get(ind));
-				bf.putInt(position+4, ind+offset);
-				position+=8;
+				bf.putInt(position+k*4+4, ind+offset);
+				position+=4;
 				ind++;
 				offset_new++;
 				n1++;
 				if(ind == keyHead.size() | n1==order*2) {
 					bf.putInt(4, n1);
+					/*
+					for(int i = 0; i < n1*2+1; i++) {
+						System.out.print(bf.getInt(8+i*4)+" ");
+					}
+					System.out.print('\n');
+					*/
 					try {
-						/*
-						for(int i = 0; i < n1+1; i++) {
-							System.out.print(bf.getInt(8+i*8)+" ");
-						}
-						System.out.println('\n');
-						*/
 						sbc.write(bf);
 						bf = ByteBuffer.allocate(4096);
 						bf.putInt(0, 1);
@@ -287,17 +310,18 @@ public class IndexBuilder {
 				}
 			}
 			if(ind < keyHead.size() - order*2 - 1) {
-				int k = (ind + keyHead.size())/2;
+				k = (ind + keyHead.size())/2 - ind -1;
+				int m = keyHead.size() - ind - 2 - k;
 				keyHead_new.add(keyHead.get(ind));
 				bf.putInt(0, 1);
-				bf.putInt(position, ind+1);
-				position+=4;
+				bf.putInt(position+k*4, ind+offset);
+				//position+=4;
 				ind++;
 				offset_new++;
-				while(ind < k) {
+				while(n1 < k) {
 					bf.putInt(position, keyHead.get(ind));
-					bf.putInt(position, ind+1);
-					position+=8;
+					bf.putInt(position+k*4+4, ind+offset);
+					position+=4;
 					ind++;
 					n1++;
 					offset_new++;
@@ -315,18 +339,19 @@ public class IndexBuilder {
 				
 				keyHead_new.add(keyHead.get(ind));
 				bf.putInt(0, 1);
-				bf.putInt(position, ind+1);
-				position+=4;
+				bf.putInt(position+4*m, ind+1);
+				//position+=4;
 				ind++;
 				offset_new++;
 				while(ind < keyHead.size()) {
 					bf.putInt(position, keyHead.get(ind));
-					bf.putInt(position, ind+1);
-					position+=8;
+					bf.putInt(position+4*m+4, ind+offset);
+					position+=4;
 					ind++;
 					n1++;
 					offset_new++;
 				}
+				bf.putInt(4, n1);
 				bf.putInt(4, n1);
 				try {
 					sbc.write(bf);
@@ -335,17 +360,18 @@ public class IndexBuilder {
 				}
 				keyTail_new.add(keyTail.get(ind-1));
 			}
-			else if(ind != keyHead.size()) {				
+			else if(ind != keyHead.size()) {
+				k = keyHead.size() - 1 - ind;
 				keyHead_new.add(keyHead.get(ind));
 				bf.putInt(0, 1);
-				bf.putInt(position, ind+1);
-				position+=4;
+				bf.putInt(position+4*k, ind+offset);
+				//position+=4;
 				ind++;
 				offset_new++;
 				while(ind < keyHead.size()) {
 					bf.putInt(position, keyHead.get(ind));
-					bf.putInt(position, ind+1);
-					position+=8;
+					bf.putInt(position+4*k+4, ind+offset);
+					position+=4;
 					ind++;
 					n1++;
 					offset_new++;

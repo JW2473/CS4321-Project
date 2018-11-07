@@ -61,7 +61,7 @@ public class OperatorTest {
 //		t.setAlias("B");
 //		t.setName("Boats");
 		MyTable table = new MyTable(t);
-		IndexScanOperator iso = new IndexScanOperator(table, null, 399);
+		IndexScanOperator iso = new IndexScanOperator(table, 3000, 3990);
 		Tuple tp = null;
 		while ((tp = iso.getNextTuple()) != null) {
 			System.out.println(tp.toString());

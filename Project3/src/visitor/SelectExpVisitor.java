@@ -14,14 +14,14 @@ public class SelectExpVisitor extends ExpVisitor {
 	Tuple t;
 	List<String> schema;
 	
-	/*
+	/**
 	 * Create a SelectExpVisitor object
 	 */
 	public SelectExpVisitor() {
 		t = null;
 	}
 	
-	/*
+	/**
 	 * Read in a tuple
 	 * @param t the tuple to be read
 	 */
@@ -29,7 +29,7 @@ public class SelectExpVisitor extends ExpVisitor {
 		this.t = t;
 	}
 	
-	/*
+	/**
 	 * Visit a column and send back the value of the column from the tuple
 	 * @param arg0 the column
 	 */

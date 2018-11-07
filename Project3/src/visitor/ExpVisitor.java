@@ -53,7 +53,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 	long curValue = 0;
 	boolean curStatus = true;
 	
-	/*
+	/**
 	 * Get current value from the specified column or constant in the query
 	 * @return a long value 
 	 */
@@ -61,7 +61,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		return curValue;
 	}
 	
-	/*
+	/**
 	 * Get current statues of the expression
 	 * @return a boolean indicates a true or false status of the expression
 	 */
@@ -69,7 +69,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		return curStatus;
 	}
 
-	/*
+	/**
 	 * Visit the expression and evaluating its left expression and right expression
 	 * to see whether the current variable in this object (curStatus or curValue)
 	 * meets the specified condition, in this case left >= right, and update current value in the variable
@@ -84,7 +84,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left && right);
 	}
 
-	/*
+	/**
 	 * Visit the expression and evaluating its left expression and right expression
 	 * to see whether the current variable in this object (curStatus or curValue)
 	 * meets the specified condition, in this case left == right, and update current value in the variable
@@ -99,7 +99,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left == right);
 	}
 
-	/*
+	/**
 	 * Visit the expression and evaluating its left expression and right expression
 	 * to see whether the current variable in this object (curStatus or curValue)
 	 * meets the specified condition, in this case left == right, and update current value in the variable
@@ -114,7 +114,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left > right);
 	}
 
-	/*
+	/**
 	 * Visit the expression and evaluating its left expression and right expression
 	 * to see whether the current variable in this object (curStatus or curValue)
 	 * meets the specified condition, in this case left >= right, and update current value in the variable
@@ -129,7 +129,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left >= right);
 	}
 
-	/*
+	/**
 	 * Visit the expression and evaluating its left expression and right expression
 	 * to see whether the current variable in this object (curStatus or curValue)
 	 * meets the specified condition, in this case left != right, and update current value in the variable
@@ -144,7 +144,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left != right);
 	}
 
-	/*
+	/**
 	 * Visit the expression and evaluating its left expression and right expression
 	 * to see whether the current variable in this object (curStatus or curValue)
 	 * meets the specified condition, in this case left < right, and update current value in the variable
@@ -159,7 +159,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left < right);
 	}
 
-	/*
+	/**
 	 * Visit the expression and evaluating its left expression and right expression
 	 * to see whether the current variable in this object (curStatus or curValue)
 	 * meets the specified condition, in this case left <= right, and update current value in the variable
@@ -174,7 +174,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		curStatus = (left <= right);
 	}
 	
-	/*
+	/**
 	 * Visit the constant in the expression and update curValue
 	 * @param arg0 the constant long value in the expression
 	 */
@@ -183,7 +183,7 @@ public abstract class ExpVisitor implements ExpressionVisitor{
 		this.curValue = arg0.getValue();
 	}
 	
-	/*
+	/**
 	 * All the following expressions are unsupported expressions
 	 */
 	@Override
