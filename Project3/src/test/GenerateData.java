@@ -13,7 +13,7 @@ public class GenerateData {
 		int max_B = 8000;
 		int max_C = 8000;
 		
-		int size = 5000;
+		int size = 15000;
 		TupleWriter tw = new TupleWriter("samples/test_input/Sailors");
 		for( int i = 0; i < size; i++) {
 			int val_A = (int)(Math.random() * max_A);
@@ -29,7 +29,7 @@ public class GenerateData {
 		int max_G = 800;
 		int max_H = 1000;
 		
-		int size = 10000;
+		int size = 20000;
 		TupleWriter tw = new TupleWriter("samples/test_input/Reserves");
 		for( int i = 0; i < size; i++) {
 			int val_G = (int)(Math.random() * max_G);
@@ -45,7 +45,7 @@ public class GenerateData {
 		int max_E = 8000;
 		int max_F = 8000;
 		
-		int size = 5000;
+		int size = 15000;
 		TupleWriter tw = new TupleWriter("samples/test_input/Boats");
 		for( int i = 0; i < size; i++) {
 			int val_D = (int)(Math.random() * max_D);

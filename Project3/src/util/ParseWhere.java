@@ -41,7 +41,12 @@ public class ParseWhere {
 		res.add(exp);
 		return res;
 	}
-	
+	/**
+	 *  pares the select condition and get the lowkey and high key for the attribute
+	 * @param attr
+	 * @param exp
+	 * @return
+	 */
 	public static String[] parseSel(String attr, Expression exp){
 		List<Expression> selExp = splitWhere(exp);
 		String[] res = {"x","x"};

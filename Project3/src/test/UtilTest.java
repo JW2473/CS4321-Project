@@ -53,9 +53,10 @@ public class UtilTest {
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
 		int count = 1;
-		long startTime = System.currentTimeMillis();
+		
 		try {
 			while ( (statement = parser.Statement()) != null ) {	
+				long startTime = System.currentTimeMillis();
 				Catalog.resetAlias();
 				try {
 					Select select = (Select) statement;
@@ -80,12 +81,14 @@ public class UtilTest {
 					count++;
 					Catalog.resetAlias();
 				}
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				System.out.println("Elapsed Time is: " + elapsedTime);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.println("Elapsed Time is: " + elapsedTime);
+		//long elapsedTime = System.currentTimeMillis() - startTime;
+		//System.out.println("Elapsed Time is: " + elapsedTime);
 	}
 
 	@Test
