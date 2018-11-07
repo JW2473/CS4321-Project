@@ -17,7 +17,7 @@ public class InMemorySortOperator extends SortOperator{
 	int index = 0;
 	List<Tuple> tps = new ArrayList<>();
 	
-	/*
+	/**
 	 * Create the operator that sorts all the columns
 	 * @param the child operator
 	 */
@@ -32,7 +32,7 @@ public class InMemorySortOperator extends SortOperator{
 		Collections.sort(tps, new tupleComp());
 	}
 
-	/*
+	/**
 	 * Create the operator with a list of orders
 	 * @param op the child operator
 	 * @param obe the column list contains orders
@@ -47,7 +47,7 @@ public class InMemorySortOperator extends SortOperator{
 		Collections.sort(tps, new tupleComp(orderBy));
 	}
   
-	/*
+	/**
 	 * Reset the operator
 	 */
 	@Override
@@ -55,7 +55,7 @@ public class InMemorySortOperator extends SortOperator{
 		index = 0;
 	}
 
-	/*
+	/**
 	 * return the next tuple in the operator
 	 * @return the next tuple in the operator
 	 */
@@ -65,7 +65,7 @@ public class InMemorySortOperator extends SortOperator{
 		return null;
 	}
 
-	/*
+	/**
 	 * Reset the operator to a specified index
 	 * @param index the index we want to go
 	 */

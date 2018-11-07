@@ -16,7 +16,7 @@ public class SelectOperator extends Operator{
 	Expression expr;
 	SelectExpVisitor sv = new SelectExpVisitor();
 	
-	/*
+	/**
 	 * Read the tuple from its child and check whether it meets WHERE condition
 	 * It uses visitor pattern to visit every expression in the condition
 	 * @return the selected tuple
@@ -35,7 +35,7 @@ public class SelectOperator extends Operator{
 		return null;
 	}
 	
-	/*
+	/**
 	 * Reset its child
 	 */
 	@Override
@@ -44,7 +44,7 @@ public class SelectOperator extends Operator{
 		
 	}
 	
-	/*
+	/**
 	 * Create a SelectOperator object
 	 * @param scanOp the child operator of select operator
 	 * @param expr the Expression object from the WHERE clause

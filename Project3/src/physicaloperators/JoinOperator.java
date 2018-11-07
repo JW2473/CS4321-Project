@@ -20,14 +20,14 @@ public abstract class JoinOperator extends Operator{
 	protected Tuple t1, t2;
 	protected JoinExpVisitor jv = new JoinExpVisitor();
 	
-	/*
+	/**
 	 * Check whether two tuple meets the join condition and get the result after join
 	 * @return the tuple after join
 	 */
 	@Override
 	public abstract Tuple getNextTuple();
 
-	/*
+	/**
 	 * Combine two tuples that meet the join condition
 	 * @param t1 the first tuple
 	 * @param t2 the second tuple
@@ -43,12 +43,12 @@ public abstract class JoinOperator extends Operator{
 		return new Tuple(value, schemas);
 	}
 
-	/*
+	/**
 	 * Look for next pair of tuples 
 	 */
 	public abstract void nextPair();
 	
-	/*
+	/**
 	 * Rest the child operators
 	 */
 	@Override
@@ -57,7 +57,7 @@ public abstract class JoinOperator extends Operator{
 		right.reset();
 	}
 	
-	/*
+	/**
 	 * Create a JoinOperator object
 	 * @param left the child operator
 	 * @param right the child operator

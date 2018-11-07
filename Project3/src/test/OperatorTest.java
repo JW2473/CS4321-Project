@@ -56,12 +56,12 @@ public class OperatorTest {
 		Catalog.initialize("samples2/interpreter_config_file.txt");
 		Catalog.getInstance();
 		Table t = new Table();
-//		t.setAlias("S");
-//		t.setName("Sailors");
-		t.setAlias("B");
-		t.setName("Boats");
+		t.setAlias("S");
+		t.setName("Sailors");
+//		t.setAlias("B");
+//		t.setName("Boats");
 		MyTable table = new MyTable(t);
-		IndexScanOperator iso = new IndexScanOperator(table, 100, 5000);
+		IndexScanOperator iso = new IndexScanOperator(table, 3000, 3990);
 		Tuple tp = null;
 		while ((tp = iso.getNextTuple()) != null) {
 			System.out.println(tp.toString());

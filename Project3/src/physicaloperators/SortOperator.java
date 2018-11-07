@@ -22,25 +22,25 @@ public abstract class SortOperator extends Operator{
 	List<Column> orderBy = new ArrayList<>();
 	
 	
-	/*
+	/**
 	 * Get the next tuple in the tuple list
 	 * @return next tuple
 	 */
 	@Override
 	public abstract Tuple getNextTuple();
 
-	/*
+	/**
 	 * Set the index to 0 so that it can return tuple from the beginning
 	 */
 	@Override
 	public abstract void reset();
 	
-	/*
+	/**
 	 * Set the index to a specified value so that it can return tuple from the specified location
 	 */
 	public abstract void reset(int index);
 	
-	/*
+	/**
 	 * Create a SortOperator object with OrderByElements
 	 * @param obe the list of OrderByElement
 	 * @param op the child operator
@@ -58,7 +58,7 @@ public abstract class SortOperator extends Operator{
 		}
 	}
 	
-	/*
+	/**
 	 * Create a ProjectOperator object without OrderByElements means sort the tuple by all schemas
 	 * @param op the child operator
 	 */	
@@ -66,7 +66,7 @@ public abstract class SortOperator extends Operator{
 		child = op;
 	}
 
-	/*
+	/**
 	 * tupleComp class implements Comparator interface and compare two tuples according to
 	 * OrderByElement and schemas
 	 * 
@@ -76,7 +76,7 @@ public abstract class SortOperator extends Operator{
 		List<Column> cols = new ArrayList<>();
 		HashSet<String> orderByElements = new HashSet<>();
 		
-		/*
+		/**
 		 * compare two tuples according to the order
 		 * @param o1 tuple 1
 		 * @param o2 tuple 2
@@ -110,7 +110,7 @@ public abstract class SortOperator extends Operator{
 			return 0;
 		}
 		
-		/*
+		/**
 		 * Create a compare object with order
 		 * @param cols the list of schema of order
 		 */
@@ -121,7 +121,7 @@ public abstract class SortOperator extends Operator{
 			}
 		}
 		
-		/*
+		/**
 		 * Create a compare object
 		 * 
 		 */

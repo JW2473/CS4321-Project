@@ -8,6 +8,7 @@ import physicaloperators.BlockNestedJoinOperator;
 import physicaloperators.DuplicateEliminationOperator;
 import physicaloperators.ExternalSortOperator;
 import physicaloperators.InMemorySortOperator;
+import physicaloperators.IndexScanOperator;
 import physicaloperators.Operator;
 import physicaloperators.ProjectOperator;
 import physicaloperators.ScanOperator;
@@ -38,9 +39,28 @@ public class PhysicalPlanBuilder {
 	 * Get the physical selection operator
 	 */
 	public void visit(LogicSelectOperator selop) {
-		op = null;
-		selop.getChild().accept(this);
-		op = new SelectOperator(op, selop.getExpr());
+		LogicScanOperator child  = (LogicScanOperator)(selop.getChild());
+		ScanOperator so = null;
+		if(Catalog.useIndex) {
+			String tabName = child.mt.getFullTableName();
+			String[] idInfo = Catalog.indexInfo.get(tabName);
+			if(idInfo != null && idInfo.length >= 4) {
+				String attr = idInfo[1];
+				String[] range = ParseWhere.parseSel(attr, selop.getExpr());
+				if( (!range[0].equals("x") ) || ( !range[1].equals("x") ) ) {
+					Integer lowkey = null;
+					Integer highkey = null;
+					if(!range[0].equals("x")) 
+						lowkey = Integer.getInteger(range[0]);
+					if(!range[1].equals("x")) 
+						highkey = Integer.getInteger(range[1]);
+					so = new IndexScanOperator(child.mt, lowkey, highkey);
+				}
+			}
+		}
+		if(so == null)
+			so = new ScanOperator(child.mt);
+		op = new SelectOperator(so, selop.getExpr());
 	}
 	
 	/**

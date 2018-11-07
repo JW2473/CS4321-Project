@@ -13,7 +13,7 @@ public class JoinExpVisitor extends ExpVisitor{
 	
 	Tuple t1, t2;
 	
-	/*
+	/**
 	 * Create a JoinExpVisitor object
 	 */
 	public JoinExpVisitor() {
@@ -21,7 +21,7 @@ public class JoinExpVisitor extends ExpVisitor{
 		t2 = null;
 	}
 	
-	/*
+	/**
 	 * Read in two tuples
 	 * @param t1 the first tuple
 	 * @param t2 the second tuple
@@ -31,7 +31,7 @@ public class JoinExpVisitor extends ExpVisitor{
 		this.t2 = t2;
 	}
 	
-	/*
+	/**
 	 * Visit a column and send back the value of the column from the tuple
 	 * @param arg0 the column
 	 */

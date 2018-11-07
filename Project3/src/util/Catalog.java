@@ -62,8 +62,7 @@ public class Catalog {
 	 * Initialize the Catalog with the new input address and output address
 	 * and temp directory address. It also processes the config file
 	 * Read the schema data from file and save data in a map
-	 * @param input user specified input address
-	 * @param output user specified output address
+	 * @param the address of the config file
 	 * @param tempDir the temp dirctory address
 	 */
 	public static void initialize(String interpreterConfig) {
@@ -139,8 +138,15 @@ public class Catalog {
 				if (fi.length >= 4) {
 					Catalog.indexInfo.put(fi[0], fi);
 				}
-				if (Integer.valueOf(fi[2]) == 1) {
-					Tools.sortByIndex(fi[0]);
+				if (buildIndex) {
+					System.out.println("Building Index...");
+					if (Integer.valueOf(fi[2]) == 1) {
+						Tools.sortByIndex(fi[0]);
+					}
+					int index = schema_map.get(fi[0]).indexOf(fi[1]);
+					IndexBuilder ib = new IndexBuilder(Catalog.getTableFiles(fi[0]), index , Integer.valueOf(fi[3]));
+					ib.leafNodes();
+					ib.IndexNodes();
 				}
 			}
 		} catch (IOException e) {
@@ -163,11 +169,6 @@ public class Catalog {
 		}
 		return null;
 	}
-	
-//	public static TreeReader getIndexFiles() {
-//		File indexFile = new File(Catalog.indexDir + "");
-//		return new TreeReader(indexFile);
-//	}
 	
 	/**
 	 * Find the specified table in the input directory and read it

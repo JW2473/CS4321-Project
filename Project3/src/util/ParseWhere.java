@@ -2,7 +2,13 @@ package util;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
+import net.sf.jsqlparser.expression.operators.relational.MinorThan;
+import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.schema.Column;
 import physicaloperators.Operator;
 
@@ -18,7 +24,7 @@ public class ParseWhere {
 	private List<String> froms;
 	private Map<String, Expression> selcon;
 	private Map<String, Expression> joincon;
-	/*
+	/**
 	 * split Expression from 'Where' to non and Expressions.
 	 * @param exp the Expression get from where
 	 * @return the list of expression from where
@@ -35,7 +41,109 @@ public class ParseWhere {
 		res.add(exp);
 		return res;
 	}
-	/*
+	/**
+	 *  pares the select condition and get the lowkey and high key for the attribute
+	 * @param attr
+	 * @param exp
+	 * @return
+	 */
+	public static String[] parseSel(String attr, Expression exp){
+		List<Expression> selExp = splitWhere(exp);
+		String[] res = {"x","x"};
+		if(selExp.size() == 0) return res;
+		for(Expression expr:selExp) {
+			if(!res[0].equals("x")&&!res[1].equals("x")) {
+				long small = Long.parseLong(res[0]);
+				long large = Long.parseLong(res[1]);
+				if(small > large)
+					return new String[] {"x","x"};
+			}
+			Expression left = ((BinaryExpression)expr).getLeftExpression();
+			Expression right = ((BinaryExpression)expr).getRightExpression();
+			if( (left instanceof Column && right instanceof LongValue) || (right instanceof Column && left instanceof LongValue) ) {
+				String col = left instanceof Column ? Tools.rebuildWholeColumnName((Column)left):Tools.rebuildWholeColumnName((Column)right);
+				String colname = col.split("\\.")[1];
+				if(colname.equals(attr)) {
+					long value = left instanceof LongValue ? ((LongValue)left).getValue():((LongValue)right).getValue();
+					
+					// attr < value
+					if( ( left instanceof LongValue && expr instanceof GreaterThan ) || ( right instanceof LongValue && expr instanceof MinorThan ) ) {
+						if(res[1].equals("x")) {
+							res[1] = Long.toString(value - 1);
+						} else {
+							long temp = Long.parseLong(res[1]);
+							if(value < temp)
+								res[1] = Long.toString(value - 1);
+						}
+					}
+					// attr <= value
+					else if ( ( left instanceof LongValue && expr instanceof GreaterThanEquals ) || ( right instanceof LongValue && expr instanceof MinorThanEquals ) ) {
+						if(res[1].equals("x")) {
+							res[1] = Long.toString(value);
+						} else {
+							long temp = Long.parseLong(res[1]);
+							if(value < temp)
+								res[1] = Long.toString(value);
+						}
+					}
+					// attr > value
+					else if( ( right instanceof LongValue && expr instanceof GreaterThan ) || ( left instanceof LongValue && expr instanceof MinorThan ) ) {
+						if(res[0].equals("x")) {
+							res[0] = Long.toString(value + 1);
+						} else {
+							long temp = Long.parseLong(res[0]);
+							if(value > temp)
+								res[0] = Long.toString(value + 1);
+						}
+					}
+					// attr >= value
+					else if ( ( right instanceof LongValue && expr instanceof GreaterThanEquals ) || ( left instanceof LongValue && expr instanceof MinorThanEquals ) ) {
+						if(res[0].equals("x")) {
+							res[0] = Long.toString(value);
+						} else {
+							long temp = Long.parseLong(res[0]);
+							if(value > temp)
+								res[0] = Long.toString(value);
+						}
+					}
+					// attr == value
+					else if(expr instanceof EqualsTo) {
+						if(res[0].equals("x")&&res[1].equals("x")) {
+							res[0] = Long.toString(value);
+							res[1] = Long.toString(value);
+							continue;
+						} else if (res[0].equals("x")&&!res[1].equals("x")) {
+							long large = Long.parseLong(res[1]);
+							res[0] = Long.toString(value);
+							if(value < large)
+								res[1] = Long.toString(value);
+						} else if (!res[0].equals("x")&& res[1].equals("x")) {
+							long small = Long.parseLong(res[0]);
+							res[1] = Long.toString(value);
+							if(value > small)
+								res[0] = Long.toString(value);
+						} else {
+							long small = Long.parseLong(res[0]);
+							long large = Long.parseLong(res[1]);
+							if(value > small )
+								res[0] = Long.toString(value);
+							if(value < large)
+								res[1] = Long.toString(value);
+						}
+						
+					}
+				}
+			}
+		}
+		if(!res[0].equals("x")&&!res[1].equals("x")) {
+			long small = Long.parseLong(res[0]);
+			long large = Long.parseLong(res[1]);
+			if(small > large)
+				return new String[] {"x","x"};
+		}
+		return res;
+	}
+	/**
 	 * pares the join condition allocate the expression to the left operator and right operator
 	 * @param left left operator
 	 * @param right right operator
@@ -69,7 +177,7 @@ public class ParseWhere {
 		}
 		return res;
 	}
-	/*
+	/**
 	 * get the final Expression for a table.
 	 * @param exps the expression list related to a table
 	 * @return the final Expression for a table.
@@ -83,7 +191,7 @@ public class ParseWhere {
 		return res;
 	}
 	
-	/*
+	/**
 	 * get the most right table ID from the from list.
 	 * @param relateTable the list of table we need to distinguish
 	 * @return the final Expression for a table.
@@ -98,7 +206,7 @@ public class ParseWhere {
 		return id;
 	}
 	
-	/*
+	/**
 	 * get the related select expression of a table.
 	 * @param tabName the table name
 	 * @return the select Expression for a table.
@@ -107,7 +215,7 @@ public class ParseWhere {
 		return selcon.get(tabName);
 	}
 	
-	/*
+	/**
 	 * get the related join expression of a table.
 	 * @param tabName the table name
 	 * @return the join Expression for a table.
@@ -116,7 +224,7 @@ public class ParseWhere {
 		return joincon.get(tabName);
 	}
 	
-	/*
+	/**
 	 * Create ParseWhere class from the list of table names and the where expression.
 	 * @param froms the list of table names
 	 * @param whereExpression expression from where

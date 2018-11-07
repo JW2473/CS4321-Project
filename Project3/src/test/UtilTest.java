@@ -52,9 +52,10 @@ public class UtilTest {
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
 		int count = 1;
-		long startTime = System.currentTimeMillis();
+		
 		try {
 			while ( (statement = parser.Statement()) != null ) {	
+				long startTime = System.currentTimeMillis();
 				Catalog.resetAlias();
 				try {
 					Select select = (Select) statement;
@@ -79,12 +80,14 @@ public class UtilTest {
 					count++;
 					Catalog.resetAlias();
 				}
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				System.out.println("Elapsed Time is: " + elapsedTime);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.println("Elapsed Time is: " + elapsedTime);
+		//long elapsedTime = System.currentTimeMillis() - startTime;
+		//System.out.println("Elapsed Time is: " + elapsedTime);
 	}
 
 	@Test
@@ -114,10 +117,19 @@ public class UtilTest {
 	public void TreeReaderTest() {
 		Catalog.initialize("samples2/interpreter_config_file.txt");
 		Catalog.getInstance();
-		TreeReader tr = new TreeReader("Sailors", null, 10);
+		TreeReader tr = new TreeReader("Sailors", null, 399);
 		int[] rid = null;
 		while ((rid = tr.nextRid()) != null) {
 			System.out.println(Arrays.toString(rid));
 		}
+	}
+	
+	@Test
+	public void TreeBuilerTest() {
+		Catalog.initialize("samples2/interpreter_config_file.txt");
+		Catalog.getInstance();
+//		IndexBuilder ib = new IndexBuilder(Catalog.getTableFiles("Boats"), 1, 10);
+//		ib.leafNodes();
+//		ib.IndexNodes();
 	}
 }
