@@ -56,7 +56,8 @@ public class IndexBuilder {
 		this.order = order;
 		String[] tokens = reader.getFile().split(File.separator);
 		String tName = tokens[tokens.length-1];
-		String output_dir = Catalog.indexDir + tName + '.' + Catalog.getSchema(tName).get(keyInd);	
+		String output_dir = Catalog.indexDir + tName + '.' + Catalog.getSchema(tName).get(keyInd);
+		System.out.println(output_dir);
 		File file = new File(output_dir);
 		file.delete();
 		try {
@@ -65,12 +66,13 @@ public class IndexBuilder {
 			e.printStackTrace();
 		}
 		this.path = Paths.get(output_dir);	
-		long[] tuple = null;
-		while((tuple = reader.nextTuple()) != null) {
+		long[] tuple = reader.nextTuple();
+		while(tuple != null) {
 			ridList.add(new Rid((int) tuple[keyInd], reader.pageNum(), reader.tupleNum()));
 			tuple = reader.nextTuple();
 		}
 		Collections.sort(ridList, new RidComp());
+		System.out.println(ridList.size());
 	}
 	
 	/*Put the next rid entry in the sorted collection into the current leave node
