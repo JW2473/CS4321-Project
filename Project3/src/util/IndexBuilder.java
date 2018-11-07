@@ -50,11 +50,12 @@ public class IndexBuilder {
 		}
 	}
 
+	//
 	public IndexBuilder(TupleReader reader, int keyInd, int order) {
 		this.order = order;
 		String[] tokens = reader.getFile().split(File.separator);
 		String tName = tokens[tokens.length-1];
-		String output_dir = Catalog.output + tName + '.' + Catalog.getSchema(tName).get(order);	
+		String output_dir = "./" + tName + ".A";	
 		File file = new File(output_dir);
 		file.delete();
 		try {
