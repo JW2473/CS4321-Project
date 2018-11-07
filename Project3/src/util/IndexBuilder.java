@@ -57,7 +57,7 @@ public class IndexBuilder {
 		String[] tokens = reader.getFile().split(File.separator);
 		String tName = tokens[tokens.length-1];
 		String output_dir = Catalog.indexDir + tName + '.' + Catalog.getSchema(tName).get(keyInd);
-		System.out.println(output_dir);
+//		System.out.println(output_dir);
 		File file = new File(output_dir);
 		file.delete();
 		try {
@@ -72,7 +72,7 @@ public class IndexBuilder {
 			tuple = reader.nextTuple();
 		}
 		Collections.sort(ridList, new RidComp());
-		System.out.println(ridList.size());
+//		System.out.println(ridList.size());
 	}
 	
 	/*Put the next rid entry in the sorted collection into the current leave node

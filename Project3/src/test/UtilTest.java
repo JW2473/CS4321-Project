@@ -6,6 +6,7 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
+import util.IndexBuilder;
 import util.SelectParserTree;
 import util.Tools;
 import util.TreeReader;
@@ -119,5 +120,14 @@ public class UtilTest {
 		while ((rid = tr.nextRid()) != null) {
 			System.out.println(Arrays.toString(rid));
 		}
+	}
+	
+	@Test
+	public void TreeBuilerTest() {
+		Catalog.initialize("samples2/interpreter_config_file.txt");
+		Catalog.getInstance();
+//		IndexBuilder ib = new IndexBuilder(Catalog.getTableFiles("Boats"), 1, 10);
+//		ib.leafNodes();
+//		ib.IndexNodes();
 	}
 }
