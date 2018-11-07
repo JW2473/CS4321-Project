@@ -39,9 +39,6 @@ public class PhysicalPlanBuilder {
 	 * Get the physical selection operator
 	 */
 	public void visit(LogicSelectOperator selop) {
-		//op = null;
-//		selop.getChild().accept(this);
-//		op = new SelectOperator(op, selop.getExpr());
 		LogicScanOperator child  = (LogicScanOperator)(selop.getChild());
 		ScanOperator so = null;
 		if(Catalog.useIndex) {

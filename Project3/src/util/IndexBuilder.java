@@ -61,12 +61,19 @@ public class IndexBuilder {
 	 */
 	public IndexBuilder(TupleReader reader, int keyInd, int order) {
 		this.order = order;
-		String[] tokens = reader.getFile().split(File.separator);
+		//String[] tokens = reader.getFile().split(File.separator);
+		String[] tokens = reader.getFile().split("\\\\");
 		String tName = tokens[tokens.length-1];
 		String output_dir = Catalog.indexDir + tName + '.' + Catalog.getSchema(tName).get(keyInd);
-//		System.out.println(output_dir);
+		//System.out.println(output_dir);
+		
 		File file = new File(output_dir);
-		file.delete();
+//		if (!Files.notExists(Paths.get(output_dir))) {
+//			//file = new File(output_dir); 
+//			file.delete();
+//		}
+		//File file = new File(output_dir);
+		//file.delete();
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
@@ -79,7 +86,7 @@ public class IndexBuilder {
 			tuple = reader.nextTuple();
 		}
 		Collections.sort(ridList, new RidComp());
-//		System.out.println(ridList.size());
+		//System.out.println(ridList.size());
 	}
 	
 	/**
@@ -92,6 +99,7 @@ public class IndexBuilder {
 		Rid entry = ridList.get(ind);
 		if(entry.key == key) {
 			n2++;
+			//System.out.println(entry.key);
 			bf.putInt(position, entry.pageNum);
 			bf.putInt(position+4, entry.rNum);
 			position += 8;
