@@ -57,7 +57,7 @@ public class Tools {
 		}
 		return ret;	
 	}
-	/*
+	/**
 	 * Get the Related TableName from the Expression
 	 * @param exp: the binary expression
 	 * @return the list of related tablename
@@ -78,7 +78,7 @@ public class Tools {
 			c = (Column)right;
 			String s = c.getTable().getName();
 			if( s != null)
-				if( res == null || !res.get(0).equals(s))
+				if( res.size() == 0 || !res.get(0).equals(s))
 					res.add(s);
 		}
 		return res;
