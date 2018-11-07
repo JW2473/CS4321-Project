@@ -12,7 +12,6 @@ import util.TreeReader;
 import util.TupleReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.Arrays;
 
 public class UtilTest {
@@ -62,15 +61,15 @@ public class UtilTest {
 					System.out.println(select.toString());
 					SelectParserTree spt = new SelectParserTree(select);
 					
-//					System.out.println("Dumping binary file...");
-//					String filePath = Catalog.output;
-//					String fileName = "query" + String.valueOf(count);
-//					spt.root.dump(filePath, fileName);
+					System.out.println("Dumping binary file...");
+					String filePath = Catalog.output;
+					String fileName = "query" + String.valueOf(count);
+					spt.root.dump(filePath, fileName);
 					
-					System.out.println("Dumping readiable file...");
-					PrintStream ps = null;
-					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
-					spt.root.dump(ps);
+//					System.out.println("Dumping readiable file...");
+//					PrintStream ps = null;
+//					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
+//					spt.root.dump(ps);
 					
 				} catch (Exception e) {	
 					e.printStackTrace();

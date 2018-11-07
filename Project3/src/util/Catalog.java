@@ -85,7 +85,7 @@ public class Catalog {
 		} finally {
 			if( in != null ) in.close();
 		}
-		
+
 		String schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
 		File file = new File(schema);
 		in = null;
@@ -139,7 +139,6 @@ public class Catalog {
 					Catalog.indexInfo.put(fi[0], fi);
 				}
 				if (buildIndex) {
-					System.out.println("Building Index...");
 					if (Integer.valueOf(fi[2]) == 1) {
 						Tools.sortByIndex(fi[0]);
 					}
