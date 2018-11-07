@@ -114,7 +114,7 @@ public class UtilTest {
 	public void TreeReaderTest() {
 		Catalog.initialize("samples2/interpreter_config_file.txt");
 		Catalog.getInstance();
-		TreeReader tr = new TreeReader("Sailors", null, 10);
+		TreeReader tr = new TreeReader("Sailors", null, 399);
 		int[] rid = null;
 		while ((rid = tr.nextRid()) != null) {
 			System.out.println(Arrays.toString(rid));
