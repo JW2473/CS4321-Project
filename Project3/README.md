@@ -11,6 +11,6 @@ Clustered and unclustered indexes are handled in index scan operator, tree reade
 ### Deserialize the tree
 To deserialize the tree, the tree reader recursively read index pages from the root page. It deserializes the index page and compare the given key to all the keys stored in that page. When it reaches the leaf page. It traverse to the ***lowkey*** and return all the Rid between ***lowkey*** and ***highkey***.
 ## Logical / Physical Plan Builder
-
+The logic of how to decide to use index scan is defined in Physical Plan Builder. First, we check if both of the table and its corresponding attribute are defined in the index_info.txt. Then we parse the selection expression of the table to get the high key and low key for index scan. Finally, we check if the low key and high make sense like the low key is minor than the high key. If not, we apply full scan.
 ## Known Bugs
 1. The table names, column names and alias names in the query are case sensitive.
