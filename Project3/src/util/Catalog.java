@@ -139,6 +139,7 @@ public class Catalog {
 					Catalog.indexInfo.put(fi[0], fi);
 				}
 				if (buildIndex) {
+					System.out.println("Building Index...");
 					if (Integer.valueOf(fi[2]) == 1) {
 						Tools.sortByIndex(fi[0]);
 					}

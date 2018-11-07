@@ -61,19 +61,12 @@ public class IndexBuilder {
 	 */
 	public IndexBuilder(TupleReader reader, int keyInd, int order) {
 		this.order = order;
-		//String[] tokens = reader.getFile().split(File.separator);
-		String[] tokens = reader.getFile().split("\\\\");
+		String[] tokens = reader.getFile().split(File.separator);
+//		String[] tokens = reader.getFile().split("\\\\");
 		String tName = tokens[tokens.length-1];
 		String output_dir = Catalog.indexDir + tName + '.' + Catalog.getSchema(tName).get(keyInd);
-		//System.out.println(output_dir);
 		
 		File file = new File(output_dir);
-//		if (!Files.notExists(Paths.get(output_dir))) {
-//			//file = new File(output_dir); 
-//			file.delete();
-//		}
-		//File file = new File(output_dir);
-		//file.delete();
 		try {
 			file.createNewFile();
 		} catch (IOException e) {

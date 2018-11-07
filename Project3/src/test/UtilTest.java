@@ -6,7 +6,6 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
-import util.IndexBuilder;
 import util.SelectParserTree;
 import util.Tools;
 import util.TreeReader;

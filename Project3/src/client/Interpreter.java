@@ -37,6 +37,7 @@ public class Interpreter {
 		Catalog.initialize(interpreterConfig);
 		Catalog.getInstance();
 		if (!Catalog.executeQuery) return;
+		System.out.println("Executing Query...");
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
 		int count = 1;
