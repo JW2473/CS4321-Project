@@ -81,6 +81,14 @@ public class MyTable{
 		}
 	}
 	
+	/**
+	 * Read the long array from the tuple reader
+	 * by using pageID and tupleId
+	 * Create the tuple from that array
+	 * @param pageNum the pageID
+	 * @param tupleNum the tupleID
+	 * @return the tuple at pageID and tupleID
+	 */
 	public Tuple nextTuple(int pageNum, int tupleNum) {
 		// TODO Return tuple according to the Rid
 		try {
@@ -91,6 +99,11 @@ public class MyTable{
 		}
 	}
 	
+	/**
+	 * Return the tuple when the index is clustered
+	 * @param highKey the upper bound of the tuple key range
+	 * @return the next tuple in the file which is smaller than highKey
+	 */
 	public Tuple nextTuple(int highKey) {
 		try {
 			long[] value = tr.nextTuple();

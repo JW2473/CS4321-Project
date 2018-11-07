@@ -73,7 +73,7 @@ public class Tuple {
 		}
 	}
 	
-	/*
+	/**
 	 * Return the schema list of the tuple
 	 * @return the list of the schema in the tuple
 	 */
@@ -85,7 +85,7 @@ public class Tuple {
 		return new ArrayList<String>(Arrays.asList(schemas));
 	}
 	
-	/*
+	/**
 	 * Return the data list of the tuple
 	 * @return the list of the data in the tuple
 	 */
@@ -93,7 +93,7 @@ public class Tuple {
 		return value;
 	}
 
-	/*
+	/**
 	 * Get the number of columns of the tuple
 	 * @return the columns number
 	 */
@@ -101,7 +101,7 @@ public class Tuple {
 		return size;
 	}
 
-	/*
+	/**
 	 * Get the unique identity name of the table
 	 * @return the unique identity name of the table
 	 */
@@ -109,7 +109,7 @@ public class Tuple {
 		return this.uniqueName;
 	}
 	
-	/*
+	/**
 	 * Override toString() to format the output string
 	 * @return the formatted string
 	 */
@@ -118,7 +118,7 @@ public class Tuple {
 		return value.toString().replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
 	}
 	
-	/*
+	/**
 	 * Get the specified value in the tuple according to the Column object in the query
 	 * It checks whether the tuple is in the original table or a temperate tuple and performs corresponding functions
 	 * @param c the column object in the query
@@ -133,7 +133,7 @@ public class Tuple {
 		}
 	}
 
-	/*
+	/**
 	 * Override equals to check whether two tuples have exactly same value.
 	 * @param the tuple need to be compared
 	 * @return true if equals, false if not equal

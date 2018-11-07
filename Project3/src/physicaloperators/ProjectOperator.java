@@ -23,7 +23,7 @@ public class ProjectOperator extends Operator{
 	List<SelectItem> si;
 	List<String> schemas = new ArrayList<>();
 	
-	/*
+	/**
 	 * Create a new tuple from the Column object and child operator's tuple
 	 * It can determine whether the SelectItem is * or a certain column in a tuple
 	 * @return the projected tuple
@@ -46,7 +46,7 @@ public class ProjectOperator extends Operator{
 		return new Tuple(projection, schemas);
 	}
 	
-	/*
+	/**
 	 * Reset the child's operator
 	 */
 	@Override
@@ -54,7 +54,7 @@ public class ProjectOperator extends Operator{
 		child.reset();
 	}
 	
-	/*
+	/**
 	 * Create a ProjectOperator object
 	 * @param si the SelectItem object from the query
 	 * @param op the child operator

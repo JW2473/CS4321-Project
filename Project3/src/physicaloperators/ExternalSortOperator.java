@@ -34,8 +34,6 @@ public class ExternalSortOperator extends SortOperator{
 	private int outputRun = 0;
 	private int tuplePerPage = 0;
 	private int tupleCount = 0;
-	private int totalCount = 0;
-	private int totalPass = 0;
 	private String tempDir = Catalog.tempDir;
 	private int ID;
 	private List<String> allSchema;
@@ -76,8 +74,8 @@ public class ExternalSortOperator extends SortOperator{
 	private void sort() {
 		ID = Catalog.sortID();
 		initialPass(orderBy);
-		totalPass = (int) Math.ceil((Math.log(Math.ceil((double) Math.ceil(totalCount / tuplePerPage) / bufferSize)) / Math.log(fanIn)));
-		while (inputPass < totalPass) {
+//		totalPass = (int) Math.ceil((Math.log(Math.ceil((double) Math.ceil(totalCount / tuplePerPage) / bufferSize)) / Math.log(fanIn)));
+		while (outputRun != 0) {
 			inputRun = 0;
 			outputRun = 0;
 			tupleCount = 0;
@@ -110,7 +108,7 @@ public class ExternalSortOperator extends SortOperator{
 			if (!orderBy.isEmpty()) Collections.sort(buff, new tupleComp(orderBy));
 			else Collections.sort(buff, new tupleComp());
 			tupleCount += buff.size();
-			totalCount += buff.size();
+			buff.size();
 			writeTuples(buff);
 			buff.clear();
 			if (t == null && outputRun == 0) {
@@ -239,7 +237,7 @@ public class ExternalSortOperator extends SortOperator{
 		
 	}
 	
-	/*
+	/**
 	 * Reset the operator
 	 */
 	@Override

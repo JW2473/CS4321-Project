@@ -13,7 +13,7 @@ public class DuplicateEliminationOperator extends Operator{
 	Operator child;
 	Tuple returned;
 	
-	/*
+	/**
 	 * Return the next distinct tuple
 	 * @return the next tuple
 	 */
@@ -32,7 +32,7 @@ public class DuplicateEliminationOperator extends Operator{
 		}
 	}
 
-	/*
+	/**
 	 * Reset the child operator
 	 */
 	@Override
@@ -41,7 +41,7 @@ public class DuplicateEliminationOperator extends Operator{
 		
 	}
 	
-	/*
+	/**
 	 * Create the DuplicateEliminationOperator object from a sort operator, if the child is not a sort operator
 	 * create a new sort operator to sort the tuples first
 	 * @param op the child operator

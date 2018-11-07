@@ -20,7 +20,7 @@ public abstract class Operator {
 	
 	public abstract void reset();
 	
-	/*
+	/**
 	 * Call getNextTuple until the next tuple is null and then print the result to the output stream
 	 * @param an output stream
 	 */
@@ -33,7 +33,7 @@ public abstract class Operator {
 		ps.close();
 	}
 	
-	/*
+	/**
 	 * Return the unique schema of the tuple in the operator
 	 * @return the list of the columns of the tuple
 	 */
@@ -41,7 +41,7 @@ public abstract class Operator {
 		return this.uniqueSchema;
 	}
 	
-	/*
+	/**
 	 * Dump all the tuples to a file in binary format
 	 * @param filePath the path of the file
 	 * @param filename the name of the file

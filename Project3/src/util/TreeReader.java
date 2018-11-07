@@ -5,7 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-
+/**
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * Deserialize the binary file of the B+ tree
+ *
+ */
 public class TreeReader {
 	private FileInputStream fin;
 	private FileChannel fc;
@@ -29,6 +34,12 @@ public class TreeReader {
 	private int nextKeyIndex;
 	private int count;
 	
+	/**
+	 * Create the TreeReader 
+	 * @param tableName the full name of the table
+	 * @param lowKey the lower bound of the key range
+	 * @param highKey the upper bound of the key range
+	 */
 	public TreeReader(String tableName, Integer lowKey, Integer highKey) {
 		this.tableName = tableName;
 		if (lowKey == null) this.lowKey = Integer.MIN_VALUE;
@@ -53,6 +64,12 @@ public class TreeReader {
 		}
 	}
 	
+	/**
+	 * Traverse to the leaf node
+	 * @param pageAddr the address of the node to start from
+	 * @param key the key of the tuple
+	 * @return the leaf node position
+	 */
 	private int readPage(int pageAddr, Integer key) {
 		int nextPage = readIndexPage(pageAddr, key);
 		while (nextPage > leafNum) {
@@ -61,6 +78,12 @@ public class TreeReader {
 		return nextPage;
 	}
 	
+	/**
+	 * Deserialize index page
+	 * @param pageAddr the address of the index page
+	 * @param key the key of the tuple
+	 * @return the child node address
+	 */
 	private int readIndexPage(int pageAddr, Integer key) {
 		clearBuffer();
 		try {
@@ -90,6 +113,11 @@ public class TreeReader {
 		return -1;
 	}
 	
+	/**
+	 * Deserialize the leaf node
+	 * @param pageAddr the address of the leaf node
+	 * @return true if the leaf page is successfully read
+	 */
 	private boolean readLeafPage(int pageAddr) {
 		clearBuffer();
 		try {
@@ -115,6 +143,10 @@ public class TreeReader {
 		}
 	}
 	
+	/**
+	 * Fetch the Rid from the leaf node
+	 * @return the next rid stored in a int array with size 2
+	 */
 	public int[] nextRid() {
 		int[] rid = new int[2];
 		while (buffer.getInt(entryKeyIndex) < lowKey) {
@@ -142,6 +174,10 @@ public class TreeReader {
 		return null;
 	}
 	
+	/**
+	 * Fetch the first Rid that matches the key
+	 * @return the rid stored in an int array with size 2
+	 */
 	public int[] firstRid() {
 		int[] rid = new int[2];
 		while (buffer.getInt(entryKeyIndex) < lowKey) {
@@ -152,7 +188,9 @@ public class TreeReader {
 		entryStartIndex += entryStep;
 		return rid;
 	}
-	
+	/**
+	 * Update the index to the next data entry 
+	 */
 	private void updateIndex() {
 		entryNumIndex = entryKeyIndex + 4;
 		entryStartIndex = entryNumIndex + 4;
@@ -164,12 +202,18 @@ public class TreeReader {
 		count++;
 	}
 	
+	/**
+	 * Fill buffer with 0
+	 */
 	private void clearBuffer() {
 		buffer.clear();
 		buffer.put(new byte[pageSize]);
 		buffer.clear();
 	}
 	
+	/**
+	 * Close the tree reader
+	 */
 	public void close() {
 		try {
 			rootAddr = 0;

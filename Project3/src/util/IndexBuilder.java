@@ -12,7 +12,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+/**
+ * @author Ji Wu
+ * @author Yixin Cui
+ * @author Haodong Ping
+ * Build the tree from the index
+ *
+ */
 public class IndexBuilder {
 	List<Rid> ridList = new ArrayList<>();
 	int order = 0;
@@ -50,7 +56,8 @@ public class IndexBuilder {
 		}
 	}
 
-	/*Constructor
+	/**
+	 * Constructor
 	 */
 	public IndexBuilder(TupleReader reader, int keyInd, int order) {
 		this.order = order;
@@ -75,10 +82,11 @@ public class IndexBuilder {
 //		System.out.println(ridList.size());
 	}
 	
-	/*Put the next rid entry in the sorted collection into the current leave node
-	 * bf: buffer to write
-	 * ind: index of current entry being processed
-	 * order: order of the tree
+	/**
+	 * Put the next rid entry in the sorted collection into the current leave node
+	 * @param bf: buffer to write
+	 * @param ind: index of current entry being processed
+	 * @param order: order of the tree
 	 */
 	public boolean putNextRid(ByteBuffer bf, int ind, int order) {
 		Rid entry = ridList.get(ind);
@@ -105,8 +113,9 @@ public class IndexBuilder {
 		return true;
 	}
 	
-	/*Build leaf nodes, entries in the last 2 pages are redistributed if the last page contains
-	 less than order entries.*/
+	/**
+	 * Build leaf nodes, entries in the last 2 pages are redistributed if the last page contains
+	 * less than order entries.*/
 	public void leafNodes() {
 		nLeaves = 0;
 		int ind = 0;
@@ -235,8 +244,9 @@ public class IndexBuilder {
 		//System.out.println(nLeaves);		
 	}
 	
-	/*Build index nodes, keep track of the list of high key in current level. When the number of remaining entries 
-	is between 2*order+1 and 3*order+2, put each half in one page. */
+	/**
+	 * Build index nodes, keep track of the list of high key in current level. When the number of remaining entries 
+	 * is between 2*order+1 and 3*order+2, put each half in one page. */
 	public void IndexNodes() {
 		SeekableByteChannel sbc = null;
 		ByteBuffer bf = null;

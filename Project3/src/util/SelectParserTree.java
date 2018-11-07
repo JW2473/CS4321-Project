@@ -32,7 +32,7 @@ public class SelectParserTree {
 	private ParseWhere pw;
 	public Operator root;
 	
-	/*
+	/**
 	 * build the operator tree
 	 */
 	private void buildTree() {
@@ -61,7 +61,7 @@ public class SelectParserTree {
 		root = ppb.getOp();
 	}
 	
-	/*
+	/**
 	 * Create the Select Parser Tree from the select query.
 	 * @param select the select query.
 	 */

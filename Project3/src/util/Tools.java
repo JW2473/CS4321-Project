@@ -21,7 +21,7 @@ import physicaloperators.SortOperator.tupleComp;
  */
 public class Tools {
 
-	/*
+	/**
 	 * Rebuild the whole column Name from the column object with the unique identity name of the table
 	 * @param col the column
 	 * @return the whole column name
@@ -38,7 +38,7 @@ public class Tools {
 		return sb.toString();	
 	}
 	
-	/*
+	/**
 	 * Initialize the whole column Name from the the table full name and unique identity name
 	 * @param uniqueName the unique identity name of the table
 	 * @param tableFullName the full name of the table
@@ -83,7 +83,7 @@ public class Tools {
 		}
 		return res;
 	}
-	/*
+	/**
 	 * Get table name from Join
 	 * @param j: Join 
 	 * @return the table name from join class
@@ -99,6 +99,11 @@ public class Tools {
 		return  fi.toString();
 	}
 	
+	/**
+	 * Get the column information according to the config
+	 * @param tableName the full name of the table
+	 * @return the list contains column objects used for indexing
+	 */
 	public static List<Column> indexBy(String tableName) {
 		List<Column> ret = new ArrayList<>();
 		Column col = new Column();
@@ -111,6 +116,10 @@ public class Tools {
 		return ret;
 	}
 	
+	/**
+	 * Sort the original table file according to index
+	 * @param tableName the full name of the table
+	 */
 	public static void sortByIndex(String tableName) {
 		List<Tuple> tps = new ArrayList<>();
 		TupleReader tr = Catalog.getTableFiles(tableName);
