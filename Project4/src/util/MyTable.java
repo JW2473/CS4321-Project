@@ -90,7 +90,6 @@ public class MyTable{
 	 * @return the tuple at pageID and tupleID
 	 */
 	public Tuple nextTuple(int pageNum, int tupleNum) {
-		// TODO Return tuple according to the Rid
 		try {
 			long[] value = tr.nextTuple(pageNum, tupleNum);
 			return new Tuple(value, getUniqueName(), tFullName);

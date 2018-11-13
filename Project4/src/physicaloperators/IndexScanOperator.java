@@ -59,7 +59,6 @@ public class IndexScanOperator extends ScanOperator{
 	 */
 	@Override
 	public void reset() {
-		// TODO Reset the IndexScanOperator
 		treeReader.reset();
 	}
 
