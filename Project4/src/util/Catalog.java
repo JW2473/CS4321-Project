@@ -17,10 +17,12 @@ public class Catalog {
 	public static String output = "samples" + File.separator + "output" + File.separator;
 	public static String tempDir = "samples" + File.separator + "temp" + File.separator;
 	public static String indexDir = "samples" + File.separator + "input" + File.separator + "db" + File.separator + "indexes" + File.separator;
+	public static String statsDir = "samples" + File.separator + "input" + File.separator + "db" + File.separator + "stats.txt";
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 	public static HashMap<String, String> aliases = new HashMap<>();
 	public static HashMap<String, String> uniqueAliases = new HashMap<>();
 	public static HashMap<String, String[]> indexInfo = new HashMap<>();
+	public static HashMap<String, statsInfo> stats = new HashMap<>();
 	
 	public static int ID = 0;
 	public static int pageSize = 4096;
@@ -39,12 +41,21 @@ public class Catalog {
 	public static boolean buildIndex = false;
 	public static boolean executeQuery = false;
 	public static boolean useIndex = false;
-
+	
+	public class statsInfo {
+		int n;
+		int[] ma;
+		int[] mi;
+		public statsInfo(int n, int[] ma, int[] mi) {
+			this.n = n;
+			this.ma = ma;
+			this.mi = mi;
+		}
+	}
 	/**
 	 * Create the Catalog object then initialize it
 	 */
-	private Catalog() {
-		
+	private Catalog() {		
 			initialize(interpreterConfig);					
 	}
 	
@@ -152,6 +163,68 @@ public class Catalog {
 			e.printStackTrace();
 		} finally {
 			if( in != null ) in.close();
+		}
+		File f = new File(statsDir);
+		if(!f.exists()) {
+			FileWriter fw = null;
+			try {
+				fw = new FileWriter(statsDir);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			BufferedWriter bw = new BufferedWriter(fw);
+			for(String Table : schema_map.keySet()) {
+				List<String> s = schema_map.get(Table);
+				int l = s.size();
+				int size = 0;
+				int[] ma = new int[l];
+				int[] mi = new int[l];
+				TupleReader r = new TupleReader(Table);
+				long[] t = r.nextTuple();
+				while(t != null) {
+					size++;
+					for(int i = 0; i < l ; i++) {
+						ma[i] = (int) (ma[i]>t[i]? ma[i]:t[i]);
+						mi[i] = (int) (mi[i]<t[i]? mi[i]:t[i]);
+					}
+					t = r.nextTuple();
+				}
+				stats.put(Table, instance.new statsInfo(size, ma, mi));
+				String str = Table + ' ' + Integer.toString(size);		
+				for(int i = 0; i < l; i++) {
+					str += ' ' + s.get(i) + ',' + Integer.toString(mi[i]) + ',' + Integer.toString(ma[i]);
+				}
+				try {
+					bw.write(str + '\n');
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else {
+			FileReader fr = null;
+			try {
+				fr = new FileReader(statsDir);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			BufferedReader br = new BufferedReader(fr);
+			while(true)
+				try {
+					String str = br.readLine();
+					String[] list = str.split(" ");
+					int[] ma = new int[list.length - 2];
+					int[] mi = new int[list.length - 2];
+					int size = Integer.valueOf(list[1]);
+					for(int i = 2; i < list.length; i++) {
+						String[] list2 = list[i].split(",");
+						mi[i-2] = Integer.valueOf(list2[1]);
+						ma[i-2] = Integer.valueOf(list2[2]);
+					}
+					stats.put(list[1], instance.new statsInfo(size, ma, mi));
+				} catch (IOException e) {
+					break;
+				}
 		}
 	}
 	
