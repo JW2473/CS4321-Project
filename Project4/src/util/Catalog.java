@@ -164,6 +164,9 @@ public class Catalog {
 		} finally {
 			if( in != null ) in.close();
 		}
+	}
+	
+	public static void findStats() {
 		File f = new File(statsDir);
 		if(!f.exists()) {
 			FileWriter fw = null;
@@ -200,6 +203,12 @@ public class Catalog {
 					e.printStackTrace();
 				}
 			}
+			try {
+				bw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else {
 			FileReader fr = null;
@@ -227,7 +236,6 @@ public class Catalog {
 				}
 		}
 	}
-	
 	/**
 	 * Find the location of queries file and read the query file
 	 * @return the FileReader of the query file
