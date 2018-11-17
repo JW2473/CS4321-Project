@@ -63,7 +63,7 @@ public class Catalog {
 	 * and temp directory address. It also processes the config file
 	 * Read the schema data from file and save data in a map
 	 * @param the address of the config file
-	 * @param tempDir the temp dirctory address
+	 * @param tempDir the temp directory address
 	 */
 	public static void initialize(String interpreterConfig) {
 		Scanner in = null;
@@ -77,8 +77,8 @@ public class Catalog {
 			Catalog.input = in.nextLine();
 			Catalog.output = in.nextLine() + File.separator;
 			Catalog.tempDir = in.nextLine() + File.separator;
-			Catalog.buildIndex = Integer.valueOf(in.nextLine()) == 1;
-			Catalog.executeQuery = Integer.valueOf(in.nextLine()) == 1;
+			Catalog.buildIndex = true;
+			Catalog.executeQuery = true;
 			Catalog.indexDir = Catalog.input + File.separator + "db" + File.separator + "indexes" + File.separator;
 		} catch (IOException e) {
 			e.printStackTrace();

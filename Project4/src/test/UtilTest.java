@@ -3,6 +3,8 @@ package test;
 import org.junit.Test;
 
 import net.sf.jsqlparser.parser.CCJSqlParser;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
@@ -10,6 +12,7 @@ import util.SelectParserTree;
 import util.Tools;
 import util.TreeReader;
 import util.TupleReader;
+import util.UnionFind;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -130,5 +133,42 @@ public class UtilTest {
 //		IndexBuilder ib = new IndexBuilder(Catalog.getTableFiles("Boats"), 1, 10);
 //		ib.leafNodes();
 //		ib.IndexNodes();
+	}
+	
+	@Test
+	public void UnionFindTest() {
+		Column col1 = generateColumn("Sailors", "A");
+		Column col2 = generateColumn("Boats", "E");
+		Column col3 = generateColumn("Reserves", "G");
+		Column col4 = generateColumn("Reserves", "H");
+		Column col5 = generateColumn("Sailors", "B");
+		Column col6 = generateColumn("Sailors", "C");
+		Column col7 = generateColumn("Boats", "D");
+		UnionFind uf = new UnionFind();
+		uf.setLowerBound(uf.find(col1), 50);
+		uf.setEqualityConstraint(uf.find(col3), 100);
+		uf.setUpperBound(uf.find(col7), 600);
+		uf.join(uf.find(col1), uf.find(col3));
+		uf.join(uf.find(col2), uf.find(col4));
+		uf.join(uf.find(col2), uf.find(col5));
+		uf.join(uf.find(col7), uf.find(col4));
+		uf.join(uf.find(col1), uf.find(col6));
+		uf.setUpperBound(uf.find(col2), 90);
+		System.out.println(uf.find(col1).toString());
+		System.out.println(uf.find(col2).toString());
+		System.out.println(uf.find(col3).toString());
+		System.out.println(uf.find(col4).toString());
+		System.out.println(uf.find(col5).toString());
+		System.out.println(uf.find(col6).toString());
+		System.out.println(uf.find(col7).toString());
+	}
+	
+	private Column generateColumn(String tName, String AttrName) {
+		Column col = new Column();
+		Table t = new Table();
+		t.setName(tName);
+		col.setColumnName(AttrName);
+		col.setTable(t);
+		return col;
 	}
 }
