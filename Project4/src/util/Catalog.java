@@ -20,7 +20,7 @@ public class Catalog {
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 	public static HashMap<String, String> aliases = new HashMap<>();
 	public static HashMap<String, String> uniqueAliases = new HashMap<>();
-	public static HashMap<String, String[]> indexInfo = new HashMap<>();
+	public static HashMap<String, IndexInfo> indexInfo = new HashMap<>();
 	
 	public static int ID = 0;
 	public static int pageSize = 4096;
@@ -136,16 +136,21 @@ public class Catalog {
 			while(in.hasNextLine()) {
 				String[] fi = in.nextLine().split(" ");
 				if (fi.length >= 4) {
-					Catalog.indexInfo.put(fi[0], fi);
-				}
-				if (buildIndex) {
-					if (Integer.valueOf(fi[2]) == 1) {
-						Tools.sortByIndex(fi[0]);
+					IndexInfo ii = new IndexInfo(fi[0]);
+					ii.setOrder(fi[fi.length - 1]);
+					ii.setIsclustered(fi[fi.length - 2]);
+					if (ii.isClustered()) {
+						ii.setClusteredIndex(fi[1]);
+						for (int i = 2; i < fi.length - 2; i++) {
+							ii.addUnclusteredIndex(fi[i]);
+						}
+					}else {
+						for (int i = 1; i < fi.length - 2; i++) {
+							ii.addUnclusteredIndex(fi[i]);
+						}
 					}
-					int index = schema_map.get(fi[0]).indexOf(fi[1]);
-					IndexBuilder ib = new IndexBuilder(Catalog.getTableFiles(fi[0]), index , Integer.valueOf(fi[3]));
-					ib.leafNodes();
-					ib.IndexNodes();
+					Catalog.indexInfo.put(ii.getTableName(), ii);
+					ii.buildTree();
 				}
 			}
 		} catch (IOException e) {

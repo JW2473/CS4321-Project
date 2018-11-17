@@ -109,8 +109,8 @@ public class Tools {
 		Column col = new Column();
 		Table t = new Table();
 		t.setName(tableName);
-		String[] indexInfo = Catalog.indexInfo.get(tableName);
-		col.setColumnName(indexInfo[1]);
+		String index = Catalog.indexInfo.get(tableName).getClusteredIndex();
+		col.setColumnName(index);
 		col.setTable(t);
 		ret.add(col);
 		return ret;
