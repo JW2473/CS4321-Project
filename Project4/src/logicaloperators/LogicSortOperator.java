@@ -3,6 +3,7 @@ package logicaloperators;
 import java.util.List;
 
 import visitor.PhysicalPlanBuilder;
+import visitor.PlanEvaluater;
 /**
  * @author Yixin Cui
  * @author Haodong Ping
@@ -34,6 +35,11 @@ public class LogicSortOperator extends LogicOperator {
 
 	public List<?> getObe() {
 		return obe;
+	}
+
+	@Override
+	public void accept(PlanEvaluater planEvaluater) {
+		planEvaluater.visit(this);	
 	}
 
 }

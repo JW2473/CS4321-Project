@@ -2,6 +2,7 @@ package logicaloperators;
 
 import util.MyTable;
 import visitor.PhysicalPlanBuilder;
+import visitor.PlanEvaluater;
 /**
  * @author Yixin Cui
  * @author Haodong Ping
@@ -18,6 +19,11 @@ public class LogicScanOperator extends LogicOperator {
 	@Override
 	public void accept(PhysicalPlanBuilder ppb) {
 		ppb.visit(this);
+	}
+
+	@Override
+	public void accept(PlanEvaluater planEvaluater) {
+		planEvaluater.visit(this);		
 	}
 
 }

@@ -2,7 +2,6 @@ package util;
 
 import java.io.*;
 import java.util.*;
-
 /**
  * @author Yixin Cui
  * @author Haodong Ping
@@ -43,13 +42,30 @@ public class Catalog {
 	public static boolean useIndex = false;
 	
 	public class statsInfo {
-		int n;
-		int[] ma;
-		int[] mi;
+		public int n;
+		public int[] ma;
+		public int[] mi;
 		public statsInfo(int n, int[] ma, int[] mi) {
 			this.n = n;
 			this.ma = ma;
 			this.mi = mi;
+		}
+		
+		public statsInfo(statsInfo s) {
+			this.n = s.n;
+			this.ma = Arrays.copyOf(s.ma, s.ma.length);
+			this.mi = Arrays.copyOf(s.mi, s.mi.length);
+		}
+		
+		public void add(statsInfo s) {
+			int[] ma_new = new int[ma.length + s.ma.length];
+		    System.arraycopy(ma, 0, ma_new, 0, ma.length);
+		    System.arraycopy(s.ma, 0, ma_new, ma.length, s.ma.length);
+		    ma = ma_new;
+			int[] mi_new = new int[mi.length + s.mi.length];
+		    System.arraycopy(mi, 0, mi_new, 0, mi.length);
+		    System.arraycopy(s.mi, 0, mi_new, mi.length, s.mi.length);
+		    mi = mi_new;
 		}
 	}
 	/**
@@ -268,6 +284,9 @@ public class Catalog {
 		return schema_map.get(tFullName);
 	}
 	
+	public static statsInfo getStats(String tFullName) {
+		return stats.get(tFullName);
+	}
 	/**
 	 * Get the original table name from the alias
 	 * @param alias the alias of the table

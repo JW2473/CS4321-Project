@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.sf.jsqlparser.statement.select.SelectItem;
 import visitor.PhysicalPlanBuilder;
+import visitor.PlanEvaluater;
 /**
  * @author Yixin Cui
  * @author Haodong Ping
@@ -30,6 +31,11 @@ public class LogicProjectOperator extends LogicOperator {
 	
 	public List<SelectItem> getSi() {
 		return si;
+	}
+	@Override
+	public void accept(PlanEvaluater planEvaluater) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

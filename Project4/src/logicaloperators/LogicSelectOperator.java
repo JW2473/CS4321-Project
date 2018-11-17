@@ -2,6 +2,7 @@ package logicaloperators;
 
 import net.sf.jsqlparser.expression.Expression;
 import visitor.PhysicalPlanBuilder;
+import visitor.PlanEvaluater;
 /**
  * @author Yixin Cui
  * @author Haodong Ping
@@ -30,6 +31,11 @@ public class LogicSelectOperator extends LogicOperator{
 	public void accept(PhysicalPlanBuilder ppb) {
 
 		ppb.visit(this);
+	}
+
+	@Override
+	public void accept(PlanEvaluater planEvaluater) {
+		planEvaluater.visit(this);	
 	}
 
 }

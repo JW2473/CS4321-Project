@@ -1,6 +1,7 @@
 package logicaloperators;
 
 import visitor.PhysicalPlanBuilder;
+import visitor.PlanEvaluater;
 /**
  * @author Yixin Cui
  * @author Haodong Ping
@@ -20,5 +21,9 @@ public class LogicDuplicateEliminationOperator extends LogicOperator {
 	}
 	public LogicOperator getChild() {
 		return child;
+	}
+	@Override
+	public void accept(PlanEvaluater planEvaluater) {
+		planEvaluater.visit(this);
 	}
 }
