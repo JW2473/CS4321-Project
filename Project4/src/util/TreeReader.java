@@ -16,6 +16,7 @@ public class TreeReader {
 	private FileChannel fc;
 	private ByteBuffer buffer;
 	private String tableName;
+	private String columnName;
 	private File indexFile;
 	private int pageSize = Catalog.pageSize;
 	private int rootAddr;
@@ -40,13 +41,14 @@ public class TreeReader {
 	 * @param lowKey the lower bound of the key range
 	 * @param highKey the upper bound of the key range
 	 */
-	public TreeReader(String tableName, Integer lowKey, Integer highKey) {
+	public TreeReader(String tableName, String columnName, Integer lowKey, Integer highKey) {
 		this.tableName = tableName;
+		this.columnName = columnName;
 		if (lowKey == null) this.lowKey = Integer.MIN_VALUE;
 		else this.lowKey = lowKey;
 		if (highKey == null) this.highKey = Integer.MAX_VALUE;
 		else this.highKey = highKey;
-		String indexName = this.tableName + "." + Catalog.indexInfo.get(this.tableName)[1];
+		String indexName = this.tableName + "." + this.columnName;
 		indexFile = new File(Catalog.indexDir + indexName);
 		try {
 			fin = new FileInputStream(indexFile);
@@ -151,7 +153,11 @@ public class TreeReader {
 		int[] rid = new int[2];
 		while (buffer.getInt(entryKeyIndex) < lowKey) {
 //			System.out.println(buffer.getInt(entryKeyIndex));
-			updateIndex();
+			try {
+				updateIndex();
+			} catch (IndexOutOfBoundsException e) {
+				return null;
+			}
 		}
 		if (entryStartIndex < buffer.capacity() && count <= dataNum 
 				&& buffer.getInt(entryKeyIndex) >= lowKey 

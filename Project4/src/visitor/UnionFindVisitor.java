@@ -137,8 +137,7 @@ public class UnionFindVisitor implements ExpressionVisitor{
 
 	@Override
 	public void visit(Matches arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedException(msg);
 	}
 
 	@Override

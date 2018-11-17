@@ -119,7 +119,7 @@ public class UtilTest {
 	public void TreeReaderTest() {
 		Catalog.initialize("samples2/interpreter_config_file.txt");
 		Catalog.getInstance();
-		TreeReader tr = new TreeReader("Sailors", null, 399);
+		TreeReader tr = new TreeReader("Sailors", "B", null, 399);
 		int[] rid = null;
 		while ((rid = tr.nextRid()) != null) {
 			System.out.println(Arrays.toString(rid));
@@ -137,6 +137,8 @@ public class UtilTest {
 	
 	@Test
 	public void UnionFindTest() {
+		// ufe1: 1,3,6  100,100,100
+		// ufe2: 2,4,5,7  20,90,null
 		Column col1 = generateColumn("Sailors", "A");
 		Column col2 = generateColumn("Boats", "E");
 		Column col3 = generateColumn("Reserves", "G");
@@ -146,6 +148,7 @@ public class UtilTest {
 		Column col7 = generateColumn("Boats", "D");
 		UnionFind uf = new UnionFind();
 		uf.setLowerBound(uf.find(col1), 50);
+		uf.setLowerBound(uf.find(col5), 20);
 		uf.setEqualityConstraint(uf.find(col3), 100);
 		uf.setUpperBound(uf.find(col7), 600);
 		uf.join(uf.find(col1), uf.find(col3));

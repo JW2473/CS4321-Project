@@ -28,7 +28,8 @@ public class UnionFindElement {
 	}
 	
 	public void setLowerBound(Integer lowerBound) {
-		this.lowerBound = lowerBound;
+		if (equalityConstraint == null)
+			this.lowerBound = lowerBound;
 	}
 	
 	public Integer getUpperBound() {
@@ -36,7 +37,8 @@ public class UnionFindElement {
 	}
 	
 	public void setUpperBound(Integer upperBound) {
-		this.upperBound = upperBound;
+		if (equalityConstraint == null)
+			this.upperBound = upperBound;
 	}
 	
 	public Integer getEqualityConstraint() {
@@ -45,6 +47,10 @@ public class UnionFindElement {
 	
 	public void setEqualityConstraint(Integer equalityConstraint) {
 		this.equalityConstraint = equalityConstraint;
+		if (equalityConstraint != null) {
+			this.lowerBound = equalityConstraint;
+			this.upperBound = equalityConstraint;
+		}
 	}
 
 	@Override
