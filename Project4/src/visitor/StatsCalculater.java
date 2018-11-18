@@ -43,32 +43,29 @@ import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import util.Catalog;
+import util.Tools;
 import util.Catalog.statsInfo;
 
-public class V_Calculater implements ExpressionVisitor{
+public class StatsCalculater implements ExpressionVisitor{
 	int v;
 	int reduction = 1;
 	statsInfo s1;
 	statsInfo s2;
-	String table1;
-	String table2;
+
 	List<String> Schema1;
 	List<String> Schema2;
-	boolean isBinary;
-	public void set(String table1, statsInfo s1, List<String> Schema1, String table2, statsInfo s2, List<String> Schema2) {
+	public void set(statsInfo s1, List<String> Schema1, statsInfo s2, List<String> Schema2) {
 		this.s1 = s1;
 		this.s2 = s2;
 		this.Schema1 = Schema1;
 		this.Schema2 = Schema2;
-		this.table1 = table1;
-		this.table2 = table2;
-		isBinary = true;
 	}
 	
 	public void set(statsInfo s1, List<String> Schema1) {
 		this.s1 = s1;
 		this.Schema1 = Schema1;
-		isBinary = false;
+		this.s2 = null;
+		this.Schema2 = null;
 	}
 	
 	public void visit(NullValue arg0) {
@@ -176,17 +173,18 @@ public class V_Calculater implements ExpressionVisitor{
 			s1.ma[i] = ma_new;
 			s1.mi[i] = mi_new;
 		}
-		for(int i = 0; i < st2.ma.length; i++) {
-			int ma_new = st2.ma[i]>s2.ma[i]? s2.ma[i]: st2.ma[i];
-			int mi_new = st2.mi[i]<s2.mi[i]? s2.mi[i]: st2.mi[i];
-			if(mi_new > ma_new) {
-				ma_new = 0;
-				mi_new = 0;
+		if(s2 != null)
+			for(int i = 0; i < st2.ma.length; i++) {
+				int ma_new = st2.ma[i]>s2.ma[i]? s2.ma[i]: st2.ma[i];
+				int mi_new = st2.mi[i]<s2.mi[i]? s2.mi[i]: st2.mi[i];
+				if(mi_new > ma_new) {
+					ma_new = 0;
+					mi_new = 0;
+				}
+				//s2.n = s2.n*(ma_new - mi_new + 1)/(s2.ma[i] - s2.mi[i] + 1);
+				s2.ma[i] = ma_new;
+				s2.mi[i] = mi_new;
 			}
-			//s2.n = s2.n*(ma_new - mi_new + 1)/(s2.ma[i] - s2.mi[i] + 1);
-			s2.ma[i] = ma_new;
-			s2.mi[i] = mi_new;
-		}
 		reduction = reduction_left*reduction;
 	}
 
@@ -220,12 +218,9 @@ public class V_Calculater implements ExpressionVisitor{
 				st2 = s2;
 				v -= 1000;
 			}
-			
-			if(st1.ma[v1] - st1.mi[v1] + 1 > st2.ma[v] - st2.mi[v] + 1)
-				reduction = st1.ma[v1] - st1.mi[v1] + 1;
-			else
-				reduction = st2.ma[v] - st2.mi[v] + 1;
-			
+			int reduction1 = st1.ma[v1] - st1.mi[v1] + 1 > st1.n? st1.n: st1.ma[v1] - st1.mi[v1] + 1;
+			int reduction2 = st2.ma[v] - st2.mi[v] + 1 > st2.n? st2.n: st2.ma[v] - st2.mi[v] + 1;
+			reduction = reduction1 > reduction2? reduction1: reduction2;			
 			st1.ma[v1] = st1.ma[v1]>st2.ma[v]? st2.ma[v]: st1.ma[v1];
 			st1.mi[v1] = st1.mi[v1]<st2.mi[v]? st2.mi[v]: st1.mi[v1];
 			if(st1.mi[v1] > st1.ma[v1]) {
@@ -427,21 +422,11 @@ public class V_Calculater implements ExpressionVisitor{
 
 	@Override
 	public void visit(Column arg0) {
-		String s = arg0.getTable().getName() ;
-		if(s != null) {
-			if(s.equals(table1)) {
-				v = Schema1.indexOf(arg0.getColumnName().toString());
-			}
-			else {
-				v = 1000 + Schema2.indexOf(arg0.getColumnName().toString());
-			}
-		}
-		else {
-			if(Schema1.contains(arg0.getColumnName().toString()))
-				v = Schema1.indexOf(arg0.getColumnName().toString());
-			if(Schema2.contains(arg0.getColumnName().toString()))
-				v = 1000 + Schema2.indexOf(arg0.getColumnName().toString());
-		}
+		String s = Tools.rebuildWholeColumnName(arg0);
+		if(Schema1.contains(s))
+			v = Schema1.indexOf(arg0.getColumnName().toString());
+		else 
+			v = 1000 + Schema2.indexOf(arg0.getColumnName().toString());
 	}
 
 	@Override

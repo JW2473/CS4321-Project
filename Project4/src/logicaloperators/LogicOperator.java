@@ -13,7 +13,6 @@ import visitor.PlanEvaluater;
  */
 public abstract class LogicOperator {
 	
-	public String alias;
 	public statsInfo stats;
 	public int cost = 0;
 	public List<String> Schema;
