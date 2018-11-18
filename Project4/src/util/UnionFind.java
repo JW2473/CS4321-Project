@@ -1,6 +1,7 @@
 package util;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import net.sf.jsqlparser.schema.Column;
@@ -51,6 +52,19 @@ public class UnionFind {
 	
 	public void setEqualityConstraint(UnionFindElement ufe, Integer equalityConstraint) {
 		ufe.setEqualityConstraint(equalityConstraint);
+	}
+	
+	@Override
+	public String toString() {
+		HashSet<UnionFindElement> set = new HashSet<>();
+		for (Column col : parentMap.keySet()) {
+			set.add(find(col));
+		}
+		String str = "";
+		for (UnionFindElement ufe : set) {
+			str = str + ufe.toString() + "\n";
+		}
+		return str;
 	}
 	
 	private Column findParent(Column col) {
