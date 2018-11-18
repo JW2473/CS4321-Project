@@ -185,7 +185,6 @@ public class UtilTest {
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
-		int count = 1;
 		try {
 			while ( (statement = parser.Statement()) != null ) {	
 				Catalog.resetAlias();
@@ -202,7 +201,6 @@ public class UtilTest {
 					System.err.println("Exception occurred during parsing");
 					continue;
 				}finally {
-					count++;
 					Catalog.resetAlias();
 				}
 			}

@@ -2,15 +2,13 @@ package util;
 
 import java.util.HashSet;
 
-import net.sf.jsqlparser.schema.Column;
-
 public class UnionFindElement {
-	private HashSet<Column> ufe;
+	private HashSet<MyColumn> ufe;
 	private Integer lowerBound = null;
 	private Integer upperBound = null;
 	private Integer equalityConstraint = null;
 	
-	public UnionFindElement(Column col) {
+	public UnionFindElement(MyColumn col) {
 		ufe = new HashSet<>();
 		ufe.add(col);
 	}
@@ -19,7 +17,7 @@ public class UnionFindElement {
 		this.ufe.addAll(ufe.getUfe());
 	}
 	
-	public HashSet<Column> getUfe() {
+	public HashSet<MyColumn> getUfe() {
 		return ufe;
 	}
 

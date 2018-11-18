@@ -7,8 +7,8 @@ import java.util.Map;
 import net.sf.jsqlparser.schema.Column;
 
 public class UnionFind {
-	private Map<Column, Column> parentMap;
-	private Map<Column, UnionFindElement> unionMap; 
+	private Map<MyColumn, MyColumn> parentMap;
+	private Map<MyColumn, UnionFindElement> unionMap; 
 	
 	
 	public UnionFind() {
@@ -17,20 +17,22 @@ public class UnionFind {
 	}
 	
 	public UnionFindElement find(Column col) {
-		if (unionMap.get(col) == null) {
-			parentMap.put(col, col);
-			UnionFindElement ufe = new UnionFindElement(col);
-			unionMap.put(col, ufe);
+		MyColumn mCol = new MyColumn(col);
+		System.out.println(mCol.hashCode());
+		if (unionMap.get(mCol) == null) {
+			parentMap.put(mCol, mCol);
+			UnionFindElement ufe = new UnionFindElement(mCol);
+			unionMap.put(mCol, ufe);
 			return ufe;
 		}else {
-			Column root = findParent(col);
+			MyColumn root = findParent(mCol);
 			return unionMap.get(root);
 		}
 	}
 	
 	public void join(UnionFindElement ufe1, UnionFindElement ufe2) {
-		Column root1 = findParent(ufe1.getUfe().iterator().next());
-		Column root2 = findParent(ufe2.getUfe().iterator().next());
+		MyColumn root1 = findParent(ufe1.getUfe().iterator().next());
+		MyColumn root2 = findParent(ufe2.getUfe().iterator().next());
 		if (!root1.equals(root2)) {
 			parentMap.put(root1, root2);
 			UnionFindElement newUfe1 = unionMap.get(root2);
@@ -57,8 +59,9 @@ public class UnionFind {
 	@Override
 	public String toString() {
 		HashSet<UnionFindElement> set = new HashSet<>();
-		for (Column col : parentMap.keySet()) {
-			set.add(find(col));
+		for (MyColumn col : parentMap.keySet()) {
+			
+			set.add(unionMap.get(findParent(col)));
 		}
 		String str = "";
 		for (UnionFindElement ufe : set) {
@@ -67,7 +70,7 @@ public class UnionFind {
 		return str;
 	}
 	
-	private Column findParent(Column col) {
+	private MyColumn findParent(MyColumn col) {
 		if (parentMap.get(col) == col) {
 			return col;
 		}else {
