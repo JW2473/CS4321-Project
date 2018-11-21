@@ -11,6 +11,7 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.schema.Column;
 import physicaloperators.Operator;
+import visitor.UnionFindVisitor;
 
 import java.util.*;
 
@@ -234,7 +235,10 @@ public class ParseWhere {
 		List<Expression> exps = splitWhere(whereExpression);
 		Map<String,List<Expression>> tempselcon = new HashMap<>();
 		Map<String,List<Expression>> tempjoincon = new HashMap<>();
-
+		//UnionFind to parse the join
+		UnionFindVisitor ufv = new UnionFindVisitor();
+		whereExpression.accept(ufv);
+		//
 		for(String name : froms) {
 			tempselcon.put(name,new ArrayList<>());
 			tempjoincon.put(name,new ArrayList<>());
@@ -247,6 +251,42 @@ public class ParseWhere {
 				tempselcon.get(froms.get(getRightTableId(relateTable))).add(exp);
 			}else {
 				tempjoincon.get(froms.get(getRightTableId(relateTable))).add(exp);
+				Column left_c = (Column)(((BinaryExpression)exp).getLeftExpression());
+				Column right_c = (Column)(((BinaryExpression)exp).getRightExpression());
+				UnionFindElement left = ufv.getUnionFind().find(left_c);
+				UnionFindElement right = ufv.getUnionFind().find(right_c);
+				if(left != null) {
+					int id = froms.indexOf(relateTable.get(0));
+					if(left.getEqualityConstraint() != null) {
+						EqualsTo et = new EqualsTo(left_c, new LongValue(left.getLowerBound().toString()));
+						tempselcon.get(froms.get(id)).add(et);
+					}else {						
+						if(left.getLowerBound() != null) {
+							GreaterThanEquals gte = new GreaterThanEquals(left_c, new LongValue(left.getLowerBound().toString()));
+							tempselcon.get(froms.get(id)).add(gte);
+						}
+						if(left.getUpperBound() != null) {
+							MinorThanEquals mte = new MinorThanEquals(left_c, new LongValue(left.getUpperBound().toString()));
+							tempselcon.get(froms.get(id)).add(mte);
+						}
+					}
+				}
+				if (right != null) {
+					int id = froms.indexOf(relateTable.get(1));
+					if(right.getEqualityConstraint() != null) {
+						EqualsTo et = new EqualsTo(right_c, new LongValue(right.getLowerBound().toString()));
+						tempselcon.get(froms.get(id)).add(et);
+					}else {						
+						if(right.getLowerBound() != null) {
+							GreaterThanEquals gte = new GreaterThanEquals(right_c, new LongValue(right.getLowerBound().toString()));
+							tempselcon.get(froms.get(id)).add(gte);
+						}
+						if(right.getUpperBound() != null) {
+							MinorThanEquals mte = new MinorThanEquals(right_c, new LongValue(right.getUpperBound().toString()));
+							tempselcon.get(froms.get(id)).add(mte);
+						}
+					}
+				}
 			}
 		}
 		this.selcon = new HashMap<>();
