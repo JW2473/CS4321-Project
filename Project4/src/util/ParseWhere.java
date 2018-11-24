@@ -326,6 +326,7 @@ public class ParseWhere {
 		 * 
 		 * 
 		 *****************/
+		this.optimizedFroms = new ArrayList<>(this.froms);
 		tableStat[] initial = initialSize(tempselcon);
 		evalTable et = new evalTable();
 		backtrack(initial, et);

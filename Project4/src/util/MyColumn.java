@@ -4,7 +4,7 @@ import net.sf.jsqlparser.schema.Column;
 
 public class MyColumn{
 
-	Column col;
+	private Column col;
 	
 	public MyColumn(Column col) {
 		this.col = col;
