@@ -42,6 +42,7 @@ public class LogicSortOperator extends LogicOperator {
 			System.out.print("-");
 		System.out.print("Sort");
 		System.out.print(obe);
+		System.out.println();
 		
 	}
 	
