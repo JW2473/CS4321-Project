@@ -30,7 +30,7 @@ public class PhysicalPlanBuilder {
 	
 	Operator op;
 	int layer = 0;
-	
+	boolean logic_join_status = false;
 	/**
 	 * Get the physical scan operator
 	 */
@@ -120,14 +120,20 @@ public class PhysicalPlanBuilder {
 	 * Get the physical join operator
 	 */
 	public void visit(LogicJoinOperator ljo) {
-		ljo.print();
+		int next_layer = ljo.layer;
+		if(!logic_join_status) {
+			logic_join_status = true;
+			ljo.print();
+			next_layer++;
+		}
+		
 		pair p = new pair();
 		op = null;
-		ljo.getLeft().setLayer(ljo.layer+1);
+		ljo.getLeft().setLayer(next_layer);
 		ljo.getLeft().accept(this);
 		p.left = op;
 		op = null;
-		ljo.getRight().setLayer(ljo.layer+1);
+		ljo.getRight().setLayer(next_layer);
 		ljo.getRight().accept(this);
 		p.right = op;
 		Expression e = ljo.getExpr();

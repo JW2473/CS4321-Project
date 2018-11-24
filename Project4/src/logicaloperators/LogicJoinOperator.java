@@ -49,22 +49,23 @@ public class LogicJoinOperator extends LogicOperator {
 			System.out.print("-");
 		System.out.print("Join");
 		List<Expression> exps = ParseWhere.splitWhere(expr);
-		System.out.println("["+expr+"]");
-		for(Expression e : exps) {
-			if(e instanceof EqualsTo) {
-				Column c = (Column)(((BinaryExpression)e).getLeftExpression());
-				UnionFindElement ufe = ParseWhere.ufv.getUnionFind().find(c);
-				System.out.println(ufe);
-			} else {
-				Column c = (Column)(((BinaryExpression)e).getLeftExpression());
-				UnionFindElement ufe = ParseWhere.ufv.getUnionFind().find(c);
-				System.out.println(ufe);
-				Column c_r = (Column)(((BinaryExpression)e).getRightExpression());
-				UnionFindElement ufe_r = ParseWhere.ufv.getUnionFind().find(c_r);
-				System.out.println(ufe_r);
-			}
-				
-		}
+		System.out.println(ParseWhere.ufv.getUnusableComp().toString().replaceAll(",", " AND"));
+		System.out.print(ParseWhere.ufv.getUnionFind());
+//		for(Expression e : exps) {
+//			if(e instanceof EqualsTo) {
+//				Column c = (Column)(((BinaryExpression)e).getLeftExpression());
+//				UnionFindElement ufe = ParseWhere.ufv.getUnionFind().find(c);
+//				System.out.println(ufe);
+//			} else {
+//				Column c = (Column)(((BinaryExpression)e).getLeftExpression());
+//				UnionFindElement ufe = ParseWhere.ufv.getUnionFind().find(c);
+//				System.out.println(ufe);
+//				Column c_r = (Column)(((BinaryExpression)e).getRightExpression());
+//				UnionFindElement ufe_r = ParseWhere.ufv.getUnionFind().find(c_r);
+//				System.out.println(ufe_r);
+//			}
+//				
+//		}
 		
 	}
 
