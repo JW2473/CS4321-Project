@@ -32,4 +32,13 @@ public class LogicSelectOperator extends LogicOperator{
 		ppb.visit(this);
 	}
 
+	@Override
+	public void print() {
+		// TODO Auto-generated method stub
+		for(int i = 0; i < this.layer; i++)
+			System.out.print("-");
+		System.out.print("Select");
+		System.out.println("["+expr+"]");
+	}
+
 }

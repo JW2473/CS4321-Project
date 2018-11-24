@@ -18,7 +18,6 @@ public class UnionFind {
 	
 	public UnionFindElement find(Column col) {
 		MyColumn mCol = new MyColumn(col);
-		System.out.println(mCol.hashCode());
 		if (unionMap.get(mCol) == null) {
 			parentMap.put(mCol, mCol);
 			UnionFindElement ufe = new UnionFindElement(mCol);

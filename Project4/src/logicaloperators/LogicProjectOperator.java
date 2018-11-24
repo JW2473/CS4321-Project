@@ -31,5 +31,17 @@ public class LogicProjectOperator extends LogicOperator {
 	public List<SelectItem> getSi() {
 		return si;
 	}
-
+	@Override
+	public void print() {
+		
+		for(int i = 0; i < this.layer; i++)
+			System.out.print("-");
+		System.out.print("Project");
+//		for(SelectItem s : si) {
+//			System.out.print(s.toString()+", ");
+//		}
+//		System.out.println("]");
+		System.out.println(si);
+	}
+	
 }

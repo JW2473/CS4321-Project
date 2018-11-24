@@ -1,7 +1,13 @@
 package logicaloperators;
 
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.schema.Column;
+import util.ParseWhere;
+import util.UnionFind;
+import util.UnionFindElement;
 import visitor.PhysicalPlanBuilder;
+import java.util.*;
 /**
  * @author Yixin Cui
  * @author Haodong Ping
@@ -34,6 +40,24 @@ public class LogicJoinOperator extends LogicOperator {
 
 	public Expression getExpr() {
 		return expr;
+	}
+	@Override
+	public void print() {
+		
+		for(int i = 0; i < this.layer; i++)
+			System.out.print("-");
+		System.out.print("Join");
+		String exp = "";
+		if(expr != null)		
+			exp = expr.toString().replaceAll("=", "<>");
+		System.out.println("["+exp+"]");
+		List<Expression> exps = ParseWhere.splitWhere(expr);
+		for(Expression e : exps) {
+			Column c = (Column)(((BinaryExpression)e).getLeftExpression());
+			UnionFindElement ufe = ParseWhere.ufv.getUnionFind().find(c);
+			System.out.println(ufe);
+		}
+		
 	}
 
 }

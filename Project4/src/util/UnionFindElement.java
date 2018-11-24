@@ -53,8 +53,10 @@ public class UnionFindElement {
 
 	@Override
 	public String toString() {
-		return "UnionFindElement [ufe=" + ufe + ", lowerBound=" + lowerBound + ", upperBound=" + upperBound
-				+ ", equalityConstraint=" + equalityConstraint + "]";
+//		return "UnionFindElement [ufe=" + ufe + ", lowerBound=" + lowerBound + ", upperBound=" + upperBound
+//				+ ", equalityConstraint=" + equalityConstraint + "]";
+		return "[" + ufe + ", equals " + equalityConstraint + ", min " + lowerBound + ", max " + upperBound
+				+"]";
 	}
 	
 }
