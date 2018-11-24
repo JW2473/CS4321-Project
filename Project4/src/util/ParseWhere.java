@@ -11,6 +11,8 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.schema.Column;
 import physicaloperators.Operator;
+import visitor.UnionFindVisitor;
+import visitor.UnsupportedException;
 
 import java.util.*;
 
@@ -22,14 +24,24 @@ import java.util.*;
  */
 public class ParseWhere {
 	private List<String> froms;
+	private List<String> optimizedFroms;
+	
+	private Map<String, MyTable> from_map;
 	private Map<String, Expression> selcon;
 	private Map<String, Expression> joincon;
+	
+	private Map<TablePairs, List<Expression>> joinState;
+	private Map<String, Integer> selSize;
+	
+	private int min_size = Integer.MAX_VALUE;
+	
+	public static UnionFindVisitor ufv;
 	/**
 	 * split Expression from 'Where' to non and Expressions.
 	 * @param exp the Expression get from where
 	 * @return the list of expression from where
 	 */
-	private static List<Expression> splitWhere(Expression exp) {
+	public static List<Expression> splitWhere(Expression exp) {
 		List<Expression> res = new ArrayList<>();
 		if(exp == null)
 			return res;
@@ -197,11 +209,12 @@ public class ParseWhere {
 	 * @return the final Expression for a table.
 	 */
 	private int getRightTableId(List<String> relateTable) {
+
 		int id = 0;
 		if( relateTable.size()==0 )
-			return froms.size()-1;
+			return this.froms.size()-1;
 		for(String table:relateTable) {
-			id = Math.max(id, froms.indexOf(table));
+			id = Math.max(id, this.froms.indexOf(table));
 		}
 		return id;
 	}
@@ -229,31 +242,378 @@ public class ParseWhere {
 	 * @param froms the list of table names
 	 * @param whereExpression expression from where
 	 */
-	public ParseWhere( List<String> froms, Expression whereExpression) {
+	public ParseWhere( List<String> froms, Map<String, MyTable> from_map, Expression whereExpression) {
 		this.froms = froms;
+		this.from_map = from_map;
+		this.optimizedFroms = new ArrayList<>();
+		this.joinState = new HashMap<>();
 		List<Expression> exps = splitWhere(whereExpression);
 		Map<String,List<Expression>> tempselcon = new HashMap<>();
 		Map<String,List<Expression>> tempjoincon = new HashMap<>();
-
+		//UnionFind to parse the join
+		this.ufv = new UnionFindVisitor();
+		whereExpression.accept(ufv);
+		//
 		for(String name : froms) {
 			tempselcon.put(name,new ArrayList<>());
 			tempjoincon.put(name,new ArrayList<>());
 		}
 		for(Expression exp : exps) {
 			List<String> relateTable = Tools.getRelativeTabAlias(exp);
+			/*
 			if( relateTable.size() == 0 ) {
 				tempjoincon.get(froms.get(getRightTableId(relateTable))).add(exp);
-			}else if( relateTable.size() == 1 ) {
+			}*/
+			if( relateTable.size() == 1 ) {
 				tempselcon.get(froms.get(getRightTableId(relateTable))).add(exp);
-			}else {
-				tempjoincon.get(froms.get(getRightTableId(relateTable))).add(exp);
+			}else if( relateTable.size() == 2 ){
+				
+				 //---------------- add TablePairs -------------------------------------------------//
+				
+				TablePairs tp = new TablePairs(relateTable.get(0),relateTable.get(1));
+				if(joinState.containsKey(tp)) {
+					joinState.get(tp).add(exp);
+				}else {
+					List<Expression> temp = new ArrayList<>();
+					temp.add(exp);
+					joinState.put(tp, temp);
+				}
+				//--------------------------------------------------------------------------------//
+				
+				//tempjoincon.get(froms.get(getRightTableId(relateTable))).add(exp);
+				Column left_c = (Column)(((BinaryExpression)exp).getLeftExpression());
+				Column right_c = (Column)(((BinaryExpression)exp).getRightExpression());
+				UnionFindElement left = ufv.getUnionFind().find(left_c);
+				UnionFindElement right = ufv.getUnionFind().find(right_c);
+				if(left != null) {
+					int id = froms.indexOf(relateTable.get(0));
+					if(left.getEqualityConstraint() != null) {
+						EqualsTo et = new EqualsTo(left_c, new LongValue(left.getLowerBound().toString()));
+						tempselcon.get(froms.get(id)).add(et);
+					}else {						
+						if(left.getLowerBound() != null) {
+							GreaterThanEquals gte = new GreaterThanEquals(left_c, new LongValue(left.getLowerBound().toString()));
+							tempselcon.get(froms.get(id)).add(gte);
+						}
+						if(left.getUpperBound() != null) {
+							MinorThanEquals mte = new MinorThanEquals(left_c, new LongValue(left.getUpperBound().toString()));
+							tempselcon.get(froms.get(id)).add(mte);
+						}
+					}
+				}
+				if (right != null) {
+					int id = froms.indexOf(relateTable.get(1));
+					if(right.getEqualityConstraint() != null) {
+						EqualsTo et = new EqualsTo(right_c, new LongValue(right.getLowerBound().toString()));
+						tempselcon.get(froms.get(id)).add(et);
+					}else {						
+						if(right.getLowerBound() != null) {
+							GreaterThanEquals gte = new GreaterThanEquals(right_c, new LongValue(right.getLowerBound().toString()));
+							tempselcon.get(froms.get(id)).add(gte);
+						}
+						if(right.getUpperBound() != null) {
+							MinorThanEquals mte = new MinorThanEquals(right_c, new LongValue(right.getUpperBound().toString()));
+							tempselcon.get(froms.get(id)).add(mte);
+						}
+					}
+				}
 			}
 		}
+		
+		/******
+		 * implement optimization
+		 * 
+		 * 
+		 * 
+		 *****************/
+		tableStat[] initial = initialSize(tempselcon);
+		evalTable et = new evalTable();
+		backtrack(initial, et);
+//		for(int k = 0; k < optimizedFroms.size();k++) {
+//			System.out.print(optimizedFroms.get(k)+" ");
+//		}
+//		System.out.println();
+		this.froms = new ArrayList(optimizedFroms);
+		for(Expression exp : exps) {
+			List<String> relateTable = Tools.getRelativeTabAlias(exp);
+			if( relateTable.size() == 0 ) {
+				tempjoincon.get(this.froms.get(getRightTableId(relateTable))).add(exp);
+			}else if( relateTable.size() == 2 ){
+				tempjoincon.get(this.froms.get(getRightTableId(relateTable))).add(exp);
+			}
+		}
+		
+		
+		//--------------------------------------------------------------------//
 		this.selcon = new HashMap<>();
 		this.joincon = new HashMap<>();
-		for(String from:froms) {
+		for(String from:this.froms) {
 			this.selcon.put(from, rebuildExpression(tempselcon.get(from)));
 			this.joincon.put(from, rebuildExpression(tempjoincon.get(from)));
 		}
+	}
+	
+	/**
+	 * return the optimized order
+	 */
+	private void backtrack(tableStat[] ts,evalTable et) {
+		for(int i = 0; i < ts.length; i++) {
+			if(et.tables.add(ts[i].name)) {
+//				System.out.println("table:");
+//				for(String name: et.tables)
+//					System.out.print(name+" ");
+//				System.out.println();
+				int insertPos = et.optimizeOrder.size();
+				if(et.optimizeOrder.size() == 0) {
+					//et.size += ts[i].tuple_numbers;
+					et.size.add(ts[i].tuple_numbers);
+					et.optimizeOrder.add(ts[i]);
+//					System.out.println("begin:"+ts[i].name);
+//					System.out.println("tables:");
+//					for(String name: et.tables)
+//						System.out.print(name+" ");
+//					System.out.println();
+					backtrack(ts,et);
+					
+						
+		
+					et.optimizeOrder.remove(insertPos);
+					//et.size -= ts[i].tuple_numbers;
+					et.size.remove(insertPos);
+					et.tables.remove(ts[i].name);
+//					if(!et.tables.isEmpty()) {
+//						for(String name: et.tables)
+//							System.out.print(name+" ");
+//						System.out.println();
+//					}
+					
+			//	System.out.println("et_size:"+et.tables.size());
+				}
+				else if(et.optimizeOrder.size()== froms.size()-1) {
+					et.tables.remove(ts[i].name);
+					int size = 0;
+					for(Integer num : et.size)
+						size += num;
+//					System.out.println("plan:");
+//					for(int k = 0; k < et.optimizeOrder.size();k++) {
+//						System.out.print(et.optimizeOrder.get(k).name+" ");
+//					}
+//					System.out.println();
+//					System.out.println("size:"+size);
+					if(size < min_size) {
+//						if(et.tables.size() != 1) {
+//							System.out.println("end:"+ts[i].name);
+//							System.out.println("tables:");
+//							for(String name: et.tables)
+//								System.out.print(name+" ");
+//							System.out.println();
+//						}
+						this.optimizedFroms.clear();
+						List<String> temp = new ArrayList<>();
+						for(tableStat t: et.optimizeOrder) {
+							temp.add(t.name);
+						}
+						temp.add(ts[i].name);
+						this.optimizedFroms = new ArrayList(temp);
+//						System.out.println("best order:");
+//						for(int k = 0; k < optimizedFroms.size();k++) {
+//							System.out.print(optimizedFroms.get(k)+" ");
+//						}
+//						System.out.println();
+						min_size = size;
+						//et.tables.remove(ts[i].name);
+
+//						if(!et.tables.isEmpty()) {
+//							System.out.println("table:");
+//						for(String name: et.tables)
+//							System.out.print(name+" ");
+//						System.out.println();
+//					}
+					
+						return;
+					}
+				} else {
+					//if(et.size < min_size) {
+					//	int origin_size = et.size;
+						int addsize = et.size.get(insertPos-1) * ts[i].tuple_numbers;
+						//------------calculate the intermediate size----------------
+						for(tableStat t: et.optimizeOrder) {
+							TablePairs tp = new TablePairs(t.name, ts[i].name);
+							List<Expression> exps = joinState.get(tp);							
+							if(exps != null)
+								for(Expression exp : exps) {
+									if(exp instanceof EqualsTo) {
+										EqualsTo eqt = (EqualsTo)exp;
+										Column left = (Column)(eqt.getLeftExpression());
+										Column right = (Column)(eqt.getRightExpression());
+										String left_name = Tools.rebuildWholeColumnName(left);
+										String right_name = Tools.rebuildWholeColumnName(right);
+										if(t.stat.containsKey(left_name)) {
+											pair p_left = t.stat.get(left_name);
+											long range_left = p_left.high - p_left.low + 1;
+											pair p_right = ts[i].stat.get(right_name);
+											long rang_right = p_right.high - p_right.low + 1;
+											long Max_range = Math.max(range_left, rang_right);
+											int temp_size = (int)(addsize /(double)Max_range);
+											//et.size = temp_size;
+										}else {
+											pair p_left = t.stat.get(right_name);
+											long range_left = p_left.high - p_left.low + 1;
+											pair p_right = ts[i].stat.get(left_name);
+											long rang_right = p_right.high - p_right.low + 1;
+											long Max_range = Math.max(range_left, rang_right);
+											int temp_size = (int)(addsize /(double)Max_range);
+											//et.size = temp_size;
+										}
+									}
+								}
+						}
+						//--------------------------------------------------
+						//et.size += addsize;
+						et.size.add(addsize);
+						et.optimizeOrder.add(ts[i]);
+						backtrack(ts, et);
+						et.optimizeOrder.remove(insertPos);
+						et.size.remove(insertPos);
+						
+					//	et.size -= addsize;
+				//	}	
+					et.tables.remove(ts[i].name);
+				}
+			}
+		}
+	}
+	public List<String> getOptimizeFroms(){
+		return this.froms;
+	}
+	/**
+	 * initialize the size of tables in froms
+	 */
+	tableStat[] initialSize(Map<String,List<Expression>> tempselcon) {
+		tableStat[] initial = new tableStat[froms.size()];
+		for(int i = 0; i < froms.size(); i++) {
+			//------------------------------------
+			//initialize value for each table
+			//------------------------------------
+			statsInfo si = Catalog.stats.get(from_map.get(froms.get(i)).getFullTableName());
+			initial[i] = new tableStat();
+			initial[i].name = froms.get(i);
+			initial[i].tuple_numbers = si.n;
+			List<String> schema = Catalog.schema_map.get(from_map.get(froms.get(i)).getFullTableName());
+			for(int j = 0; j < schema.size(); j++) {
+				String colName = initial[i].name+"."+schema.get(j);
+				initial[i].stat.put(colName, new pair(si.mi[j],si.ma[j]));
+			}
+			
+			//change the table value according to select condition
+			List<Expression> exps = tempselcon.get(froms.get(i));
+			for(Expression exp : exps) {
+				if(!(exp instanceof BinaryExpression)) continue;
+				BinaryExpression be = (BinaryExpression)exp;
+				int tuple_number = initial[i].tuple_numbers;
+				Expression left = be.getLeftExpression();
+				Expression right = be.getRightExpression();
+				if((left instanceof Column && right instanceof LongValue) || (right instanceof Column && left instanceof LongValue)) {
+					String colName = left instanceof Column ? Tools.rebuildWholeColumnName((Column)left):Tools.rebuildWholeColumnName((Column)right);
+					long value = left instanceof LongValue ? ((LongValue)left).getValue():((LongValue)right).getValue();
+					pair temp = initial[i].stat.get(colName);			
+					if(temp == null) {
+						throw new RuntimeException("cannot find pairs");
+					}
+					
+					long origin_range = temp.high - temp.low + 1;
+					
+					if(value > temp.high || value < temp.low)
+						continue;
+					//col < value
+					if( (left instanceof LongValue && exp instanceof GreaterThan) || (right instanceof LongValue && exp instanceof MinorThan) ) {
+						temp.high = value - 1;
+					}
+					//col <= value
+					else if( (left instanceof LongValue && exp instanceof GreaterThanEquals ) || (right instanceof LongValue && exp instanceof MinorThanEquals) ) {
+						temp.high = value;
+					}
+					//col > value
+					else if( (right instanceof LongValue && exp instanceof GreaterThan ) || (left instanceof LongValue && exp instanceof MinorThan) ) {
+						temp.low = value + 1;
+					}
+					// col >= value
+					else if( (right instanceof LongValue && exp instanceof GreaterThanEquals ) || (left instanceof LongValue && exp instanceof MinorThanEquals) ) {
+						temp.low = value;
+					}
+					//col == value
+					else if( exp instanceof EqualsTo ) {
+						temp.low = value;
+						temp.high = value;
+					}
+					else {
+						throw new UnsupportedException();
+					}
+					
+					//update tuple numbers
+					double radio = (temp.high - temp.low+1)/(double)origin_range;
+					initial[i].tuple_numbers = (int)(tuple_number*radio);
+					initial[i].stat.put(colName, temp);
+				}				
+			}
+		}
+		return initial;
+	}
+	
+}
+
+class TablePairs { 
+	String tableName1;
+	String tableName2;
+	
+	public TablePairs(String tableName1, String tableName2) {
+		// TODO Auto-generated constructor stub
+		this.tableName1 = tableName1;
+		this.tableName2 = tableName2;
+	}
+	@Override
+	public boolean equals(Object arg0) {
+		if(!(arg0 instanceof TablePairs)) return false;
+		TablePairs tp = (TablePairs)arg0;
+		return (this.tableName1.equals(tp.tableName2)&&this.tableName2.equals(tp.tableName1))
+				||
+				(this.tableName2.equals(tp.tableName2)&&this.tableName1.equals(tp.tableName1));
+	}
+	@Override
+	public int hashCode() {
+		int hash1 = tableName1.hashCode();
+		int hash2 = tableName2.hashCode();
+		return hash1^hash2;
+	}
+	
+}
+
+
+class evalTable {
+	List<tableStat> optimizeOrder;
+	Set<String> tables;
+	List<Integer> size;
+	public evalTable() {
+		this.size = new LinkedList<>();
+		this.optimizeOrder = new ArrayList<>();
+		this.tables = new HashSet<>();
+	}
+	public int getTableNumbers() {
+		return optimizeOrder.size();
+	}
+}
+
+class tableStat {
+	String name;
+	int tuple_numbers;
+	Map<String,pair> stat = new HashMap<>(); 	
+}
+
+class pair{
+	long low;
+	long high;
+	public pair(long low,long high) {
+		this.low = low;
+		this.high = high;
 	}
 }

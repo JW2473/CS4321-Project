@@ -3,6 +3,8 @@ package visitor;
 import java.util.*;
 
 import logicaloperators.*;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import physicaloperators.BlockNestedJoinOperator;
 import physicaloperators.DuplicateEliminationOperator;
@@ -27,11 +29,13 @@ import util.ParseWhere;;
 public class PhysicalPlanBuilder {
 	
 	Operator op;
+	int layer = 0;
 	
 	/**
 	 * Get the physical scan operator
 	 */
 	public void visit(LogicScanOperator scanop) {
+		scanop.print();
 		op = new ScanOperator(scanop.mt);
 	}
 	
@@ -39,11 +43,14 @@ public class PhysicalPlanBuilder {
 	 * Get the physical selection operator
 	 */
 	public void visit(LogicSelectOperator selop) {
+		selop.print();
 		LogicScanOperator child  = (LogicScanOperator)(selop.getChild());
+		child.setLayer(selop.layer + 1);
 		ScanOperator so = null;
+		/*
 		if(Catalog.useIndex) {
 			String tabName = child.mt.getFullTableName();
-			String[] idInfo = Catalog.indexInfo.get(tabName);
+			String[] idInfo = null;//Catalog.indexInfo.get(tabName);
 			if(idInfo != null && idInfo.length >= 4) {
 				String attr = idInfo[1];
 				String[] range = ParseWhere.parseSel(attr, selop.getExpr());
@@ -58,8 +65,12 @@ public class PhysicalPlanBuilder {
 				}
 			}
 		}
-		if(so == null)
-			so = new ScanOperator(child.mt);
+		*/
+		if(so == null) {
+			child.accept(this);
+			so = (ScanOperator)op;
+		}
+			
 		op = new SelectOperator(so, selop.getExpr());
 	}
 	
@@ -68,6 +79,8 @@ public class PhysicalPlanBuilder {
 	 */
 	public void visit(LogicProjectOperator lpo) {
 		op = null;
+		lpo.print();
+		lpo.getChild().setLayer(lpo.layer+1);
 		lpo.getChild().accept(this);
 		op = new ProjectOperator(lpo.getSi(), op);
 	}
@@ -77,6 +90,8 @@ public class PhysicalPlanBuilder {
 	 */
 	public void visit(LogicSortOperator sortop) {
 		op = null;
+		sortop.print();
+		sortop.getChild().setLayer(sortop.layer+1);
 		sortop.getChild().accept(this);
 		switch (Catalog.sortConfig) {
 			case Catalog.IMS:
@@ -95,6 +110,8 @@ public class PhysicalPlanBuilder {
 	 */
 	public void visit(LogicDuplicateEliminationOperator ldeo) {
 		op = null;
+		ldeo.print();
+		ldeo.getChild().setLayer(ldeo.layer+1);
 		ldeo.getChild().accept(this);
 		op = new DuplicateEliminationOperator(op);
 	}
@@ -103,14 +120,27 @@ public class PhysicalPlanBuilder {
 	 * Get the physical join operator
 	 */
 	public void visit(LogicJoinOperator ljo) {
+		ljo.print();
 		pair p = new pair();
 		op = null;
+		ljo.getLeft().setLayer(ljo.layer+1);
 		ljo.getLeft().accept(this);
 		p.left = op;
 		op = null;
+		ljo.getRight().setLayer(ljo.layer+1);
 		ljo.getRight().accept(this);
 		p.right = op;
-		switch (Catalog.joinConfig) {
+		Expression e = ljo.getExpr();
+		int Method = Catalog.BNLJ;
+		List<Expression> exps = ParseWhere.splitWhere(e);
+		for(Expression exp : exps) {
+			if(exp instanceof EqualsTo) {
+				Method = Catalog.SMJ;
+				break;
+			}
+		}
+
+		switch (Method) {
 			case Catalog.TNLJ:
 				op = new TupleNestedLoopJoinOperator(p.left,p.right,ljo.getExpr());
 				break;

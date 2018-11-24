@@ -18,7 +18,14 @@ public class LogicDuplicateEliminationOperator extends LogicOperator {
 	public void accept(PhysicalPlanBuilder ppb) {
 		ppb.visit(this);
 	}
+	
 	public LogicOperator getChild() {
 		return child;
+	}
+	@Override
+	public void print() {
+		for(int i = 0; i < this.layer; i++)
+			System.out.print("-");
+		System.out.println("DupElim");
 	}
 }

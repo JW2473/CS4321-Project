@@ -1,6 +1,7 @@
 package util;
 
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
 import net.sf.jsqlparser.statement.select.Distinct;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
@@ -10,6 +11,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import physicaloperators.Operator;
 import visitor.PhysicalPlanBuilder;
+import visitor.UnionFindVisitor;
 
 import java.util.*;
 
@@ -28,7 +30,7 @@ public class SelectParserTree {
 	private List<SelectItem> selItems;
 	private List<OrderByElement> orders;
 	private Distinct delDup;
-	private Map<String, FromItem> from_map;
+	private Map<String, MyTable> from_map;
 	private ParseWhere pw;
 	public Operator root;
 	
@@ -36,19 +38,22 @@ public class SelectParserTree {
 	 * build the operator tree
 	 */
 	private void buildTree() {
-		LogicOperator op = new LogicScanOperator(new MyTable(from_map.get(froms.get(0))));
+		
+		LogicOperator op = new LogicScanOperator(from_map.get(froms.get(0)));
 		if((pw.getSelExp(froms.get(0)))!=null)
 			op = new LogicSelectOperator(op,pw.getSelExp(froms.get(0)));
 		for ( int i = 1; i < froms.size(); i++ ) {
 			String name = froms.get(i);
-			FromItem temp = from_map.get(name);
-			LogicOperator temp_op = new LogicScanOperator(new MyTable(temp));
+			MyTable temp = from_map.get(name);
+			LogicOperator temp_op = new LogicScanOperator(temp);
 			Expression selExp = pw.getSelExp(name);
 			if(selExp!=null)
 				temp_op = new LogicSelectOperator(temp_op, selExp);
 			Expression joinExp = pw.getJoinExp(name);
+	
 			op = new LogicJoinOperator(op, temp_op, joinExp);
 		}
+
 		op = new LogicProjectOperator(op,selItems);
 		
 		if( orders != null )
@@ -78,11 +83,11 @@ public class SelectParserTree {
 		if(fi != null) {
 			if ( fi.getAlias() != null) {
 				froms.add(fi.getAlias());
-				from_map.put(fi.getAlias(), fi);
+				from_map.put(fi.getAlias(), new MyTable(fi));
 			}				
 			else {
 				froms.add(fi.toString());
-				from_map.put(fi.toString(),fi);
+				from_map.put(fi.toString(), new MyTable(fi));
 			}
 		}
 		List<Join> joins = ps.getJoins();
@@ -90,11 +95,15 @@ public class SelectParserTree {
 			for( Join j : joins ) {
 				String name = Tools.Join2Tabname(j);
 				froms.add(name);
-				from_map.put(name, j.getRightItem());
+				from_map.put(name, new MyTable(j.getRightItem()));
 			}
-
-		this.pw = new ParseWhere(froms, ps.getWhere());
+		//Collections.reverse(froms);
+		this.pw = new ParseWhere(froms, from_map, ps.getWhere());
+		this.froms = new ArrayList<>(pw.getOptimizeFroms());
+		
+		//this.froms = 
 		buildTree();
+		pw.ufv = null;
 	}
 	
 }

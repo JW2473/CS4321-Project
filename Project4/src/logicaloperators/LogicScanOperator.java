@@ -20,4 +20,13 @@ public class LogicScanOperator extends LogicOperator {
 		ppb.visit(this);
 	}
 
+	@Override
+	public void print() {
+
+		for(int i = 0; i < this.layer; i++)
+			System.out.print("-");
+		System.out.print("Leaf");
+		System.out.println("["+mt.getFullTableName()+"]");
+	}
+
 }
