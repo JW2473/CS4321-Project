@@ -141,4 +141,23 @@ public class Tools {
 		tw.close();
 	}
 	
+	public static int getTupleNumbers(String name) {
+		return Catalog.stats.get(Catalog.aliases.get(name)).n;
+	}
+	
+	public static int getLowBound(Column col) {
+		String colname = rebuildWholeColumnName(col);
+		String table = colname.split("\\.")[0];
+		List<String> schema = Catalog.getSchema(Catalog.aliases.get(table));
+		int id = schema.indexOf(colname.split("\\.")[1]);
+		return Catalog.stats.get(Catalog.aliases.get(table)).mi[id];
+	}
+	
+	public static int getUpperBound(Column col) {
+		String colname = rebuildWholeColumnName(col);
+		String table = colname.split("\\.")[0];
+		List<String> schema = Catalog.getSchema(Catalog.aliases.get(table));
+		int id = schema.indexOf(colname.split("\\.")[1]);
+		return Catalog.stats.get(Catalog.aliases.get(table)).ma[id];
+	}
 }
