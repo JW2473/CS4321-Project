@@ -142,10 +142,10 @@ public class Tools {
 	}
 	
 	public static int getTupleNumbers(String name) {
-		return Catalog.stats.get(Catalog.aliases.get(name)).n;
+		return Catalog.stats.get(Catalog.getTableFullName(name)).n;
 	}
 	
-	public static int getLowBound(Column col) {
+	public static int getLowerBound(Column col) {
 		String colname = rebuildWholeColumnName(col);
 		String table = colname.split("\\.")[0];
 		List<String> schema = Catalog.getSchema(Catalog.aliases.get(table));

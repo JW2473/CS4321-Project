@@ -27,9 +27,9 @@ public class Catalog {
 	public static int ID = 0;
 	public static int pageSize = 4096;
 	public static int joinConfig = 2;
-	public static int joinBuffer = 0;
-	public static int sortConfig = 0;
-	public static int sortBuffer = 0;
+	public static int joinBuffer = 5;
+	public static int sortConfig = 1;
+	public static int sortBuffer = 4;
 	
 	public static final int TNLJ = 0;
 	public static final int BNLJ = 1;
@@ -107,26 +107,6 @@ public class Catalog {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			if( in != null ) in.close();
-		}
-		
-		String configFile = Catalog.input + File.separator + "plan_builder_config.txt";
-		File conf = new File(configFile);
-		in  = null;
-		try {
-			in = new Scanner(conf);
-			String[] joinMethod = in.nextLine().split(" ");
-			Catalog.joinBuffer = joinMethod.length == 2 ? Catalog.joinBuffer = Integer.valueOf(joinMethod[1]) : 0;
-			Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
-			String[] sortMethod = in.nextLine().split(" ");
-			if (sortMethod.length == 2) {
-				Catalog.sortConfig = 1;
-				Catalog.sortBuffer = Integer.valueOf(sortMethod[1]);
-			}
-			Catalog.useIndex = Integer.valueOf(in.nextLine()) == 1;
-		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			if( in != null ) in.close();

@@ -68,11 +68,11 @@ public class LogicSelectOperator extends LogicOperator{
 			} else {
 				if(ufe.getLowerBound() != null) {
 					int val = ufe.getLowerBound();
-					rebuild_exps.add(new MinorThanEquals(c,new LongValue((long)val)));
+					rebuild_exps.add(new GreaterThanEquals(c,new LongValue((long)val)));
 				}
 				if(ufe.getUpperBound() != null) {
 					int val = ufe.getUpperBound();
-					rebuild_exps.add(new GreaterThanEquals(c,new LongValue((long)val)));
+					rebuild_exps.add(new MinorThanEquals(c,new LongValue((long)val)));
 				}
 			}			
 		}

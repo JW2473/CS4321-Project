@@ -5,7 +5,6 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import util.ParseWhere;
-import util.UnionFind;
 import util.UnionFindElement;
 import visitor.PhysicalPlanBuilder;
 import java.util.*;

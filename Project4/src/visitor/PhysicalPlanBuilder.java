@@ -3,6 +3,7 @@ package visitor;
 import java.util.*;
 
 import logicaloperators.*;
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
@@ -18,7 +19,10 @@ import physicaloperators.SelectOperator;
 import physicaloperators.SortMergeJoinOperator;
 import physicaloperators.TupleNestedLoopJoinOperator;
 import util.Catalog;
-import util.ParseWhere;;
+import util.MyColumn;
+import util.ParseWhere;
+import util.Tools;
+import util.UnionFindElement;;
 
 /**
  * @author Yixin Cui
@@ -47,30 +51,41 @@ public class PhysicalPlanBuilder {
 		LogicScanOperator child  = (LogicScanOperator)(selop.getChild());
 		child.setLayer(selop.layer + 1);
 		ScanOperator so = null;
-		/*
-		if(Catalog.useIndex) {
-			String tabName = child.mt.getFullTableName();
-			String[] idInfo = null;//Catalog.indexInfo.get(tabName);
-			if(idInfo != null && idInfo.length >= 4) {
-				String attr = idInfo[1];
-				String[] range = ParseWhere.parseSel(attr, selop.getExpr());
-				if( (!range[0].equals("x") ) || ( !range[1].equals("x") ) ) {
-					Integer lowkey = null;
-					Integer highkey = null;
-					if(!range[0].equals("x")) 
-						lowkey = Integer.getInteger(range[0]);
-					if(!range[1].equals("x")) 
-						highkey = Integer.getInteger(range[1]);
-					so = new IndexScanOperator(child.mt, lowkey, highkey);
+		Set<MyColumn> colSet = new HashSet<>();
+		List<Expression> exps = ParseWhere.splitWhere(selop.getExpr());
+		float minCost = Integer.MAX_VALUE;
+		String scanColumn;
+		for(Expression exp : exps) {
+			BinaryExpression be = (BinaryExpression) exp;
+			Expression l = be.getLeftExpression();
+			Expression r = be.getRightExpression();
+			Column c = (Column)(l instanceof Column ? (Column)l : (Column)r);
+			String tableName = Catalog.getTableFullName(c.getTable().getName());
+			String colName = c.getColumnName();
+			if (colSet.add(new MyColumn(c))) {
+				UnionFindElement ufe = ParseWhere.ufv.getUnionFind().find(c);
+				int range = (ufe.getUpperBound() == null ? Tools.getUpperBound(c) : ufe.getUpperBound())
+						  - (ufe.getLowerBound() == null ? Tools.getLowerBound(c) : ufe.getLowerBound()) + 1;
+				int totalRange = Tools.getUpperBound(c) - Tools.getLowerBound(c) + 1;
+				int totalCount = Tools.getTupleNumbers(tableName);
+				int tupleSize = Catalog.schema_map.get(tableName).size();
+				int pageNum = (int) Math.ceil((float) totalCount * tupleSize / Catalog.pageSize);
+				int leafPageNum = Catalog.indexInfo.get(tableName).leafPageNum(colName);
+				int root2Leaf = 3;
+				boolean isClustered = Catalog.indexInfo.get(tableName).isClustered();
+				float reductionFactor = (float) range / totalRange;
+				float cost = isClustered ? root2Leaf + pageNum * reductionFactor
+						   				 : root2Leaf + (leafPageNum + totalCount) * reductionFactor;
+//				System.out.println(cost);
+				if (cost < pageNum || cost < minCost) {
+					scanColumn = colName;
+					so = new IndexScanOperator(child.mt, colName, ufe.getLowerBound(), ufe.getUpperBound());
+				}else {
+					child.accept(this);
+					so = (ScanOperator) op;
 				}
 			}
-		}
-		*/
-		if(so == null) {
-			child.accept(this);
-			so = (ScanOperator)op;
-		}
-			
+		}	
 		op = new SelectOperator(so, selop.getExpr());
 	}
 	

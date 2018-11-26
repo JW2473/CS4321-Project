@@ -1,5 +1,10 @@
 package util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +66,23 @@ public class IndexInfo {
 			ib.leafNodes();
 			ib.IndexNodes();
 		}
+	}
+	
+	public int leafPageNum(String ColumnName) {
+		String indexName = tableName + "." + ColumnName;
+		File indexFile = new File(Catalog.indexDir + indexName);
+		try {
+			FileInputStream fin = new FileInputStream(indexFile);
+			FileChannel fc = fin.getChannel();
+			ByteBuffer buffer = ByteBuffer.allocate(Catalog.pageSize);
+			fc.read(buffer);
+			int leafNum = buffer.getInt(4);
+			fin.close();
+			return leafNum;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	private List<String> allIndice() {

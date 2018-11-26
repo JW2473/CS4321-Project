@@ -94,6 +94,7 @@ public class ExternalSortOperator extends SortOperator{
 		File tempPath = new File(tempDir);
 		tempPath.mkdirs();
 		Tuple t = child.getNextTuple();
+		if (t == null) return;
 		allSchema = t.getAllSchemas();
 		tupleSize = t.getSize();
 		tuplePerPage = (Catalog.pageSize - 8) / tupleSize / 4;
@@ -230,10 +231,9 @@ public class ExternalSortOperator extends SortOperator{
 			return new Tuple(vals, allSchema);
 		} catch (NullPointerException e) {
 			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			return null;
 		}
-		return null;
 		
 	}
 	
