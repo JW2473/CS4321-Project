@@ -53,8 +53,7 @@ public class PhysicalPlanBuilder {
 		ScanOperator so = null;
 		Set<MyColumn> colSet = new HashSet<>();
 		List<Expression> exps = ParseWhere.splitWhere(selop.getExpr());
-		float minCost = Integer.MAX_VALUE;
-		String scanColumn;
+		float minCost = Float.MAX_VALUE;
 		for(Expression exp : exps) {
 			BinaryExpression be = (BinaryExpression) exp;
 			Expression l = be.getLeftExpression();
@@ -68,7 +67,7 @@ public class PhysicalPlanBuilder {
 						  - (ufe.getLowerBound() == null ? Tools.getLowerBound(c) : ufe.getLowerBound()) + 1;
 				int totalRange = Tools.getUpperBound(c) - Tools.getLowerBound(c) + 1;
 				int totalCount = Tools.getTupleNumbers(tableName);
-				int tupleSize = Catalog.schema_map.get(tableName).size();
+				int tupleSize = Catalog.schema_map.get(tableName).size() * 4;
 				int pageNum = (int) Math.ceil((float) totalCount * tupleSize / Catalog.pageSize);
 				int leafPageNum = Catalog.indexInfo.get(tableName).leafPageNum(colName);
 				int root2Leaf = 3;
@@ -77,15 +76,22 @@ public class PhysicalPlanBuilder {
 				float cost = isClustered ? root2Leaf + pageNum * reductionFactor
 						   				 : root2Leaf + (leafPageNum + totalCount) * reductionFactor;
 //				System.out.println(cost);
-				if (cost < pageNum || cost < minCost) {
-					scanColumn = colName;
+				if (pageNum < minCost) {
+					minCost = pageNum;
+					so = null;
+				}
+				if (cost < minCost) {
+//					System.out.println(colName);
+					minCost = cost;
 					so = new IndexScanOperator(child.mt, colName, ufe.getLowerBound(), ufe.getUpperBound());
-				}else {
-					child.accept(this);
-					so = (ScanOperator) op;
 				}
 			}
-		}	
+		}
+		if (so == null) {
+			child.accept(this);
+			so = (ScanOperator) op;
+		}
+//		System.out.println(so.toString());
 		op = new SelectOperator(so, selop.getExpr());
 	}
 	
