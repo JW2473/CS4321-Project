@@ -17,7 +17,7 @@ public class Catalog {
 	public static String output = "samples" + File.separator + "output" + File.separator;
 	public static String tempDir = "samples" + File.separator + "temp" + File.separator;
 	public static String indexDir = "samples" + File.separator + "input" + File.separator + "db" + File.separator + "indexes" + File.separator;
-	public static String statsDir = "samples" + File.separator + "input" + File.separator + "db" + File.separator + "stats.txt";	
+	public static String statsFile = "samples" + File.separator + "input" + File.separator + "db" + File.separator + "stats.txt";	
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 	public static HashMap<String, String> aliases = new HashMap<>();
 	public static HashMap<String, String> uniqueAliases = new HashMap<>();
@@ -26,7 +26,6 @@ public class Catalog {
 	
 	public static int ID = 0;
 	public static int pageSize = 4096;
-	public static int joinConfig = 2;
 	public static int joinBuffer = 5;
 	public static int sortConfig = 1;
 	public static int sortBuffer = 4;
@@ -68,6 +67,7 @@ public class Catalog {
 	 * @param tempDir the temp directory address
 	 */
 	public static void initialize(String interpreterConfig) {
+		// Read directory information
 		Scanner in = null;
 		if (!interpreterConfig.isEmpty()) {
 			Catalog.interpreterConfig = interpreterConfig;
@@ -82,14 +82,13 @@ public class Catalog {
 			Catalog.buildIndex = true;
 			Catalog.executeQuery = true;
 			Catalog.indexDir = Catalog.input + File.separator + "db" + File.separator + "indexes" + File.separator;
-			//comment after test
-			Catalog.statsDir = Catalog.input + File.separator + "db" + File.separator + "stats.txt";
+			Catalog.statsFile = Catalog.input + File.separator + "db" + File.separator + "stats.txt";
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			if( in != null ) in.close();
 		}
-
+		// Read schema information
 		String schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
 		File file = new File(schema);
 		in = null;
@@ -111,7 +110,7 @@ public class Catalog {
 		} finally {
 			if( in != null ) in.close();
 		}
-		
+		// Read index information and build B+ tree
 		String indexInfo = Catalog.input + File.separator + "db" + File.separator + "index_info.txt";
 		File indexInfoFile = new File(indexInfo);
 		in = null;
@@ -142,6 +141,7 @@ public class Catalog {
 		} finally {
 			if( in != null ) in.close();
 		}
+		// Output stats information
 		findStats();
 	}
 	
@@ -225,16 +225,18 @@ public class Catalog {
 	public static int sortID() {
 		return ID++;
 	}
+	
 	/**
-	 * Get the number of external sort
-	 * @return the number of external sort
+	 * Generate stats file which contains the information
+	 * about tuple numbers, max value and min value of 
+	 * every table
 	 */
 	public static void findStats() {
-		File f = new File(statsDir);
+		File f = new File(statsFile);
 		if(!f.exists()) {
 			FileWriter fw = null;
 			try {
-				fw = new FileWriter(statsDir);
+				fw = new FileWriter(statsFile);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -277,7 +279,7 @@ public class Catalog {
 		else {
 			FileReader fr = null;
 			try {
-				fr = new FileReader(statsDir);
+				fr = new FileReader(statsFile);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -303,6 +305,11 @@ public class Catalog {
 
 }
 
+/**
+ * A helper class store stats information
+ * @author Ji Wu
+ *
+ */
 class statsInfo {
 	public int n;
 	public int[] ma;

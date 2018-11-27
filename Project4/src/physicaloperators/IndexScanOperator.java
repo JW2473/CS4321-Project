@@ -21,6 +21,7 @@ public class IndexScanOperator extends ScanOperator{
 	/**
 	 * Create the IndexScanOpertor 
 	 * @param table the Name of the table
+	 * @param the name of the column
 	 * @param lowKey the lower bound of the index range
 	 * @param highKey the upper bound of the index range
 	 */

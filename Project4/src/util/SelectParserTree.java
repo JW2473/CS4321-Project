@@ -1,7 +1,6 @@
 package util;
 
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
 import net.sf.jsqlparser.statement.select.Distinct;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
@@ -11,8 +10,6 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import physicaloperators.Operator;
 import visitor.PhysicalPlanBuilder;
-import visitor.UnionFindVisitor;
-
 import java.util.*;
 
 import logicaloperators.*;

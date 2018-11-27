@@ -38,6 +38,7 @@ public class TreeReader {
 	/**
 	 * Create the TreeReader 
 	 * @param tableName the full name of the table
+	 * @param columnName the name of the column in the table
 	 * @param lowKey the lower bound of the key range
 	 * @param highKey the upper bound of the key range
 	 */

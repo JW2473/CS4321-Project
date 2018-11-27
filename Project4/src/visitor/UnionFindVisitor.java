@@ -46,6 +46,11 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import util.UnionFind;
 
+/**
+ * UnionFindVisitor goes through where clause to create union-find data structure
+ * @author Yixin Cui
+ * @author Haodong Ping
+ */
 public class UnionFindVisitor implements ExpressionVisitor{
 
 	private final String msg = "Unusable comparison!";
@@ -53,25 +58,45 @@ public class UnionFindVisitor implements ExpressionVisitor{
 	private int intValue;
 	private List<Expression> unusableComp = new ArrayList<>();
 	
+	/**
+	 * @return the union-find data structure
+	 */
 	public UnionFind getUnionFind() {
 		return uf;
 	}
 	
+	/**
+	 * @return the list contains all unusable comparison expression
+	 */
 	public List<Expression> getUnusableComp() {
 		return unusableComp;
 	}
 	
+	/**
+	 * Set the value according to the value in the expression
+	 * @param arg0 the long value
+	 */
 	@Override
 	public void visit(LongValue arg0) {
 		this.intValue = (int) arg0.getValue();
 	}
 
+	/**
+	 * Visit and expression and process left and right expressing using
+	 * this visitor
+	 */
 	@Override
 	public void visit(AndExpression arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
 	}
 
+	/**
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the left or right expression is a column and then process it
+	 * using a union-find data structure
+	 * @param arg0 the expression of =
+	 */
 	@Override
 	public void visit(EqualsTo arg0) {
 		boolean isLeftCol = arg0.getLeftExpression() instanceof Column;
@@ -93,6 +118,12 @@ public class UnionFindVisitor implements ExpressionVisitor{
 		}
 	}
 
+	/**
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the left or right expression is a column and then process it
+	 * using a union-find data structure
+	 * @param arg0 the expression of >
+	 */
 	@Override
 	public void visit(GreaterThan arg0) {
 		boolean isLeftCol = arg0.getLeftExpression() instanceof Column;
@@ -110,6 +141,12 @@ public class UnionFindVisitor implements ExpressionVisitor{
 		}
 	}
 
+	/**
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the left or right expression is a column and then process it
+	 * using a union-find data structure
+	 * @param arg0 the expression of >=
+	 */
 	@Override
 	public void visit(GreaterThanEquals arg0) {
 		boolean isLeftCol = arg0.getLeftExpression() instanceof Column;
@@ -127,6 +164,12 @@ public class UnionFindVisitor implements ExpressionVisitor{
 		}
 	}
 
+	/**
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the left or right expression is a column and then process it
+	 * using a union-find data structure
+	 * @param arg0 the expression of <
+	 */
 	@Override
 	public void visit(MinorThan arg0) {
 		boolean isLeftCol = arg0.getLeftExpression() instanceof Column;
@@ -144,6 +187,12 @@ public class UnionFindVisitor implements ExpressionVisitor{
 		}
 	}
 
+	/**
+	 * Visit the expression and evaluating its left expression and right expression
+	 * to see whether the left or right expression is a column and then process it
+	 * using a union-find data structure
+	 * @param arg0 the expression of <=
+	 */
 	@Override
 	public void visit(MinorThanEquals arg0) {
 		boolean isLeftCol = arg0.getLeftExpression() instanceof Column;
@@ -161,6 +210,10 @@ public class UnionFindVisitor implements ExpressionVisitor{
 		}
 	}
 
+	/**
+	 * Visit the not equals to expression add it to unusable comparasion list
+	 * @param arg0 the expression of <>
+	 */
 	@Override
 	public void visit(NotEqualsTo arg0) {
 		unusableComp.add(arg0);
