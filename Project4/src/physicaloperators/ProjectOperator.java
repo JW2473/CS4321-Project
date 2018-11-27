@@ -73,4 +73,18 @@ public class ProjectOperator extends Operator{
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < this.layer; i++)
+			sb.append("-");
+		sb.append("Project");
+		sb.append(si);
+		sb.append("\n");
+		
+		return sb.toString();
+	}
+	
+	
+
 }

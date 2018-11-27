@@ -53,4 +53,23 @@ public class TupleNestedLoopJoinOperator extends JoinOperator{
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < this.layer; i++)
+			sb.append("-");
+		sb.append("TNLJ");
+		String exp = "";
+		if(expr != null) {
+			exp = expr.toString();
+		}
+		sb.append("["+exp+"]");
+		sb.append("\n");
+		
+		return sb.toString();
+	}
+	
+	
 }

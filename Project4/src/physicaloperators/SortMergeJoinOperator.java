@@ -73,6 +73,18 @@ public class SortMergeJoinOperator extends JoinOperator{
 		}
 		return null;
 	}
+	
+	@Override
+	public String toString() {			
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < layer; i++) {
+			sb.append("-");
+		}
+		sb.append("SMJ");
+		sb.append("["+expr.toString()+"]");
+		sb.append("\n");
+		return sb.toString();
+}
 
 	/**
 	 * Set tuples to the next pair from two relations
@@ -126,7 +138,7 @@ public class tupleComp implements Comparator<Tuple> {
 		public tupleComp(List<Column> leftColumns, List<Column> rightColumns) {
 			this.leftColumns = leftColumns;
 			this.rightColumns = rightColumns;
-		}
+		}				
 	}
 
 }

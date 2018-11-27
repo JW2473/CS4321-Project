@@ -85,7 +85,7 @@ public class IndexInfo {
 		return 0;
 	}
 	
-	private List<String> allIndice() {
+	public List<String> allIndice() {
 		ArrayList<String> ret = new ArrayList<>();
 		if (unclusteredIndex != null) ret.addAll(unclusteredIndex);
 		if (clusteredIndex != null) ret.add(clusteredIndex);

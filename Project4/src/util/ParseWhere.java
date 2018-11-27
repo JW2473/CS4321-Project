@@ -33,7 +33,7 @@ public class ParseWhere {
 	private Map<TablePairs, List<Expression>> joinState;
 	private Map<String, Integer> selSize;
 	
-	private int min_size = Integer.MAX_VALUE;
+	private long min_size = Long.MAX_VALUE;
 	
 	public static UnionFindVisitor ufv;
 	/**
@@ -330,10 +330,6 @@ public class ParseWhere {
 		tableStat[] initial = initialSize(tempselcon);
 		evalTable et = new evalTable();
 		backtrack(initial, et);
-//		for(int k = 0; k < optimizedFroms.size();k++) {
-//			System.out.print(optimizedFroms.get(k)+" ");
-//		}
-//		System.out.println();
 		this.froms = new ArrayList(optimizedFroms);
 		for(Expression exp : exps) {
 			List<String> relateTable = Tools.getRelativeTabAlias(exp);
@@ -349,7 +345,38 @@ public class ParseWhere {
 		this.selcon = new HashMap<>();
 		this.joincon = new HashMap<>();
 		for(String from:this.froms) {
-			this.selcon.put(from, rebuildExpression(tempselcon.get(from)));
+			
+			//rebuild sel expression
+			List<Expression> sel_exps = tempselcon.get(from);
+			List<Expression> rebuild_exps = new ArrayList<>();
+			Set<MyColumn> hs = new HashSet<>();
+			for(Expression exp : sel_exps) {
+				BinaryExpression be = (BinaryExpression)exp;
+				Expression l = be.getLeftExpression();
+				Expression r = be.getRightExpression();
+				if( l instanceof Column && r instanceof Column) {
+					rebuild_exps.add(exp);
+					continue;
+				}
+				Column c = (Column)(l instanceof Column ? (Column)l : (Column)r);
+				UnionFindElement ufe = ParseWhere.ufv.getUnionFind().find(c);	
+				if(!hs.add(new MyColumn(c))) continue;
+				if(ufe.getEqualityConstraint() != null) {
+					int val = ufe.getEqualityConstraint();
+					rebuild_exps.add(new EqualsTo(c,new LongValue((long)val)));
+				} else {
+					if(ufe.getLowerBound() != null) {
+						int val = ufe.getLowerBound();
+						rebuild_exps.add(new GreaterThanEquals(c,new LongValue((long)val)));
+					}
+					if(ufe.getUpperBound() != null) {
+						int val = ufe.getUpperBound();
+						rebuild_exps.add(new MinorThanEquals(c,new LongValue((long)val)));
+					}
+				}			
+			}
+			//this.selcon.put(from, rebuildExpression(tempselcon.get(from)));
+			this.selcon.put(from, rebuildExpression(rebuild_exps));
 			this.joincon.put(from, rebuildExpression(tempjoincon.get(from)));
 		}
 	}
@@ -360,55 +387,27 @@ public class ParseWhere {
 	private void backtrack(tableStat[] ts,evalTable et) {
 		for(int i = 0; i < ts.length; i++) {
 			if(et.tables.add(ts[i].name)) {
-//				System.out.println("table:");
-//				for(String name: et.tables)
-//					System.out.print(name+" ");
-//				System.out.println();
 				int insertPos = et.optimizeOrder.size();
 				if(et.optimizeOrder.size() == 0) {
-					//et.size += ts[i].tuple_numbers;
+					
 					et.size.add(ts[i].tuple_numbers);
 					et.optimizeOrder.add(ts[i]);
-//					System.out.println("begin:"+ts[i].name);
-//					System.out.println("tables:");
-//					for(String name: et.tables)
-//						System.out.print(name+" ");
-//					System.out.println();
-					backtrack(ts,et);
 					
-						
-		
+					backtrack(ts,et);
+												
 					et.optimizeOrder.remove(insertPos);
-					//et.size -= ts[i].tuple_numbers;
 					et.size.remove(insertPos);
 					et.tables.remove(ts[i].name);
-//					if(!et.tables.isEmpty()) {
-//						for(String name: et.tables)
-//							System.out.print(name+" ");
-//						System.out.println();
-//					}
-					
-			//	System.out.println("et_size:"+et.tables.size());
+
 				}
 				else if(et.optimizeOrder.size()== froms.size()-1) {
 					et.tables.remove(ts[i].name);
-					int size = 0;
-					for(Integer num : et.size)
+					long size = 0;
+					for(Long num : et.size)
 						size += num;
-//					System.out.println("plan:");
-//					for(int k = 0; k < et.optimizeOrder.size();k++) {
-//						System.out.print(et.optimizeOrder.get(k).name+" ");
-//					}
-//					System.out.println();
-//					System.out.println("size:"+size);
+
 					if(size < min_size) {
-//						if(et.tables.size() != 1) {
-//							System.out.println("end:"+ts[i].name);
-//							System.out.println("tables:");
-//							for(String name: et.tables)
-//								System.out.print(name+" ");
-//							System.out.println();
-//						}
+
 						this.optimizedFroms.clear();
 						List<String> temp = new ArrayList<>();
 						for(tableStat t: et.optimizeOrder) {
@@ -416,27 +415,12 @@ public class ParseWhere {
 						}
 						temp.add(ts[i].name);
 						this.optimizedFroms = new ArrayList(temp);
-//						System.out.println("best order:");
-//						for(int k = 0; k < optimizedFroms.size();k++) {
-//							System.out.print(optimizedFroms.get(k)+" ");
-//						}
-//						System.out.println();
 						min_size = size;
-						//et.tables.remove(ts[i].name);
-
-//						if(!et.tables.isEmpty()) {
-//							System.out.println("table:");
-//						for(String name: et.tables)
-//							System.out.print(name+" ");
-//						System.out.println();
-//					}
-					
+						
 						return;
 					}
-				} else {
-					//if(et.size < min_size) {
-					//	int origin_size = et.size;
-						int addsize = et.size.get(insertPos-1) * ts[i].tuple_numbers;
+				} else {					
+						long addsize = et.size.get(insertPos-1) * ts[i].tuple_numbers;
 						//------------calculate the intermediate size----------------
 						for(tableStat t: et.optimizeOrder) {
 							TablePairs tp = new TablePairs(t.name, ts[i].name);
@@ -470,15 +454,12 @@ public class ParseWhere {
 								}
 						}
 						//--------------------------------------------------
-						//et.size += addsize;
 						et.size.add(addsize);
 						et.optimizeOrder.add(ts[i]);
 						backtrack(ts, et);
 						et.optimizeOrder.remove(insertPos);
 						et.size.remove(insertPos);
 						
-					//	et.size -= addsize;
-				//	}	
 					et.tables.remove(ts[i].name);
 				}
 			}
@@ -511,7 +492,7 @@ public class ParseWhere {
 			for(Expression exp : exps) {
 				if(!(exp instanceof BinaryExpression)) continue;
 				BinaryExpression be = (BinaryExpression)exp;
-				int tuple_number = initial[i].tuple_numbers;
+				long tuple_number = initial[i].tuple_numbers;
 				Expression left = be.getLeftExpression();
 				Expression right = be.getRightExpression();
 				if((left instanceof Column && right instanceof LongValue) || (right instanceof Column && left instanceof LongValue)) {
@@ -593,7 +574,7 @@ class TablePairs {
 class evalTable {
 	List<tableStat> optimizeOrder;
 	Set<String> tables;
-	List<Integer> size;
+	List<Long> size;
 	public evalTable() {
 		this.size = new LinkedList<>();
 		this.optimizeOrder = new ArrayList<>();
@@ -606,7 +587,7 @@ class evalTable {
 
 class tableStat {
 	String name;
-	int tuple_numbers;
+	long tuple_numbers;
 	Map<String,pair> stat = new HashMap<>(); 	
 }
 

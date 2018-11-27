@@ -261,5 +261,18 @@ public class ExternalSortOperator extends SortOperator{
 	private String getFileName(int pass, int run) {
 		return File.separator + "Pass" + pass + "_" + (run);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < layer; i++) {
+			sb.append("-");
+		}
+		sb.append("ExternalSort");
+		sb.append(this.orderBy);
+		sb.append("\n");
+		return sb.toString();
+	}
+	
 	
 }

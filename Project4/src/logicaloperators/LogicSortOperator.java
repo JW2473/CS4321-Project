@@ -45,5 +45,15 @@ public class LogicSortOperator extends LogicOperator {
 		System.out.println();
 		
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < this.layer; i++)
+			sb.append("-");
+		sb.append("Sort");
+		sb.append(obe+"\n");
+		return sb.toString();
+	}
 	
 }

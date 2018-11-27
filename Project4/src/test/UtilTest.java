@@ -58,7 +58,7 @@ public class UtilTest {
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
 		int count = 1;
-		
+		//System.out.println(Catalog.joinConfig);
 		try {
 			while ( (statement = parser.Statement()) != null ) {	
 				long startTime = System.currentTimeMillis();
@@ -73,6 +73,10 @@ public class UtilTest {
 					String fileName = "query" + String.valueOf(count);
 					spt.root.dump(filePath, fileName);
 					
+					String logicFileName = "query" + String.valueOf(count)+"_logicalplan";
+					String physicFileName = "query" + String.valueOf(count)+"_physicalplan";
+					spt.ppb.dumpLog_Plan(logicFileName);
+					spt.ppb.dumpPhy_Plan(physicFileName);
 //					System.out.println("Dumping readiable file...");
 //					PrintStream ps = null;
 //					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
@@ -181,7 +185,7 @@ public class UtilTest {
 	
 	@Test
 	public void UnionFindVisitorTest() {
-		Catalog.initialize("samples2/interpreter_config_file.txt");
+		Catalog.initialize("samples2"+File.separator+"interpreter_config_file.txt");
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
