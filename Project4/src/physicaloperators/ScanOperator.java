@@ -44,5 +44,18 @@ public class ScanOperator extends Operator{
 	public void reset() {
 		table.reset();
 	}
+
+	@Override
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < this.layer; i++)
+			sb.append("-");
+		sb.append("TableScan");
+		sb.append("["+table.getFullTableName()+"]\n");
+		
+		return sb.toString();
+	}
+	
 	
 }

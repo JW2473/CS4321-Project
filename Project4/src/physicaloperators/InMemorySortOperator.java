@@ -73,6 +73,17 @@ public class InMemorySortOperator extends SortOperator{
 	public void reset(int index) {
 		this.index = index;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < layer; i++) {
+			sb.append("-");
+		}
+		sb.append("InMemorySort");
+		sb.append(this.orderBy);
+		sb.append("\n");
+		return sb.toString();
+	}
 	
 }

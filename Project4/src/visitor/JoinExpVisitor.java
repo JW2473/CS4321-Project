@@ -37,11 +37,17 @@ public class JoinExpVisitor extends ExpVisitor{
 	 */
 	@Override
 	public void visit(Column arg0) {
+		
 		Long value = t1.getValue(arg0);
 		
 		if (value == null) {
 			value = t2.getValue(arg0);
 		}
+//		if(value == null) {
+//			System.out.println(t1.getAllSchemas());
+//			System.out.println(t2.getAllSchemas());
+//		}
+			
 		this.curValue = value;
 	}
 

@@ -103,4 +103,22 @@ public class BlockNestedJoinOperator extends JoinOperator{
 		block = new ArrayList<>();
 		nextPair();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < layer; i++) {
+			sb.append("-");
+		}
+		sb.append("BNLJ");
+		String exp = "";
+		if(expr != null) {
+			exp = expr.toString();
+		}
+		sb.append("["+exp+"]");
+		sb.append("\n");
+		return sb.toString();
+	}
+	
+	
 }

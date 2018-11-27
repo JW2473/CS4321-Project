@@ -29,4 +29,14 @@ public class LogicScanOperator extends LogicOperator {
 		System.out.println("["+mt.getFullTableName()+"]");
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < this.layer; i++)
+			sb.append("-");
+		sb.append("Leaf");
+		sb.append("["+mt.getFullTableName()+"]\n");
+		return sb.toString();
+	}
+
 }

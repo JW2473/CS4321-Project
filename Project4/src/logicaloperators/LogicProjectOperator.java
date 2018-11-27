@@ -37,11 +37,18 @@ public class LogicProjectOperator extends LogicOperator {
 		for(int i = 0; i < this.layer; i++)
 			System.out.print("-");
 		System.out.print("Project");
-//		for(SelectItem s : si) {
-//			System.out.print(s.toString()+", ");
-//		}
-//		System.out.println("]");
+
 		System.out.println(si);
+	}
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < this.layer; i++)
+			sb.append("-");
+		sb.append("Project");
+
+		sb.append(si+"\n");
+		return sb.toString();
 	}
 	
 }

@@ -94,6 +94,8 @@ public abstract class SortOperator extends Operator{
 			}
 			
 			if (cols != null) {
+				///---------------------------------------comment----------------------------------
+			//	System.out.println(cols.size());
 				for (Column col : cols) {
 					int cmp = Long.compare(o1.getValue(col), o2.getValue(col));
 					if (cmp != 0) return cmp;

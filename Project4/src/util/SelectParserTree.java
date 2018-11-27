@@ -33,6 +33,7 @@ public class SelectParserTree {
 	private Map<String, MyTable> from_map;
 	private ParseWhere pw;
 	public Operator root;
+	public PhysicalPlanBuilder ppb;
 	
 	/**
 	 * build the operator tree
@@ -61,9 +62,12 @@ public class SelectParserTree {
 		if( delDup != null )
 			op = new LogicDuplicateEliminationOperator(op);
 		
-		PhysicalPlanBuilder ppb = new PhysicalPlanBuilder();
+		//System.out.println("\nlogical query plan:");
+		this.ppb = new PhysicalPlanBuilder();
 		op.accept(ppb);
 		root = ppb.getOp();
+		//System.out.println("\nphysical query plan:");
+	//	System.out.println(ppb.toString());
 	}
 	
 	/**
