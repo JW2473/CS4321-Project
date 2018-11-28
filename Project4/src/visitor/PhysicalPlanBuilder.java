@@ -88,7 +88,7 @@ public class PhysicalPlanBuilder {
 				float reductionFactor = (float) range / totalRange;
 				float cost = isClustered ? root2Leaf + pageNum * reductionFactor
 						   				 : root2Leaf + (leafPageNum + totalCount) * reductionFactor;
-//				System.out.println(cost);
+//				System.out.println(cost + "," + pageNum);
 				if (pageNum < minCost) {
 					minCost = pageNum;
 					so = null;
@@ -284,7 +284,7 @@ public class PhysicalPlanBuilder {
 	public void dumpPhy_Plan(String fileName) {
 		PrintStream ps = null;
 		try {
-			ps = new PrintStream(new File(Catalog.output + fileName + ".txt"));
+			ps = new PrintStream(new File(Catalog.output + fileName));
 			ps.println(this.toString());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -297,7 +297,7 @@ public class PhysicalPlanBuilder {
 	public void dumpLog_Plan(String fileName) {
 		PrintStream ps = null;
 		try {
-			ps = new PrintStream(new File(Catalog.output + fileName + ".txt"));
+			ps = new PrintStream(new File(Catalog.output + fileName));
 			ps.println(logic_plan);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

@@ -53,6 +53,7 @@ public class ParseWhere {
 		res.add(exp);
 		return res;
 	}
+	
 	/**
 	 *  pares the select condition and get the lowkey and high key for the attribute
 	 * @param attr
@@ -252,7 +253,8 @@ public class ParseWhere {
 		Map<String,List<Expression>> tempjoincon = new HashMap<>();
 		//UnionFind to parse the join
 		this.ufv = new UnionFindVisitor();
-		whereExpression.accept(ufv);
+		if (whereExpression != null)
+			whereExpression.accept(ufv);
 		//
 		for(String name : froms) {
 			tempselcon.put(name,new ArrayList<>());
@@ -260,10 +262,7 @@ public class ParseWhere {
 		}
 		for(Expression exp : exps) {
 			List<String> relateTable = Tools.getRelativeTabAlias(exp);
-			/*
-			if( relateTable.size() == 0 ) {
-				tempjoincon.get(froms.get(getRightTableId(relateTable))).add(exp);
-			}*/
+
 			if( relateTable.size() == 1 ) {
 				tempselcon.get(froms.get(getRightTableId(relateTable))).add(exp);
 			}else if( relateTable.size() == 2 ){
@@ -322,9 +321,6 @@ public class ParseWhere {
 		
 		/******
 		 * implement optimization
-		 * 
-		 * 
-		 * 
 		 *****************/
 		this.optimizedFroms = new ArrayList<>(this.froms);
 		tableStat[] initial = initialSize(tempselcon);
@@ -439,7 +435,7 @@ public class ParseWhere {
 											pair p_right = ts[i].stat.get(right_name);
 											long rang_right = p_right.high - p_right.low + 1;
 											long Max_range = Math.max(range_left, rang_right);
-											int temp_size = (int)(addsize /(double)Max_range);
+											addsize = (int)(addsize /(double)Max_range);
 											//et.size = temp_size;
 										}else {
 											pair p_left = t.stat.get(right_name);
@@ -447,7 +443,7 @@ public class ParseWhere {
 											pair p_right = ts[i].stat.get(left_name);
 											long rang_right = p_right.high - p_right.low + 1;
 											long Max_range = Math.max(range_left, rang_right);
-											int temp_size = (int)(addsize /(double)Max_range);
+											addsize = (int)(addsize /(double)Max_range);
 											//et.size = temp_size;
 										}
 									}

@@ -9,11 +9,11 @@ import util.TupleWriter;
 public class GenerateData {
 	@Test
 	public void GenerateSailors() throws Exception{
-		int max_A = 200;
-		int max_B = 150;
-		int max_C = 150;
+		int max_A = 2000;
+		int max_B = 1500;
+		int max_C = 1500;
 		
-		int size = 300;
+		int size = 3000;
 		TupleWriter tw = new TupleWriter("samples2/test_input/Sailors");
 		for( int i = 0; i < size; i++) {
 			int val_A = (int)(Math.random() * max_A);
@@ -26,10 +26,10 @@ public class GenerateData {
 	}
 	@Test
 	public void GenerateReserves() throws Exception{
-		int max_G = 200;
-		int max_H = 150;
+		int max_G = 2000;
+		int max_H = 1500;
 		
-		int size = 500;
+		int size = 5000;
 		TupleWriter tw = new TupleWriter("samples2/test_input/Reserves");
 		for( int i = 0; i < size; i++) {
 			int val_G = (int)(Math.random() * max_G);
@@ -41,11 +41,11 @@ public class GenerateData {
 	}
 	@Test
 	public void GenerateBoats() throws Exception{
-		int max_D = 150;
-		int max_E = 100;
-		int max_F = 100;
+		int max_D = 1500;
+		int max_E = 1000;
+		int max_F = 1000;
 		
-		int size = 200;
+		int size = 2000;
 		TupleWriter tw = new TupleWriter("samples2/test_input/Boats");
 		for( int i = 0; i < size; i++) {
 			int val_D = (int)(Math.random() * max_D);

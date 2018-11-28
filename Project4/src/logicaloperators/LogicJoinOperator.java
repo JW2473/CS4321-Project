@@ -74,7 +74,7 @@ public class LogicJoinOperator extends LogicOperator {
 			sb.append("-");
 		sb.append("Join");
 		List<Expression> exps = ParseWhere.splitWhere(expr);
-		sb.append(ParseWhere.ufv.getUnusableComp().toString().replaceAll(",", " AND"));
+		sb.append(ParseWhere.ufv.getUnusableComp().toString().replaceAll(",", " AND") + "\n");
 		sb.append(ParseWhere.ufv.getUnionFind());
 		return sb.toString();
 	}
