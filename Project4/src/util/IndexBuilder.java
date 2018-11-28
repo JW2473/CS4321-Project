@@ -92,7 +92,7 @@ public class IndexBuilder {
 		Rid entry = ridList.get(ind);
 		if(entry.key == key) {
 			n2++;
-			//System.out.println(entry.key);
+//			System.out.println(position + " " + key);
 			bf.putInt(position, entry.pageNum);
 			bf.putInt(position+4, entry.rNum);
 			position += 8;

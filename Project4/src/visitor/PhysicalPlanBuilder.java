@@ -44,7 +44,7 @@ public class PhysicalPlanBuilder {
 	 * Get the physical scan operator
 	 */
 	public void visit(LogicScanOperator scanop) {
-		//scanop.print();
+//		scanop.print();
 		logic_plan += scanop;
 		op = new ScanOperator(scanop.mt);
 		op.setLayer(scanop.real_layer);
@@ -55,7 +55,7 @@ public class PhysicalPlanBuilder {
 	 * Get the physical selection operator
 	 */
 	public void visit(LogicSelectOperator selop) {
-		//selop.print();
+//		selop.print();
 		logic_plan += selop;
 		int size = sb.toString().split("\n").length;
 		String scan = "";
@@ -73,7 +73,7 @@ public class PhysicalPlanBuilder {
 			Column c = (Column)(l instanceof Column ? (Column)l : (Column)r);
 			String tableName = Catalog.getTableFullName(c.getTable().getName());
 			String colName = c.getColumnName();
-			if (Catalog.indexInfo.get(tableName).allIndice().indexOf(colName) == -1) continue;
+			if (Catalog.indexInfo.isEmpty() || Catalog.indexInfo.get(tableName).allIndice().indexOf(colName) == -1) continue;
 			if (colSet.add(new MyColumn(c))) {
 				UnionFindElement ufe = ParseWhere.ufv.getUnionFind().find(c);
 				int range = (ufe.getUpperBound() == null ? Tools.getUpperBound(c) : ufe.getUpperBound())
@@ -127,7 +127,7 @@ public class PhysicalPlanBuilder {
 	 */
 	public void visit(LogicProjectOperator lpo) {
 		op = null;
-	//	lpo.print();
+//		lpo.print();
 		logic_plan += lpo;
 		lpo.getChild().setLayer(lpo.layer+1);
 		lpo.getChild().setRealLayer(lpo.real_layer + 1);
@@ -142,7 +142,7 @@ public class PhysicalPlanBuilder {
 	 */
 	public void visit(LogicSortOperator sortop) {
 		op = null;
-		//sortop.print();
+//		sortop.print();
 		logic_plan += sortop;
 		sortop.getChild().setLayer(sortop.layer+1);
 		sortop.getChild().setRealLayer(sortop.real_layer + 1);
@@ -168,7 +168,7 @@ public class PhysicalPlanBuilder {
 	 */
 	public void visit(LogicDuplicateEliminationOperator ldeo) {
 		op = null;
-	//	ldeo.print();
+//		ldeo.print();
 		logic_plan += ldeo;
 		ldeo.getChild().setLayer(ldeo.layer+1);
 		ldeo.getChild().setRealLayer(ldeo.real_layer+1);
@@ -184,22 +184,23 @@ public class PhysicalPlanBuilder {
 		int next_layer = ljo.layer;
 		if(!logic_join_status) {
 			logic_join_status = true;
-			//ljo.print();
+//			ljo.print();
 			logic_plan += ljo;
 			next_layer++;
 		}
 		
 		Expression e = ljo.getExpr();
-		int Method = Catalog.SMJ;
+		int Method = Catalog.BNLJ;
 		List<Expression> exps = ParseWhere.splitWhere(e);
 		for(Expression exp : exps) {
-			if (!(exp instanceof EqualsTo)) {
-				Method = Catalog.BNLJ;
+			if ((exp instanceof EqualsTo)) {
+				Method = Catalog.SMJ;
 				break;
 			}
 		}
-		if( exps.size() == 0 )
-			Method = Catalog.BNLJ;
+		
+	//	if( exps.size() == 0 )
+	//		Method = Catalog.BNLJ;
 		
 		int plus = 1;
 		if(Method == Catalog.SMJ )
@@ -277,7 +278,6 @@ public class PhysicalPlanBuilder {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return sb.toString();
 	}
 	
@@ -287,7 +287,6 @@ public class PhysicalPlanBuilder {
 			ps = new PrintStream(new File(Catalog.output + fileName));
 			ps.println(this.toString());
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if(ps != null)
@@ -299,8 +298,7 @@ public class PhysicalPlanBuilder {
 		try {
 			ps = new PrintStream(new File(Catalog.output + fileName));
 			ps.println(logic_plan);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+		} catch (FileNotFoundException e) {			
 			e.printStackTrace();
 		}
 		if(ps != null)

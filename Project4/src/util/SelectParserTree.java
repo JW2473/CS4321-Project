@@ -101,7 +101,6 @@ public class SelectParserTree {
 		//Collections.reverse(froms);
 		this.pw = new ParseWhere(froms, from_map, ps.getWhere());
 		this.froms = new ArrayList<>(pw.getOptimizeFroms());
-		
 		//this.froms = 
 		buildTree();
 		pw.ufv = null;
