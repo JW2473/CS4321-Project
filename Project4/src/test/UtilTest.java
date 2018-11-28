@@ -2,10 +2,12 @@ package test;
 
 import org.junit.Test;
 
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
 import util.SelectParserTree;
@@ -13,8 +15,11 @@ import util.Tools;
 import util.TreeReader;
 import util.TupleReader;
 import util.UnionFind;
+import visitor.UnionFindVisitor;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Arrays;
 
 public class UtilTest {
@@ -47,14 +52,14 @@ public class UtilTest {
 	
 	@Test
 	public void newExeTest() {
-		Catalog.initialize("samples2/interpreter_config_file.txt");
+		Catalog.initialize("samples/interpreter_config_file.txt");
 //		Catalog.initialize("samples/test_input", "samples/output", "samples/temp");
 //		Catalog.initialize("/Users/cuiyixin/Desktop/Submission/p2/input", "/Users/cuiyixin/Desktop/Submission/p2/output", "/Users/cuiyixin/Desktop/Submission/p2/temp");
 		Catalog.getInstance();
 		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
 		Statement statement;
 		int count = 1;
-		
+		//System.out.println(Catalog.joinConfig);
 		try {
 			while ( (statement = parser.Statement()) != null ) {	
 				long startTime = System.currentTimeMillis();
@@ -64,15 +69,19 @@ public class UtilTest {
 					System.out.println(select.toString());
 					SelectParserTree spt = new SelectParserTree(select);
 					
-					System.out.println("Dumping binary file...");
-					String filePath = Catalog.output;
-					String fileName = "query" + String.valueOf(count);
-					spt.root.dump(filePath, fileName);
+//					System.out.println("Dumping binary file...");
+//					String filePath = Catalog.output;
+//					String fileName = "query" + String.valueOf(count);
+//					spt.root.dump(filePath, fileName);
 					
-//					System.out.println("Dumping readiable file...");
-//					PrintStream ps = null;
-//					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
-//					spt.root.dump(ps);
+					String logicFileName = "query" + String.valueOf(count)+"_logicalplan";
+					String physicFileName = "query" + String.valueOf(count)+"_physicalplan";
+					spt.ppb.dumpLog_Plan(logicFileName);
+					spt.ppb.dumpPhy_Plan(physicFileName);
+					System.out.println("Dumping readiable file...");
+					PrintStream ps = null;
+					ps = new PrintStream(new File(Catalog.output + "query" + String.valueOf(count)) + ".txt");
+					spt.root.dump(ps);
 					
 				} catch (Exception e) {	
 					e.printStackTrace();
@@ -173,5 +182,35 @@ public class UtilTest {
 		col.setColumnName(AttrName);
 		col.setTable(t);
 		return col;
+	}
+	
+	@Test
+	public void UnionFindVisitorTest() {
+		Catalog.initialize("samples2"+File.separator+"interpreter_config_file.txt");
+		Catalog.getInstance();
+		CCJSqlParser parser = new CCJSqlParser(Catalog.getQueryFiles());
+		Statement statement;
+		try {
+			while ( (statement = parser.Statement()) != null ) {	
+				Catalog.resetAlias();
+				try {
+					Select select = (Select) statement;
+					System.out.println(select.toString());
+					PlainSelect ps = (PlainSelect)select.getSelectBody();
+					UnionFindVisitor ufv = new UnionFindVisitor();
+					Expression exp = ps.getWhere();
+					exp.accept(ufv);
+					System.out.println(ufv.getUnionFind().toString());
+				} catch (Exception e) {	
+					e.printStackTrace();
+					System.err.println("Exception occurred during parsing");
+					continue;
+				}finally {
+					Catalog.resetAlias();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

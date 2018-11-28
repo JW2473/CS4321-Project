@@ -53,5 +53,20 @@ public class SelectOperator extends Operator{
 		child = op;
 		this.expr = expr;
 		this.uniqueSchema = child.uniqueSchema;
+	}
+
+	@Override
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < this.layer; i++)
+			sb.append("-");
+		sb.append("Select");
+		sb.append("["+expr+"]");
+		sb.append("\n");
+		
+		return sb.toString();
 	}	
+	
+	
 }

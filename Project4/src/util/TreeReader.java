@@ -38,6 +38,7 @@ public class TreeReader {
 	/**
 	 * Create the TreeReader 
 	 * @param tableName the full name of the table
+	 * @param columnName the name of the column in the table
 	 * @param lowKey the lower bound of the key range
 	 * @param highKey the upper bound of the key range
 	 */
@@ -72,6 +73,7 @@ public class TreeReader {
 	 * @param key the key of the tuple
 	 * @return the leaf node position
 	 */
+	
 	private int readPage(int pageAddr, Integer key) {
 		int nextPage = readIndexPage(pageAddr, key);
 		while (nextPage > leafNum) {

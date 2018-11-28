@@ -36,4 +36,24 @@ public class LogicSortOperator extends LogicOperator {
 		return obe;
 	}
 
+	@Override
+	public void print() {
+		for(int i = 0; i < this.layer; i++)
+			System.out.print("-");
+		System.out.print("Sort");
+		System.out.print(obe);
+		System.out.println();
+		
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < this.layer; i++)
+			sb.append("-");
+		sb.append("Sort");
+		sb.append(obe+"\n");
+		return sb.toString();
+	}
+	
 }

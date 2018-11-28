@@ -17,17 +17,18 @@ public class Catalog {
 	public static String output = "samples" + File.separator + "output" + File.separator;
 	public static String tempDir = "samples" + File.separator + "temp" + File.separator;
 	public static String indexDir = "samples" + File.separator + "input" + File.separator + "db" + File.separator + "indexes" + File.separator;
+	public static String statsFile = "samples" + File.separator + "input" + File.separator + "db" + File.separator + "stats.txt";	
 	public static HashMap<String, List<String>> schema_map = new HashMap<>();
 	public static HashMap<String, String> aliases = new HashMap<>();
 	public static HashMap<String, String> uniqueAliases = new HashMap<>();
 	public static HashMap<String, IndexInfo> indexInfo = new HashMap<>();
+	public static HashMap<String, statsInfo> stats = new HashMap<>();
 	
 	public static int ID = 0;
 	public static int pageSize = 4096;
-	public static int joinConfig = 0;
-	public static int joinBuffer = 0;
-	public static int sortConfig = 0;
-	public static int sortBuffer = 0;
+	public static int joinBuffer = 5;
+	public static int sortConfig = 1;
+	public static int sortBuffer = 4;
 	
 	public static final int TNLJ = 0;
 	public static final int BNLJ = 1;
@@ -66,6 +67,7 @@ public class Catalog {
 	 * @param tempDir the temp directory address
 	 */
 	public static void initialize(String interpreterConfig) {
+		// Read directory information
 		Scanner in = null;
 		if (!interpreterConfig.isEmpty()) {
 			Catalog.interpreterConfig = interpreterConfig;
@@ -80,12 +82,13 @@ public class Catalog {
 			Catalog.buildIndex = true;
 			Catalog.executeQuery = true;
 			Catalog.indexDir = Catalog.input + File.separator + "db" + File.separator + "indexes" + File.separator;
+			Catalog.statsFile = Catalog.input + File.separator + "db" + File.separator + "stats.txt";
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			if( in != null ) in.close();
 		}
-
+		// Read schema information
 		String schema = Catalog.input + File.separator + "db" + File.separator + "schema.txt";
 		File file = new File(schema);
 		in = null;
@@ -107,27 +110,7 @@ public class Catalog {
 		} finally {
 			if( in != null ) in.close();
 		}
-		
-		String configFile = Catalog.input + File.separator + "plan_builder_config.txt";
-		File conf = new File(configFile);
-		in  = null;
-		try {
-			in = new Scanner(conf);
-			String[] joinMethod = in.nextLine().split(" ");
-			Catalog.joinBuffer = joinMethod.length == 2 ? Catalog.joinBuffer = Integer.valueOf(joinMethod[1]) : 0;
-			Catalog.joinConfig = Integer.valueOf(joinMethod[0]);
-			String[] sortMethod = in.nextLine().split(" ");
-			if (sortMethod.length == 2) {
-				Catalog.sortConfig = 1;
-				Catalog.sortBuffer = Integer.valueOf(sortMethod[1]);
-			}
-			Catalog.useIndex = Integer.valueOf(in.nextLine()) == 1;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if( in != null ) in.close();
-		}
-		
+		// Read index information and build B+ tree
 		String indexInfo = Catalog.input + File.separator + "db" + File.separator + "index_info.txt";
 		File indexInfoFile = new File(indexInfo);
 		in = null;
@@ -158,6 +141,8 @@ public class Catalog {
 		} finally {
 			if( in != null ) in.close();
 		}
+		// Output stats information
+		findStats();
 	}
 	
 	/**
@@ -240,5 +225,116 @@ public class Catalog {
 	public static int sortID() {
 		return ID++;
 	}
+	
+	/**
+	 * Generate stats file which contains the information
+	 * about tuple numbers, max value and min value of 
+	 * every table
+	 */
+	public static void findStats() {
+		File f = new File(statsFile);
+		if(!f.exists()) {
+			FileWriter fw = null;
+			try {
+				fw = new FileWriter(statsFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			BufferedWriter bw = new BufferedWriter(fw);
+			for(String Table : schema_map.keySet()) {
+				List<String> s = schema_map.get(Table);
+				int l = s.size();
+				int size = 0;
+				int[] ma = new int[l];
+				int[] mi = new int[l];
+				TupleReader r = new TupleReader(Table);
+				long[] t = r.nextTuple();
+				while(t != null) {
+					size++;
+					for(int i = 0; i < l ; i++) {
+						ma[i] = (int) (ma[i]>t[i]? ma[i]:t[i]);
+						mi[i] = (int) (mi[i]<t[i]? mi[i]:t[i]);
+					}
+					t = r.nextTuple();
+				}
+				stats.put(Table, new statsInfo(size, ma, mi));
+				String str = Table + ' ' + Integer.toString(size);		
+				for(int i = 0; i < l; i++) {
+					str += ' ' + s.get(i) + ',' + Integer.toString(mi[i]) + ',' + Integer.toString(ma[i]);
+				}
+				try {
+					bw.write(str + '\n');
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				bw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		else {
+			FileReader fr = null;
+			try {
+				fr = new FileReader(statsFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			BufferedReader br = new BufferedReader(fr);
+			while(true)
+				try {
+					String str = br.readLine();
+					String[] list = str.split(" ");
+					int[] ma = new int[list.length - 2];
+					int[] mi = new int[list.length - 2];
+					int size = Integer.valueOf(list[1]);
+					for(int i = 2; i < list.length; i++) {
+						String[] list2 = list[i].split(",");
+						mi[i-2] = Integer.valueOf(list2[1]);
+						ma[i-2] = Integer.valueOf(list2[2]);
+					}
+					stats.put(list[0], new statsInfo(size, ma, mi));
+				} catch (Exception e) {
+					break;
+				}
+		}
+	}
 
+}
+
+/**
+ * A helper class store stats information
+ * @author Ji Wu
+ *
+ */
+class statsInfo {
+	public int n;
+	public int[] ma;
+	public int[] mi;
+	public statsInfo(int n, int[] ma, int[] mi) {
+		this.n = n;
+		this.ma = ma;
+		this.mi = mi;
+	}
+	
+	public statsInfo(statsInfo s) {
+		this.n = s.n;
+		this.ma = Arrays.copyOf(s.ma, s.ma.length);
+		this.mi = Arrays.copyOf(s.mi, s.mi.length);
+	}
+	
+	public void add(statsInfo s) {
+		int[] ma_new = new int[ma.length + s.ma.length];
+	    System.arraycopy(ma, 0, ma_new, 0, ma.length);
+	    System.arraycopy(s.ma, 0, ma_new, ma.length, s.ma.length);
+	    ma = ma_new;
+		int[] mi_new = new int[mi.length + s.mi.length];
+	    System.arraycopy(mi, 0, mi_new, 0, mi.length);
+	    System.arraycopy(s.mi, 0, mi_new, mi.length, s.mi.length);
+	    mi = mi_new;
+	}
+	
 }

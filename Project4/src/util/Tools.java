@@ -57,6 +57,7 @@ public class Tools {
 		}
 		return ret;	
 	}
+	
 	/**
 	 * Get the Related TableName from the Expression
 	 * @param exp: the binary expression
@@ -83,6 +84,7 @@ public class Tools {
 		}
 		return res;
 	}
+	
 	/**
 	 * Get table name from Join
 	 * @param j: Join 
@@ -141,4 +143,38 @@ public class Tools {
 		tw.close();
 	}
 	
+	/**
+	 * Return the number of tuples in a table
+	 * @param name the name of the table
+	 * @return the number of tuples
+	 */
+	public static int getTupleNumbers(String name) {
+		return Catalog.stats.get(Catalog.getTableFullName(name)).n;
+	}
+	
+	/**
+	 * Get the lower bound value of a column in a table
+	 * @param col the column
+	 * @return the lower bound value
+	 */
+	public static int getLowerBound(Column col) {
+		String colname = rebuildWholeColumnName(col);
+		String table = colname.split("\\.")[0];
+		List<String> schema = Catalog.getSchema(Catalog.aliases.get(table));
+		int id = schema.indexOf(colname.split("\\.")[1]);
+		return Catalog.stats.get(Catalog.aliases.get(table)).mi[id];
+	}
+	
+	/**
+	 * Get the upper bound value of a column in a table
+	 * @param col the column
+	 * @return the upper bound value
+	 */
+	public static int getUpperBound(Column col) {
+		String colname = rebuildWholeColumnName(col);
+		String table = colname.split("\\.")[0];
+		List<String> schema = Catalog.getSchema(Catalog.aliases.get(table));
+		int id = schema.indexOf(colname.split("\\.")[1]);
+		return Catalog.stats.get(Catalog.aliases.get(table)).ma[id];
+	}
 }
