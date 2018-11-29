@@ -190,17 +190,17 @@ public class PhysicalPlanBuilder {
 		}
 		
 		Expression e = ljo.getExpr();
-		int Method = Catalog.BNLJ;
+		int Method = Catalog.SMJ;
 		List<Expression> exps = ParseWhere.splitWhere(e);
 		for(Expression exp : exps) {
-			if ((exp instanceof EqualsTo)) {
-				Method = Catalog.SMJ;
+			if (!(exp instanceof EqualsTo)) {
+				Method = Catalog.BNLJ;
 				break;
 			}
 		}
 		
-	//	if( exps.size() == 0 )
-	//		Method = Catalog.BNLJ;
+		if( exps.size() == 0 )
+			Method = Catalog.BNLJ;
 		
 		int plus = 1;
 		if(Method == Catalog.SMJ )

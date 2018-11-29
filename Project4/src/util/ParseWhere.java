@@ -523,9 +523,9 @@ public class ParseWhere {
 						temp.low = value;
 						temp.high = value;
 					}
-					else {
-						//throw new UnsupportedException();
-					}
+//					else {
+//						//throw new UnsupportedException();
+//					}
 					
 					//update tuple numbers
 					double radio = (temp.high - temp.low+1)/(double)origin_range;
