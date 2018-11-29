@@ -132,11 +132,13 @@ public class ExternalSortOperator extends SortOperator{
 		while (inputRun <= numRun) {
 			for (int i = 0; i < fanIn; i++) {
 				File f = new File(tempDir + getFileName(inputPass, inputRun));
+//				System.out.println(numRun + getFileName(inputPass, inputRun));
 				try {
 					trs.add(new TupleReader(f));
 					tps.add(new Tuple(trs.get(i).nextTuple(), allSchema));
 					inputRun++;
 				} catch (FileNotFoundException e) {
+					inputRun++;
 					continue;
 				}
 			}

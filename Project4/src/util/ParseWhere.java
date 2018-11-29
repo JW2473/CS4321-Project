@@ -336,7 +336,6 @@ public class ParseWhere {
 			}
 		}
 		
-		
 		//--------------------------------------------------------------------//
 		this.selcon = new HashMap<>();
 		this.joincon = new HashMap<>();
@@ -525,7 +524,7 @@ public class ParseWhere {
 						temp.high = value;
 					}
 					else {
-						throw new UnsupportedException();
+						//throw new UnsupportedException();
 					}
 					
 					//update tuple numbers
