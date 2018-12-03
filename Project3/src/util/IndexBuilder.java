@@ -259,7 +259,10 @@ public class IndexBuilder {
 			e.printStackTrace();
 		}
 		int offset = 1;
-		while(keyHead.size() > 1) {
+		int flag;
+		while(keyHead.size() > 0) {
+			System.out.println(keyHead);
+			flag = 0;
 			List<Integer> keyHead_new = new ArrayList<>();
 			//List<Integer> keyTail_new = new ArrayList<>();
 			bf = ByteBuffer.allocate(4096);
@@ -275,7 +278,9 @@ public class IndexBuilder {
 				k = keyHead.size()-1;
 			while(true) {
 				if(n1 == 0) {
-					keyHead_new.add(keyHead.get(ind));
+					if(flag == 1)
+						keyHead_new.add(keyHead.get(ind));
+					flag = 1;
 					bf.putInt(position+k*4, ind+offset);
 					offset_new++;
 					//position+=4;
