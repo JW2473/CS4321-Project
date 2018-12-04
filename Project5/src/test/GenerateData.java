@@ -1,6 +1,5 @@
 package test;
 
-import java.util.ArrayList;
 import org.junit.Test;
 
 import util.Tuple;
@@ -20,7 +19,7 @@ public class GenerateData {
 			int val_B = (int)(Math.random() * max_B);
 			int val_C = (int)(Math.random() * max_C);
 			long[] t = {val_A, val_B, val_C};
-			tw.writeTuple(new Tuple(t, new ArrayList<String>()));
+			tw.writeTuple(new Tuple(t));
 		}
 		tw.close();
 	}
@@ -35,7 +34,7 @@ public class GenerateData {
 			int val_G = (int)(Math.random() * max_G);
 			int val_H = (int)(Math.random() * max_H);
 			long[] t = {val_G, val_H};
-			tw.writeTuple(new Tuple(t, new ArrayList<String>()));
+			tw.writeTuple(new Tuple(t));
 		}
 		tw.close();
 	}
@@ -52,7 +51,7 @@ public class GenerateData {
 			int val_E = (int)(Math.random() * max_E);
 			int val_F = (int)(Math.random() * max_F);
 			long[] t = {val_D, val_E, val_F};
-			tw.writeTuple(new Tuple(t, new ArrayList<String>()));
+			tw.writeTuple(new Tuple(t));
 		}
 		tw.close();
 	}

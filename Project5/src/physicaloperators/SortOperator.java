@@ -72,7 +72,7 @@ public abstract class SortOperator extends Operator{
 	 * 
 	 */
 	public static class tupleComp implements Comparator<Tuple> {
-		
+		List<String> uniqueSchema = null;
 		List<Column> cols = new ArrayList<>();
 		HashSet<String> orderByElements = new HashSet<>();
 		
@@ -97,13 +97,13 @@ public abstract class SortOperator extends Operator{
 				///---------------------------------------comment----------------------------------
 			//	System.out.println(cols.size());
 				for (Column col : cols) {
-					int cmp = Long.compare(o1.getValue(col), o2.getValue(col));
+					int cmp = Long.compare(o1.getValue(uniqueSchema, col), o2.getValue(uniqueSchema, col));
 					if (cmp != 0) return cmp;
 				}
 			}
 			
 			for (int i = 0; i < o1.getSize(); i++) {
-				String schemaName = o1.getAllSchemas().get(i);
+				String schemaName = uniqueSchema.get(i);
 				if (orderByElements.contains(schemaName)) continue;
 				int cmp = Long.compare(o1.getAllColumn().get(i), o2.getAllColumn().get(i));
 				if (cmp != 0) return cmp;
@@ -116,7 +116,8 @@ public abstract class SortOperator extends Operator{
 		 * Create a compare object with order
 		 * @param cols the list of schema of order
 		 */
-		public tupleComp(List<Column> cols) {
+		public tupleComp(List<Column> cols, List<String> uniqueSchema) {
+			this.uniqueSchema = uniqueSchema;
 			this.cols = cols;
 			for (Column col : cols) {
 				orderByElements.add(Tools.rebuildWholeColumnName(col));
@@ -127,7 +128,8 @@ public abstract class SortOperator extends Operator{
 		 * Create a compare object
 		 * 
 		 */
-		public tupleComp() {
+		public tupleComp(List<String> uniqueSchema) {
+			this.uniqueSchema = uniqueSchema;
 			this.cols = null;
 			this.orderByElements = new HashSet<>();
 		}

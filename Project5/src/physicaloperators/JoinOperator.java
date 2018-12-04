@@ -18,7 +18,7 @@ public abstract class JoinOperator extends Operator{
 	protected Operator right;
 	protected Expression expr;
 	protected Tuple t1, t2;
-	protected JoinExpVisitor jv = new JoinExpVisitor();
+	protected JoinExpVisitor jv = null;
 	
 	/**
 	 * Check whether two tuple meets the join condition and get the result after join
@@ -38,9 +38,9 @@ public abstract class JoinOperator extends Operator{
 		value.addAll(t1.getAllColumn());
 		value.addAll(t2.getAllColumn());
 		List<String> schemas = new ArrayList<String>();
-		schemas.addAll(t1.getAllSchemas());
-		schemas.addAll(t2.getAllSchemas());
-		return new Tuple(value, schemas);
+		schemas.addAll(left.getUniqueSchema());
+		schemas.addAll(right.getUniqueSchema());
+		return new Tuple(value);
 	}
 
 	/**
@@ -67,10 +67,9 @@ public abstract class JoinOperator extends Operator{
 		this.left = left;
 		this.right = right;
 		this.expr = expr;
-
+		this.jv = new JoinExpVisitor(left, right);
 		this.uniqueSchema = new ArrayList<>();
 		uniqueSchema.addAll(left.uniqueSchema);
 		uniqueSchema.addAll(right.uniqueSchema);
 	}
-
 }

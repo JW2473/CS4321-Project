@@ -36,7 +36,6 @@ public class ExternalSortOperator extends SortOperator{
 	private int tupleCount = 0;
 	private String tempDir = Catalog.tempDir;
 	private int ID;
-	private List<String> allSchema;
 	private int tupleSize;
 	private int tuplePerFile;
 	private List<Tuple> tps = new LinkedList<>();
@@ -95,7 +94,6 @@ public class ExternalSortOperator extends SortOperator{
 		tempPath.mkdirs();
 		Tuple t = child.getNextTuple();
 		if (t == null) return;
-		allSchema = t.getAllSchemas();
 		tupleSize = t.getSize();
 		tuplePerPage = (Catalog.pageSize - 8) / tupleSize / 4;
 		tuplePerFile = tuplePerPage * bufferSize;
@@ -106,8 +104,8 @@ public class ExternalSortOperator extends SortOperator{
 				i++;
 				t = child.getNextTuple();
 			}
-			if (!orderBy.isEmpty()) Collections.sort(buff, new tupleComp(orderBy));
-			else Collections.sort(buff, new tupleComp());
+			if (!orderBy.isEmpty()) Collections.sort(buff, new tupleComp(orderBy, this.uniqueSchema));
+			else Collections.sort(buff, new tupleComp(this.uniqueSchema));
 			tupleCount += buff.size();
 			buff.size();
 			writeTuples(buff);
@@ -135,7 +133,7 @@ public class ExternalSortOperator extends SortOperator{
 //				System.out.println(numRun + getFileName(inputPass, inputRun));
 				try {
 					trs.add(new TupleReader(f));
-					tps.add(new Tuple(trs.get(i).nextTuple(), allSchema));
+					tps.add(new Tuple(trs.get(i).nextTuple()));
 					inputRun++;
 				} catch (FileNotFoundException e) {
 					inputRun++;
@@ -166,7 +164,7 @@ public class ExternalSortOperator extends SortOperator{
 	private Tuple popMin() {
 		Tuple min = tps.get(0);
 		int minTr = 0;
-		Comparator<Tuple> tc = orderBy == null ? new tupleComp() : new tupleComp(orderBy);
+		Comparator<Tuple> tc = orderBy == null ? new tupleComp(this.uniqueSchema) : new tupleComp(orderBy, this.uniqueSchema);
 		for (int i = 0; i < tps.size(); i++) {
 			if (tc.compare(min, tps.get(i)) > 0) {
 				min = tps.get(i);
@@ -181,7 +179,7 @@ public class ExternalSortOperator extends SortOperator{
 			tps.remove(minTr);
 			trs.remove(minTr);
 		}else {
-			Tuple next = new Tuple(val, allSchema);
+			Tuple next = new Tuple(val);
 			tps.set(minTr, next);
 		}
 		return ret;
@@ -230,7 +228,10 @@ public class ExternalSortOperator extends SortOperator{
 		try {
 			tr = (tr == null) ? new TupleReader(new File(tempDir + getFileName(inputPass, numRun))) : tr;
 			long[] vals = tr.nextTuple();
-			return new Tuple(vals, allSchema);
+			if (vals == null) 
+				return null;
+			else 
+				return new Tuple(vals);
 		} catch (NullPointerException e) {
 			return null;
 		} catch (FileNotFoundException e) {

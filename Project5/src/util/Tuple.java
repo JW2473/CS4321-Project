@@ -2,10 +2,7 @@ package util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
-
 import net.sf.jsqlparser.schema.Column;
 
 /**
@@ -15,10 +12,8 @@ import net.sf.jsqlparser.schema.Column;
  *
  */
 public class Tuple {
-	List<Long> value = new ArrayList<>();
-	HashMap<String, Integer> schemaIndex = new HashMap<>();
-	int size;
-	String uniqueName;
+	int i = 0;
+	long[] value = null;
 
 	/**
 	 * Create a new tuple from an original table in the db directory
@@ -27,16 +22,8 @@ public class Tuple {
 	 * @param tableFullName the full name of the table
 	 * @return the tuple in the table
 	 */
-	public Tuple(long[] val, String uniqueName, String tableFullName) {
-		this.uniqueName = uniqueName;
-		size = val.length;
-		List<String> s = Tools.InitilaizeWholeColumnName(uniqueName, tableFullName);
-		for (int i = 0; i < s.size(); i++) {
-			schemaIndex.put(s.get(i), i);
-		}
-		for (int i = 0; i < val.length; i++) {
-			this.value.add(val[i]);
-		}
+	public Tuple(long[] val) {
+		this.value = val;
 	}
 	
 	/**
@@ -46,51 +33,12 @@ public class Tuple {
 	 * @param schemas the list of schemas returned by another operator
 	 * @return the newly created tuple that has been processed by the operator
 	 */
-	public Tuple(List<Long> value, List<String> schemas) {
-		this.uniqueName = null;
-		size = value.size();
-		this.value = value;
-		for (int i = 0; i < schemas.size(); i++) {
-			schemaIndex.put(schemas.get(i), i);
+	public Tuple(List<Long> value) {
+		int size = value.size();
+		this.value = new long[size];
+		for (int i = 0; i < value.size(); i++) {
+			this.value[i] = value.get(i);
 		}
-	}
-	
-	/**
-	 * Create a new tuple from a returned long value list and its corresponding schemas list
-	 * It maps from column reference to indexes by using the hashmap
-	 * @param value the list of the tuple's data returned by another operator
-	 * @param schemas the list of schemas returned by another operator
-	 * @return the newly created tuple that has been processed by the operator
-	 */
-	public Tuple(long[] value, List<String> schemas) {
-		this.uniqueName = null;
-		size = value.length;
-		for (long val : value) {
-			this.value.add(val);
-		}
-		for (int i = 0; i < schemas.size(); i++) {
-			schemaIndex.put(schemas.get(i), i);
-		}
-	}
-	
-	/**
-	 * Return the schema list of the tuple
-	 * @return the list of the schema in the tuple
-	 */
-	public List<String> getAllSchemas() {
-		String[] schemas = new String[size];
-		for (Entry<String, Integer> entry : schemaIndex.entrySet()) {
-			schemas[entry.getValue()] = entry.getKey();
-		}
-		return new ArrayList<String>(Arrays.asList(schemas));
-	}
-	
-	/**
-	 * Return the data list of the tuple
-	 * @return the list of the data in the tuple
-	 */
-	public List<Long> getAllColumn() {
-		return value;
 	}
 
 	/**
@@ -98,15 +46,7 @@ public class Tuple {
 	 * @return the columns number
 	 */
 	public int getSize() {
-		return size;
-	}
-
-	/**
-	 * Get the unique identity name of the table
-	 * @return the unique identity name of the table
-	 */
-	public String getUniqueName() {
-		return this.uniqueName;
+		return value == null ? 0 : value.length;
 	}
 	
 	/**
@@ -115,7 +55,7 @@ public class Tuple {
 	 */
 	@Override
 	public String toString() {
-		return value.toString().replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+		return Arrays.toString(value).replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
 	}
 	
 	/**
@@ -124,15 +64,24 @@ public class Tuple {
 	 * @param c the column object in the query
 	 * @return the value in that tuple
 	 */
-	public Long getValue(Column c) {
+	public Long getValue(List<String> schemas, Column c) {
 		String wholeColumnName = Tools.rebuildWholeColumnName(c);
 		try{
-			return value.get(schemaIndex.get(wholeColumnName));	
+			return value[schemas.indexOf(wholeColumnName)];	
 		}catch (NullPointerException e) {
+			return null;
+		}catch (ArrayIndexOutOfBoundsException aioobe) {
+//			System.out.println(Arrays.toString(value) + "," + schemas + "," + wholeColumnName);
+//			aioobe.printStackTrace();
 			return null;
 		}
 	}
-
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
 	/**
 	 * Override equals to check whether two tuples have exactly same value.
 	 * @param the tuple need to be compared
@@ -142,9 +91,17 @@ public class Tuple {
 	public boolean equals(Object obj) {
 		if(!(obj instanceof Tuple))
 			return false;
-		Tuple t = (Tuple)obj;
-		if(t.size != this.size) return false;
-		return t.value.equals(this.value);
+		Tuple t = (Tuple) obj;
+		if(t.getSize() != this.value.length) return false;
+		return Arrays.equals(t.value, this.value);
+	}
+
+	public List<Long> getAllColumn() {
+		List<Long> ret = new ArrayList<>();
+		for (long val : value) {
+			ret.add(val);
+		}
+		return ret;
 	}
 	
 }

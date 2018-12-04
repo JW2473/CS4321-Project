@@ -29,7 +29,7 @@ public class InMemorySortOperator extends SortOperator{
 			tps.add(t);
 			t = child.getNextTuple();
 		}
-		Collections.sort(tps, new tupleComp());
+		Collections.sort(tps, new tupleComp(this.uniqueSchema));
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class InMemorySortOperator extends SortOperator{
 		while ((t = child.getNextTuple()) != null) {
 			tps.add(t);
 		}
-		Collections.sort(tps, new tupleComp(orderBy));
+		Collections.sort(tps, new tupleComp(orderBy, this.uniqueSchema));
 	}
   
 	/**

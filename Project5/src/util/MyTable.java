@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.FromItem;
+import physicaloperators.Operator;
 
 /**
  * @author Yixin Cui
@@ -75,7 +76,10 @@ public class MyTable{
 	public Tuple nextTuple() {
 		try {
 			long[] value = tr.nextTuple();
-			return new Tuple(value, getUniqueName(), tFullName);
+			if (value == null) 
+				return null;
+			else 
+				return new Tuple(value);
 		} catch (NullPointerException e) {
 			return null;
 		}
@@ -92,7 +96,10 @@ public class MyTable{
 	public Tuple nextTuple(int pageNum, int tupleNum) {
 		try {
 			long[] value = tr.nextTuple(pageNum, tupleNum);
-			return new Tuple(value, getUniqueName(), tFullName);
+			if (value == null) 
+				return null;
+			else 
+				return new Tuple(value);
 		} catch (NullPointerException e) {
 			return null;
 		}
@@ -103,11 +110,11 @@ public class MyTable{
 	 * @param highKey the upper bound of the tuple key range
 	 * @return the next tuple in the file which is smaller than highKey
 	 */
-	public Tuple nextTuple(int highKey) {
+	public Tuple nextTuple(Operator op, int highKey) {
 		try {
 			long[] value = tr.nextTuple();
-			Tuple tp =  new Tuple(value, getUniqueName(), tFullName);
-			if (tp.getValue(Tools.indexBy(tFullName).get(0)) <= highKey) {
+			Tuple tp =  new Tuple(value);
+			if (tp.getValue(op.getUniqueSchema(), Tools.indexBy(tFullName).get(0)) <= highKey) {
 				return tp;
 			}else {
 				return null;

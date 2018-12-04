@@ -47,7 +47,7 @@ public class IndexScanOperator extends ScanOperator{
 	public Tuple getNextTuple() {
 		try {
 			if (isClustered && Catalog.indexInfo.get(table.getFullTableName()).getClusteredIndex() == this.columnName) {
-				return table.nextTuple(highKey);
+				return table.nextTuple(this, highKey);
 			}else {
 				int[] rid = treeReader.nextRid();
 				return table.nextTuple(rid[0], rid[1]);

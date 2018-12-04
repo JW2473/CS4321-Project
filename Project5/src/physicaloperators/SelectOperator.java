@@ -14,7 +14,7 @@ public class SelectOperator extends Operator{
 
 	Operator child;
 	Expression expr;
-	SelectExpVisitor sv = new SelectExpVisitor();
+	SelectExpVisitor sv = new SelectExpVisitor(this);
 	
 	/**
 	 * Read the tuple from its child and check whether it meets WHERE condition

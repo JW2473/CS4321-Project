@@ -1,6 +1,7 @@
 package visitor;
 
 import net.sf.jsqlparser.schema.Column;
+import physicaloperators.Operator;
 import util.Tuple;
 
 /**
@@ -12,11 +13,14 @@ import util.Tuple;
 public class JoinExpVisitor extends ExpVisitor{
 	
 	Tuple t1, t2;
+	Operator left, right;
 	
 	/**
 	 * Create a JoinExpVisitor object
 	 */
-	public JoinExpVisitor() {
+	public JoinExpVisitor(Operator left, Operator right) {
+		this.left = left;
+		this.right = right;
 		t1 = null;
 		t2 = null;
 	}
@@ -37,17 +41,10 @@ public class JoinExpVisitor extends ExpVisitor{
 	 */
 	@Override
 	public void visit(Column arg0) {
-		
-		Long value = t1.getValue(arg0);
-		
+		Long value = t1.getValue(left.getUniqueSchema(), arg0);
 		if (value == null) {
-			value = t2.getValue(arg0);
-		}
-//		if(value == null) {
-//			System.out.println(t1.getAllSchemas());
-//			System.out.println(t2.getAllSchemas());
-//		}
-			
+			value = t2.getValue(right.getUniqueSchema(), arg0);
+		}	
 		this.curValue = value;
 	}
 

@@ -39,11 +39,12 @@ public class ProjectOperator extends Operator{
 			if (item instanceof SelectExpressionItem) {
 				Expression expr = ((SelectExpressionItem) item).getExpression();
 				Column col = (Column) expr;
-				projection.add(t.getValue(col));
+//				System.out.println(child.uniqueSchema + "," + col.toString() + "," + t);
+				projection.add(t.getValue(child.uniqueSchema, col));
 				schemas.add(Tools.rebuildWholeColumnName(col));
 			}
 		}
-		return new Tuple(projection, schemas);
+		return new Tuple(projection);
 	}
 	
 	/**

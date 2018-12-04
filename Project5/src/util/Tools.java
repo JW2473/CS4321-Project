@@ -118,6 +118,14 @@ public class Tools {
 		return ret;
 	}
 	
+	public static List<String> rawTableSchema(String tableName) {
+		List<String> ret = new ArrayList<>();
+		for (String str: Catalog.schema_map.get(tableName)) {
+			ret.add((tableName) + "." + str);
+		}
+		return ret;
+	}
+	
 	/**
 	 * Sort the original table file according to index
 	 * @param tableName the full name of the table
@@ -127,10 +135,10 @@ public class Tools {
 		TupleReader tr = Catalog.getTableFiles(tableName);
 		long[] t = null;
 		while ((t = tr.nextTuple()) != null) {
-			tps.add(new Tuple(t, tableName, tableName));
+			tps.add(new Tuple(t));
 		}
 		tr.close();
-		Collections.sort(tps, new tupleComp(indexBy(tableName)));
+		Collections.sort(tps, new tupleComp(indexBy(tableName), rawTableSchema(tableName)));
 		
 		TupleWriter tw = new TupleWriter(tr.getFile());
 		try {

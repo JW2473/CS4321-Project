@@ -43,7 +43,8 @@ public class Interpreter {
 		Statement statement;
 		int count = 1;
 		try {
-			while ( (statement = parser.Statement()) != null ) {	
+			while ( (statement = parser.Statement()) != null ) {
+				long startTime = System.currentTimeMillis();
 				PrintStream ps = null;
 				Catalog.resetAlias();
 				try {
@@ -51,6 +52,7 @@ public class Interpreter {
 					SelectParserTree spt = new SelectParserTree(select);
 					String filePath = Catalog.output;
 					String fileName = "query" + String.valueOf(count);
+					System.out.println("Executing Query" + count + "...");
 					spt.root.dump(filePath, fileName);
 					String logicFileName = "query" + String.valueOf(count) + "_logicalplan";
 					String physicFileName = "query" + String.valueOf(count) + "_physicalplan";
@@ -61,6 +63,8 @@ public class Interpreter {
 					continue;
 				}finally {
 					if ( ps != null ) ps.close();
+					long elapsedTime = System.currentTimeMillis() - startTime;
+					System.out.println("Elapsed Time for query" + count + " is: " + elapsedTime);
 					count++;	
 				}
 			}

@@ -123,7 +123,7 @@ public class tupleComp implements Comparator<Tuple> {
 		@Override
 		public int compare(Tuple o1, Tuple o2) {
 			for (int i = 0; i < leftColumns.size(); i++) {
-				int cmp = Long.compare(o1.getValue(leftColumns.get(i)), o2.getValue(rightColumns.get(i)));
+				int cmp = Long.compare(o1.getValue(left.uniqueSchema, leftColumns.get(i)), o2.getValue(right.uniqueSchema, rightColumns.get(i)));
 				if (cmp != 0) return cmp;
 			}
 			
