@@ -292,7 +292,7 @@ public class IndexBuilder {
 				ind++;
 				offset_new++;
 				n1++;
-				if(ind == keyHead.size() | n1==order*2) {
+				if(ind >= keyHead.size() | n1==order*2) {
 					bf.putInt(4, n1);
 					/*
 					for(int i = 0; i < n1*2+1; i++) {
