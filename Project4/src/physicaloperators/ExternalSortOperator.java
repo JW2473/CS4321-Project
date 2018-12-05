@@ -94,6 +94,7 @@ public class ExternalSortOperator extends SortOperator{
 		File tempPath = new File(tempDir);
 		tempPath.mkdirs();
 		Tuple t = child.getNextTuple();
+		if (t == null) return;
 		allSchema = t.getAllSchemas();
 		tupleSize = t.getSize();
 		tuplePerPage = (Catalog.pageSize - 8) / tupleSize / 4;
@@ -131,11 +132,13 @@ public class ExternalSortOperator extends SortOperator{
 		while (inputRun <= numRun) {
 			for (int i = 0; i < fanIn; i++) {
 				File f = new File(tempDir + getFileName(inputPass, inputRun));
+//				System.out.println(numRun + getFileName(inputPass, inputRun));
 				try {
 					trs.add(new TupleReader(f));
 					tps.add(new Tuple(trs.get(i).nextTuple(), allSchema));
 					inputRun++;
 				} catch (FileNotFoundException e) {
+					inputRun++;
 					continue;
 				}
 			}
@@ -230,10 +233,9 @@ public class ExternalSortOperator extends SortOperator{
 			return new Tuple(vals, allSchema);
 		} catch (NullPointerException e) {
 			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			return null;
 		}
-		return null;
 		
 	}
 	
@@ -261,5 +263,18 @@ public class ExternalSortOperator extends SortOperator{
 	private String getFileName(int pass, int run) {
 		return File.separator + "Pass" + pass + "_" + (run);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < layer; i++) {
+			sb.append("-");
+		}
+		sb.append("ExternalSort");
+		sb.append(this.orderBy);
+		sb.append("\n");
+		return sb.toString();
+	}
+	
 	
 }

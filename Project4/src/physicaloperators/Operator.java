@@ -15,7 +15,11 @@ import java.util.*;
 public abstract class Operator {
 	
 	List<String> uniqueSchema;
+	public int layer = 0;
 	
+	public void setLayer(int layer) {
+		this.layer = layer;
+	}
 	public abstract Tuple getNextTuple();
 	
 	public abstract void reset();

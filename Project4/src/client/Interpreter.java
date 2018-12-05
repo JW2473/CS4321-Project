@@ -52,6 +52,10 @@ public class Interpreter {
 					String filePath = Catalog.output;
 					String fileName = "query" + String.valueOf(count);
 					spt.root.dump(filePath, fileName);
+					String logicFileName = "query" + String.valueOf(count) + "_logicalplan";
+					String physicFileName = "query" + String.valueOf(count) + "_physicalplan";
+					spt.ppb.dumpLog_Plan(logicFileName);
+					spt.ppb.dumpPhy_Plan(physicFileName);
 				} catch (Exception e) {					
 					System.err.println("Exception occurred during parsing");
 					continue;
