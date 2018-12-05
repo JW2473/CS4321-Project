@@ -92,7 +92,7 @@ public class IndexBuilder {
 		Rid entry = ridList.get(ind);
 		if(entry.key == key) {
 			n2++;
-//			System.out.println(position + " " + key);
+			//System.out.println(entry.key);
 			bf.putInt(position, entry.pageNum);
 			bf.putInt(position+4, entry.rNum);
 			position += 8;
@@ -259,9 +259,12 @@ public class IndexBuilder {
 			e.printStackTrace();
 		}
 		int offset = 1;
-		while(keyHead.size() > 1) {
+		int flag;
+		while(keyHead.size() > 0) {
+			System.out.println(keyHead);
+			flag = 0;
 			List<Integer> keyHead_new = new ArrayList<>();
-			List<Integer> keyTail_new = new ArrayList<>();
+			//List<Integer> keyTail_new = new ArrayList<>();
 			bf = ByteBuffer.allocate(4096);
 			bf.putInt(0, 1);
 			n1 = 0;
@@ -275,7 +278,9 @@ public class IndexBuilder {
 				k = keyHead.size()-1;
 			while(true) {
 				if(n1 == 0) {
-					keyHead_new.add(keyHead.get(ind));
+					if(flag == 1)
+						keyHead_new.add(keyHead.get(ind));
+					flag = 1;
 					bf.putInt(position+k*4, ind+offset);
 					offset_new++;
 					//position+=4;
@@ -303,7 +308,7 @@ public class IndexBuilder {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					keyTail_new.add(keyTail.get(ind-1));
+					//keyTail_new.add(keyTail.get(ind-1));
 					n1 = 0;
 					if(ind >= keyHead.size() - order*3 - 1) {
 						break;
@@ -333,14 +338,14 @@ public class IndexBuilder {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				keyTail_new.add(keyTail.get(ind-1));
+				//keyTail_new.add(keyTail.get(ind-1));
 				n1 = 0;
 				position = 8;
 				bf = ByteBuffer.allocate(4096);
 				
 				keyHead_new.add(keyHead.get(ind));
 				bf.putInt(0, 1);
-				bf.putInt(position+4*m, ind+1);
+				bf.putInt(position+4*m, ind+offset);
 				//position+=4;
 				ind++;
 				offset_new++;
@@ -353,13 +358,12 @@ public class IndexBuilder {
 					offset_new++;
 				}
 				bf.putInt(4, n1);
-				bf.putInt(4, n1);
 				try {
 					sbc.write(bf);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				keyTail_new.add(keyTail.get(ind-1));
+				//keyTail_new.add(keyTail.get(ind-1));
 			}
 			else if(ind != keyHead.size()) {
 				k = keyHead.size() - 1 - ind;
@@ -383,11 +387,11 @@ public class IndexBuilder {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				keyTail_new.add(keyTail.get(ind-1));
+				//keyTail_new.add(keyTail.get(ind-1));
 			}
 			offset = offset_new;
 			keyHead = keyHead_new;
-			keyTail = keyTail_new;
+			//keyTail = keyTail_new;
 		}
 		int k = 0;
 		try {
