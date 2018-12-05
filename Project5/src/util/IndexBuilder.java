@@ -278,6 +278,9 @@ public class IndexBuilder {
 				k = keyHead.size()-1;
 			while(true) {
 				if(n1 == 0) {
+					if(ind >= keyHead.size() - order*3 - 1) {
+						break;
+					}
 					if(flag == 1)
 						keyHead_new.add(keyHead.get(ind));
 					flag = 1;
@@ -310,15 +313,14 @@ public class IndexBuilder {
 					}
 					//keyTail_new.add(keyTail.get(ind-1));
 					n1 = 0;
-					if(ind >= keyHead.size() - order*3 - 1) {
-						break;
-					}
 				}
 			}
 			if(ind < keyHead.size() - order*2 - 1) {
 				k = (ind + keyHead.size())/2 - ind -1;
 				int m = keyHead.size() - ind - 2 - k;
-				keyHead_new.add(keyHead.get(ind));
+				if(flag == 1)
+					keyHead_new.add(keyHead.get(ind));
+				flag = 1;
 				bf.putInt(0, 1);
 				bf.putInt(position+k*4, ind+offset);
 				//position+=4;
@@ -367,7 +369,9 @@ public class IndexBuilder {
 			}
 			else if(ind != keyHead.size()) {
 				k = keyHead.size() - 1 - ind;
-				keyHead_new.add(keyHead.get(ind));
+				if(flag == 1)
+					keyHead_new.add(keyHead.get(ind));
+				flag = 1;
 				bf.putInt(0, 1);
 				bf.putInt(position+4*k, ind+offset);
 				//position+=4;
